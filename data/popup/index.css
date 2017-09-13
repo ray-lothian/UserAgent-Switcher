@@ -1,0 +1,105 @@
+[hbox] {
+  display: flex;
+  flex-direction: row;
+}
+[vbox] {
+  display: flex;
+  flex-direction: column;
+}
+[flex="1"] {
+  flex: 1;
+}
+[pack=center] {
+  justify-content: center;
+}
+[align=center] {
+  align-items: center;
+}
+[pack=end] {
+  justify-content: flex-end;
+}
+[align=end] {
+  align-items: flex-end;
+}
+
+body {
+  font-family: "Helvetica Neue",Helvetica,sans-serif;
+  font-size: 13px;
+  width: 700px;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+fieldset {
+  border: solid 1px #ccc;
+}
+select,
+input[type=search],
+input[type=text] {
+  width: 100%;
+  margin-right: 2px;
+  text-indent: 5px;
+}
+select,
+input {
+  outline: none;
+  background-color: #fff;
+  color:  #000;
+  border: solid 1px #ccc;
+  box-sizing: border-box;
+  height: 24px;
+}
+input[type=button] {
+  cursor: pointer;
+  min-width: 100px;
+}
+input[type=button]:active {
+  opacity: 0.5;
+}
+
+#list {
+  margin: 20px 0;
+  overflow: auto;
+  height: 300px;
+  background-color: rgba(0, 0, 0, 0.05);
+}
+#list[data-loading=true] {
+  background: url(loading.gif) top 120px center no-repeat;
+  background-size: 64px;
+}
+#list tr {
+  cursor: pointer;
+}
+#list tr[data-matched=false] {
+  opacity: 0.5;
+}
+#list tr:nth-child(even) {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+#list td:nth-child(1) {
+  width: 20px;
+  text-align: center;
+}
+#list td:nth-child(2),
+#list td:nth-child(3) {
+  width: 100px;
+}
+
+#list tr {
+  height: 22px;
+}
+
+#tools input {
+  width: 100px;
+  margin: 3px 0 0 5px;
+}
+
+#filter td:first-child {
+  width: 100px;
+}
+
+#agent {
+  padding: 10px 0;
+  white-space: nowrap;
+}

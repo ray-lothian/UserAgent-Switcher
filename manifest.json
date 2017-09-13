@@ -1,0 +1,39 @@
+{
+  "manifest_version": 2,
+  "name": "User-Agent Switcher",
+  "version": "0.1.0",
+
+  "description": "Spoofs User-Agent strings of your browser",
+
+  "permissions": [
+    "tabs",
+    "storage",
+    "<all_urls>",
+    "webNavigation",
+    "webRequest",
+    "webRequestBlocking"
+  ],
+
+  "icons": {
+    "16": "data/icons/16.png",
+    "32": "data/icons/32.png",
+    "48": "data/icons/48.png",
+    "64": "data/icons/64.png",
+    "128": "data/icons/128.png",
+    "256": "data/icons/256.png"
+  },
+  "background":{
+    "scripts":[
+      "common.js"
+    ]
+  },
+  "browser_action":{
+    "default_icon": {
+      "16": "data/icons/16.png",
+      "32": "data/icons/32.png",
+      "48": "data/icons/48.png",
+      "64": "data/icons/64.png"
+    },
+    "default_popup": "data/popup/index.html"
+  }
+}

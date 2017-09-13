@@ -1,0 +1,153 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link rel="stylesheet" href="index.css">
+  </head>
+  <body>
+
+    <div hbox id="filter">
+      <select id="os">
+        <optgroup label="Populars">
+        <option value="windows">Windows</option>
+        <option value="mac os">Mac OS</option>
+        <option value="linux">Linux</option>
+        <option value="chromium os">Chromium OS</option>
+        <option value="ubuntu">Ubuntu</option>
+        <option value="debian">Debian</option>
+        <option value="android">Android</option>
+        <option value="ios>">iOS</option>
+        </optgroup>
+        <optgroup label="Others">
+        <option value="amigaos">AmigaOS</option>
+        <option value="openbsd">OpenBSD</option>
+        <option value="beos">BeOS</option>
+        <option value="haiku">Haiku</option>
+        <option value="solaris">Solaris</option>
+        <option value="netbsd">NetBSD</option>
+        <option value="freebsd">FreeBSD</option>
+        <option value="slackware">Slackware</option>
+        <option value="suse">SUSE</option>
+        <option value="gentoo">gentoo</option>
+        <option value="fedora">Fedora</option>
+        <option value="gentoo">Gentoo</option>
+        <option value="mageia">Mageia</option>
+        <option value="centos">CentOS</option>
+        <option value="mint">Mint</option>
+        <option value="dragonfly">DragonFly</option>
+        <option value="kubuntu">Kubuntu</option>
+        <option value="mandriva">Mandriva</option>
+        <option value="zenwalk">Zenwalk</option>
+        <option value="unix">Unix</option>
+        <option value="gnu">GNU</option>
+        <option value="os/2">OS/2</option>
+        <option value="aix">AIX</option>
+        <option value="qnx">QNX</option>
+        <option value="beos">BEOS</option>
+        <option value="risc os">RISC OS</option>
+        <option value="symbian">Symbian</option>
+        <option value="nintendo">Nintendo</option>
+        <option value="opensolaris">OpenSolaris</option>
+        <option value="kubuntu">kubuntu</option>
+        </optgroup>
+      </select>
+      <select id="browser">
+         <optgroup label="Populars">
+          <option value="ie">Internet Explorer</option>
+          <option value="safari">Safari</option>
+          <option value="chrome">Chrome</option>
+          <option value="firefox">Firefox</option>
+          <option value="opera">Opera</option>
+          <option value="edge">Edge</option>
+        </optgroup>
+        <optgroup label="Others">
+          <option value="webkit">WebKit</option>
+          <option value="avant">Avant</option>
+          <option value="maxthon">Maxthon</option>
+          <option value="arora">Arora</option>
+          <option value="mozilla">Mozilla</option>
+          <option value="epiphany">Epiphany</option>
+          <option value="camino">Camino</option>
+          <option value="chimera">Chimera</option>
+          <option value="chromium">Chromium</option>
+          <option value="comodo dragon">Dragon</option>
+          <option value="conkeror">conkeror</option>
+          <option value="conkeror">Conkeror</option>
+          <option value="dillo">Dillo</option>
+          <option value="links">Links</option>
+          <option value="firebird">Firebird</option>
+          <option value="swiftfox">Swiftfox</option>
+          <option value="netscape">Netscape</option>
+          <option value="flock">Flock</option>
+          <option value="icab">iCab</option>
+          <option value="iceape">Iceape</option>
+          <option value="icecat">icecat</option>
+          <option value="icecat">IceCat</option>
+          <option value="iceweasel">IceWeasel</option>
+          <option value="iron">Iron</option>
+          <option value="k-meleon">Meleon</option>
+          <option value="konqueror">Konqueror</option>
+          <option value="lunascape">Lunascape</option>
+          <option value="lynx">Lynx</option>
+          <option value="maxthon">MAXTHON</option>
+          <option value="midori">midori</option>
+          <option value="midori">Midori</option>
+          <option value="khtml">KHTML</option>
+          <option value="mosaic">Mosaic</option>
+          <option value="netsurf">NetSurf</option>
+          <option value="omniweb">OmniWeb</option>
+          <option value="opera tablet">Tablet</option>
+          <option value="opera mini">Mini</option>
+          <option value="phoenix">Phoenix</option>
+          <option value="rockmelt">RockMelt</option>
+          <option value="mobile safari">Safari</option>
+          <option value="android browser">Browser</option>
+          <option value="seamonkey">SeaMonkey</option>
+          <option value="slim">Slim</option>
+          <option value="webkit">Webkit</option>
+          <option value="w3m">w3m</option>
+        </optgroup>
+      </select>
+
+      <select id="sort">
+        <option value="true">Browser version (descending)</option>
+        <option value="false">Browser version (ascending)</option>
+      </select>
+
+
+    </div>
+    <div id="list" data-loading=true>
+      <table>
+        <thead>
+          <tr>
+            <th></th>
+            <th>Browser</th>
+            <th>OS</th>
+            <th>String</th>
+          </tr>
+        </thead>
+        <template>
+          <tr>
+            <td><input type="radio" name="select"></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+        </template>
+        <tbody></tbody>
+      </table>
+    </div>
+    <div hbox>
+      <input type="search" id="custom" placeholder="Filter">
+      <input type="button" value="Update">
+    </div>
+    <div hbox id="agent" pack="center" align="center">
+      User-Agent String:&nbsp;
+      <input id="ua" type="text" name="">
+      <input type="button" value="Apply" data-cmd="apply">
+      <input type="button" value="Reset" style="margin-left: 2px;" data-cmd="reset">
+    </div>
+    <script src="ua-parser.min.js"></script>
+    <script src="index.js"></script>
+  </body>
+</html>
