@@ -5,54 +5,55 @@
     <link rel="stylesheet" href="index.css">
   </head>
   <body>
-
     <div hbox id="filter">
       <select id="os">
+        <option value="skipped">All (OS)</option>
         <optgroup label="Populars">
-        <option value="windows">Windows</option>
-        <option value="mac os">Mac OS</option>
-        <option value="linux">Linux</option>
-        <option value="chromium os">Chromium OS</option>
-        <option value="ubuntu">Ubuntu</option>
-        <option value="debian">Debian</option>
-        <option value="android">Android</option>
-        <option value="ios>">iOS</option>
+          <option value="windows">Windows</option>
+          <option value="mac os">Mac OS</option>
+          <option value="linux">Linux</option>
+          <option value="chromium os">Chromium OS</option>
+          <option value="ubuntu">Ubuntu</option>
+          <option value="debian">Debian</option>
+          <option value="android">Android</option>
+          <option value="ios">iOS</option>
         </optgroup>
         <optgroup label="Others">
-        <option value="amigaos">AmigaOS</option>
-        <option value="openbsd">OpenBSD</option>
-        <option value="beos">BeOS</option>
-        <option value="haiku">Haiku</option>
-        <option value="solaris">Solaris</option>
-        <option value="netbsd">NetBSD</option>
-        <option value="freebsd">FreeBSD</option>
-        <option value="slackware">Slackware</option>
-        <option value="suse">SUSE</option>
-        <option value="gentoo">gentoo</option>
-        <option value="fedora">Fedora</option>
-        <option value="gentoo">Gentoo</option>
-        <option value="mageia">Mageia</option>
-        <option value="centos">CentOS</option>
-        <option value="mint">Mint</option>
-        <option value="dragonfly">DragonFly</option>
-        <option value="kubuntu">Kubuntu</option>
-        <option value="mandriva">Mandriva</option>
-        <option value="zenwalk">Zenwalk</option>
-        <option value="unix">Unix</option>
-        <option value="gnu">GNU</option>
-        <option value="os/2">OS/2</option>
-        <option value="aix">AIX</option>
-        <option value="qnx">QNX</option>
-        <option value="beos">BEOS</option>
-        <option value="risc os">RISC OS</option>
-        <option value="symbian">Symbian</option>
-        <option value="nintendo">Nintendo</option>
-        <option value="opensolaris">OpenSolaris</option>
-        <option value="kubuntu">kubuntu</option>
+          <option value="amigaos">AmigaOS</option>
+          <option value="openbsd">OpenBSD</option>
+          <option value="beos">BeOS</option>
+          <option value="haiku">Haiku</option>
+          <option value="solaris">Solaris</option>
+          <option value="netbsd">NetBSD</option>
+          <option value="freebsd">FreeBSD</option>
+          <option value="slackware">Slackware</option>
+          <option value="suse">SUSE</option>
+          <option value="gentoo">gentoo</option>
+          <option value="fedora">Fedora</option>
+          <option value="gentoo">Gentoo</option>
+          <option value="mageia">Mageia</option>
+          <option value="centos">CentOS</option>
+          <option value="mint">Mint</option>
+          <option value="dragonfly">DragonFly</option>
+          <option value="kubuntu">Kubuntu</option>
+          <option value="mandriva">Mandriva</option>
+          <option value="zenwalk">Zenwalk</option>
+          <option value="unix">Unix</option>
+          <option value="gnu">GNU</option>
+          <option value="os/2">OS/2</option>
+          <option value="aix">AIX</option>
+          <option value="qnx">QNX</option>
+          <option value="beos">BEOS</option>
+          <option value="risc os">RISC OS</option>
+          <option value="symbian">Symbian</option>
+          <option value="nintendo">Nintendo</option>
+          <option value="opensolaris">OpenSolaris</option>
+          <option value="kubuntu">kubuntu</option>
         </optgroup>
       </select>
       <select id="browser">
-         <optgroup label="Populars">
+        <option value="skipped">All (Browser)</option>
+        <optgroup label="Populars">
           <option value="ie">Internet Explorer</option>
           <option value="safari">Safari</option>
           <option value="chrome">Chrome</option>
@@ -118,6 +119,12 @@
     </div>
     <div id="list" data-loading=true>
       <table>
+        <colgroup>
+          <col width="40">
+          <col width="100">
+          <col width="100">
+          <col>
+        </colgroup>
         <thead>
           <tr>
             <th></th>
@@ -138,8 +145,8 @@
       </table>
     </div>
     <div hbox>
-      <input type="search" id="custom" placeholder="Filter">
-      <input type="button" value="Update">
+      <input type="search" id="custom" placeholder="Filter items">
+      <input type="button" value="Update" disabled="true">
     </div>
     <div hbox id="agent" pack="center" align="center">
       User-Agent String:&nbsp;

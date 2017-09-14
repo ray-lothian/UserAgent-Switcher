@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "User-Agent Switcher",
-  "version": "0.1.0",
+  "version": "0.1.1",
 
   "description": "Spoofs User-Agent strings of your browser",
 
@@ -35,5 +35,6 @@
       "64": "data/icons/64.png"
     },
     "default_popup": "data/popup/index.html"
-  }
+  },
+  "homepage_url": "http://add0n.com/useragent-switcher.html"
 }

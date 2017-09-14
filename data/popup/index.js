@@ -6,7 +6,7 @@ var json = [];
 function filter(list) {
   return list.filter(o => {
     const browser = document.getElementById('browser').value;
-    if (browser) {
+    if (browser && browser !== 'skipped') {
       try {
         if (o.browser.name.toLowerCase().trim().indexOf(browser.trim()) === -1) {
           return false;
@@ -17,7 +17,7 @@ function filter(list) {
       }
     }
     const os = document.getElementById('os').value;
-    if (os) {
+    if (os && os !== 'skipped') {
       try {
         if (o.os.name.toLowerCase().trim().indexOf(os.trim()) === -1) {
           return false;
@@ -71,14 +71,22 @@ function update() {
   const tbody = parent.querySelector('tbody');
   tbody.textContent = '';
   parent.dataset.loading = true;
-  list.forEach(o => {
-    const clone = document.importNode(t.content, true);
-    clone.querySelector('td:nth-child(2)').textContent = o.browser.name + ' ' + (o.browser.version || '-');
-    clone.querySelector('td:nth-child(3)').textContent = o.os.name + ' ' + (o.os.version || '-');
-    clone.querySelector('td:nth-child(4)').textContent = o.ua;
-    tbody.appendChild(clone);
-  });
-  parent.dataset.loading = false;
+  window.setTimeout(() => {
+    const fragment = document.createDocumentFragment();
+    list.forEach(o => {
+      const clone = document.importNode(t.content, true);
+      const second = clone.querySelector('td:nth-child(2)');
+      second.title = second.textContent = o.browser.name + ' ' + (o.browser.version || ' ');
+      const third = clone.querySelector('td:nth-child(3)');
+      third.title = third.textContent = o.os.name + ' ' + (o.os.version || ' ');
+      const forth = clone.querySelector('td:nth-child(4)');
+      forth.title = forth.textContent = o.ua;
+      fragment.appendChild(clone);
+    });
+    tbody.appendChild(fragment);
+    document.getElementById('custom').placeholder = `Filter among ${list.length} "User-Agent" strings`;
+    parent.dataset.loading = false;
+  }, 1000);
 }
 
 document.addEventListener('change', ({target}) => {
@@ -122,14 +130,16 @@ chrome.storage.onChanged.addListener(prefs => {
   }
 });
 window.addEventListener('load', () => {
-  var req = new XMLHttpRequest();
-  req.onload = () => {
-    parse(req.response);
-    update();
-  };
-  req.open('GET', 'list.json');
-  req.responseType = 'json';
-  req.send();
+  window.setTimeout(() => {
+    const req = new XMLHttpRequest();
+    req.onload = () => {
+      parse(req.response);
+      update();
+    };
+    req.open('GET', 'list.json');
+    req.responseType = 'json';
+    req.send();
+  }, 100);
 });
 
 // commands

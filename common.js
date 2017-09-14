@@ -59,6 +59,26 @@ User-Agent String: ${ua || navigator.userAgent}`
 chrome.storage.local.get({
   ua: ''
 }, prefs => update(prefs.ua));
-chrome.storage.onChanged.addListener(prefs => {
-  update(prefs.ua.newValue);
+chrome.storage.onChanged.addListener(prefs => prefs.ua && update(prefs.ua.newValue));
+
+// FAQs & Feedback
+chrome.storage.local.get({
+  'version': null,
+  'faqs': navigator.userAgent.indexOf('Firefox')
+}, prefs => {
+  const version = chrome.runtime.getManifest().version;
+
+  if (prefs.version ? (prefs.faqs && prefs.version !== version) : true) {
+    chrome.storage.local.set({version}, () => {
+      chrome.tabs.create({
+        url: 'http://add0n.com/useragent-switcher.html?version=' + version +
+          '&type=' + (prefs.version ? ('upgrade&p=' + prefs.version) : 'install')
+      });
+    });
+  }
 });
+
+{
+  const {name, version} = chrome.runtime.getManifest();
+  chrome.runtime.setUninstallURL('http://add0n.com/feedback.html?name=' + name + '&version=' + version);
+}

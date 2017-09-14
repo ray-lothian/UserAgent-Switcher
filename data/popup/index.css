@@ -23,6 +23,7 @@
 }
 
 body {
+  background-color: #fff;
   font-family: "Helvetica Neue",Helvetica,sans-serif;
   font-size: 13px;
   width: 700px;
@@ -40,6 +41,7 @@ input[type=text] {
   width: 100%;
   margin-right: 2px;
   text-indent: 5px;
+  padding-right: 5px;
 }
 select,
 input {
@@ -57,6 +59,10 @@ input[type=button] {
 input[type=button]:active {
   opacity: 0.5;
 }
+input[type=button]:disabled {
+  opacity: 0.2;
+  cursor: default;
+}
 
 #list {
   margin: 20px 0;
@@ -68,26 +74,26 @@ input[type=button]:active {
   background: url(loading.gif) top 120px center no-repeat;
   background-size: 64px;
 }
+#list table {
+  table-layout: fixed;
+}
 #list tr {
   cursor: pointer;
 }
 #list tr[data-matched=false] {
   opacity: 0.5;
 }
-#list tr:nth-child(even) {
-  background-color: rgba(0, 0, 0, 0.05);
+#list tbody tr:nth-child(odd) {
+  background-color: #fff;
 }
 #list td:nth-child(1) {
-  width: 20px;
   text-align: center;
 }
-#list td:nth-child(2),
-#list td:nth-child(3) {
-  width: 100px;
-}
-
-#list tr {
-  height: 22px;
+#list td {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding: 3px 5px;
 }
 
 #tools input {
