@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "User-Agent Switcher",
-  "version": "0.1.1",
+  "version": "0.1.2",
 
   "description": "Spoofs User-Agent strings of your browser",
 
@@ -24,6 +24,7 @@
   },
   "background":{
     "scripts":[
+      "data/popup/ua-parser.min.js",
       "common.js"
     ]
   },
@@ -36,5 +37,11 @@
     },
     "default_popup": "data/popup/index.html"
   },
-  "homepage_url": "http://add0n.com/useragent-switcher.html"
+  "homepage_url": "http://add0n.com/useragent-switcher.html",
+    "applications": {
+    "gecko": {
+      "id": "{a6c4a591-f1b2-4f03-b3ff-767e5bedf4e7}",
+      "strict_min_version": "52.0"
+    }
+  }
 }

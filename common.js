@@ -1,11 +1,18 @@
+/* globals UAParser*/
+
 'use strict';
 
-var ua = 'hi';
+var ua = {
+  userAgent: '',
+  appVersion: '',
+  platform: '',
+  vendor: ''
+};
 
 var onBeforeSendHeaders = ({requestHeaders}) => {
   for (let i = 0, name = requestHeaders[0].name; i < requestHeaders.length; i += 1, name = requestHeaders[i].name) {
     if (name === 'User-Agent' || name === 'user-agent') {
-      requestHeaders[i].value = ua;
+      requestHeaders[i].value = ua.userAgent;
       return {
         requestHeaders
       };
@@ -21,7 +28,10 @@ var onCommitted = ({frameId, url, tabId}) => {
       code: `{
         const script = document.createElement('script');
         script.textContent = \`{
-          navigator.__defineGetter__('userAgent', () => '${ua}');
+          navigator.__defineGetter__('userAgent', () => '${ua.userAgent}');
+          navigator.__defineGetter__('appVersion', () => '${ua.appVersion}');
+          navigator.__defineGetter__('platform', () => '${ua.platform}');
+          navigator.__defineGetter__('vendor', () => '${ua.vendor}');
         }\`;
         document.documentElement.appendChild(script);
       }`
@@ -30,8 +40,15 @@ var onCommitted = ({frameId, url, tabId}) => {
 };
 
 function update(str) {
-  ua = str;
-  if (ua) {
+  ua.userAgent = str;
+  ua.appVersion = str
+    .replace(/^Mozilla\//, '')
+    .replace(/^Opera\//, '');
+  if (str) {
+    const p = new UAParser(str);
+    ua.platform = p.getOS().name || '';
+    ua.vendor = p.getDevice().vendor || '';
+
     chrome.webRequest.onBeforeSendHeaders.addListener(onBeforeSendHeaders, {
       'urls' : ['*://*/*']
     }, ['blocking', 'requestHeaders']);
@@ -43,16 +60,16 @@ function update(str) {
   }
   chrome.browserAction.setIcon({
     path: {
-      16: 'data/icons/' + (ua ? 'active/' : '') + '16.png',
-      32: 'data/icons/' + (ua ? 'active/' : '') + '32.png',
-      48: 'data/icons/' + (ua ? 'active/' : '') + '48.png',
-      64: 'data/icons/' + (ua ? 'active/' : '') + '64.png'
+      16: 'data/icons/' + (str ? 'active/' : '') + '16.png',
+      32: 'data/icons/' + (str ? 'active/' : '') + '32.png',
+      48: 'data/icons/' + (str ? 'active/' : '') + '48.png',
+      64: 'data/icons/' + (str ? 'active/' : '') + '64.png'
     }
   });
   chrome.browserAction.setTitle({
-    title: `UserAgent Switcher (${ua ? 'enabled' : 'disabled'})
+    title: `UserAgent Switcher (${str ? 'enabled' : 'disabled'})
 
-User-Agent String: ${ua || navigator.userAgent}`
+User-Agent String: ${str || navigator.userAgent}`
   });
 }
 

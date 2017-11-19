@@ -147,12 +147,13 @@
     <div hbox>
       <input type="search" id="custom" placeholder="Filter items">
       <input type="button" value="Update" disabled="true">
+      <input type="button" value="Refresh" title="Refresh the current page" style="margin-left: 2px;" data-cmd="refresh">
     </div>
     <div hbox id="agent" pack="center" align="center">
       User-Agent String:&nbsp;
       <input id="ua" type="text" name="">
-      <input type="button" value="Apply" data-cmd="apply">
-      <input type="button" value="Reset" style="margin-left: 2px;" data-cmd="reset">
+      <input type="button" value="Apply" title="Set this string as the browser's User-Agent string" data-cmd="apply">
+      <input type="button" value="Reset" title="Reset User-Agent string to the default one" style="margin-left: 2px;" data-cmd="reset">
     </div>
     <script src="ua-parser.min.js"></script>
     <script src="index.js"></script>
