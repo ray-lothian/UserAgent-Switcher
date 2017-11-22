@@ -9,7 +9,73 @@ var ua = {
   vendor: ''
 };
 
-var onBeforeSendHeaders = ({requestHeaders}) => {
+var prefs = {
+  ua: '',
+  blacklist: [],
+  whitelist: [],
+  mode: 'blacklist'
+};
+
+chrome.storage.local.get(prefs, ps => {
+  Object.assign(prefs, ps);
+  update(prefs.ua);
+});
+chrome.storage.onChanged.addListener(ps => {
+  Object.keys(ps).forEach(key => prefs[key] = ps[key].newValue);
+  if (ps.ua) {
+    update(prefs.ua);
+  }
+});
+
+function hostname(url) {
+  const s = url.indexOf('//') + 2;
+  if (s > 1) {
+    let o = url.indexOf('/', s);
+    if (o > 0) {
+      return url.substring(s, o);
+    }
+    else {
+      o = url.indexOf('?', s);
+      if (o > 0) {
+        return url.substring(s, o);
+      }
+      else {
+        return url.substring(s);
+      }
+    }
+  }
+  else {
+    return url;
+  }
+}
+function match(url) {
+  if (prefs.mode === 'blacklist') {
+    if (prefs.blacklist.length) {
+      const h = hostname(url);
+      return prefs.blacklist.some(s => s === h);
+    }
+  }
+  else {
+    if (prefs.blacklist.length) {
+      const h = hostname(url);
+      return prefs.whitelist.some(s => s === h) === false;
+    }
+    else {
+      return true;
+    }
+  }
+}
+
+var cache = {};
+chrome.tabs.onRemoved.addListener(id => delete cache[id]);
+
+var onBeforeSendHeaders = ({tabId, url, requestHeaders, type}) => {
+  if (type === 'main_frame') {
+    cache[tabId] = match(url);
+  }
+  if (cache[tabId]) {
+    return;
+  }
   for (let i = 0, name = requestHeaders[0].name; i < requestHeaders.length; i += 1, name = requestHeaders[i].name) {
     if (name === 'User-Agent' || name === 'user-agent') {
       requestHeaders[i].value = ua.userAgent;
@@ -22,6 +88,9 @@ var onBeforeSendHeaders = ({requestHeaders}) => {
 
 var onCommitted = ({frameId, url, tabId}) => {
   if (frameId === 0 && url && (url.startsWith('http') || url.startsWith('ftp'))) {
+    if (cache[tabId]) {
+      return;
+    }
     chrome.tabs.executeScript(tabId, {
       runAt: 'document_start',
       allFrames: true,
@@ -73,11 +142,6 @@ User-Agent String: ${str || navigator.userAgent}`
   });
 }
 
-chrome.storage.local.get({
-  ua: ''
-}, prefs => update(prefs.ua));
-chrome.storage.onChanged.addListener(prefs => prefs.ua && update(prefs.ua.newValue));
-
 // FAQs & Feedback
 chrome.storage.local.get({
   'version': null,
@@ -86,10 +150,12 @@ chrome.storage.local.get({
   const version = chrome.runtime.getManifest().version;
 
   if (prefs.version ? (prefs.faqs && prefs.version !== version) : true) {
+    const p = Boolean(prefs.version);
     chrome.storage.local.set({version}, () => {
       chrome.tabs.create({
         url: 'http://add0n.com/useragent-switcher.html?version=' + version +
-          '&type=' + (prefs.version ? ('upgrade&p=' + prefs.version) : 'install')
+          '&type=' + (p ? ('upgrade&p=' + prefs.version) : 'install'),
+        active: p === false
       });
     });
   }

@@ -142,13 +142,26 @@ window.addEventListener('load', () => {
   }, 100);
 });
 
+function msg(msg) {
+  const info = document.getElementById('info');
+  info.textContent = msg;
+  window.setTimeout(() => info.textContent = '', 750);
+}
+
 // commands
 document.addEventListener('click', ({target}) => {
   const cmd = target.dataset.cmd;
   if (cmd) {
     if (cmd === 'apply') {
+      const value = document.getElementById('ua').value;
+      if (value === navigator.userAgent) {
+        msg('Default user-agent');
+      }
+      else {
+        msg('user-agent is set');
+      }
       chrome.storage.local.set({
-        ua: document.getElementById('ua').value
+        ua: value === navigator.userAgent ? '' : value
       });
     }
     else if (cmd === 'reset') {
@@ -159,6 +172,7 @@ document.addEventListener('click', ({target}) => {
       chrome.storage.local.set({
         ua: ''
       });
+      msg('reset to default');
     }
     else if (cmd === 'refresh') {
       chrome.tabs.query({

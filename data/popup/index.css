@@ -110,3 +110,10 @@ input[type=button]:disabled {
   padding: 10px 0;
   white-space: nowrap;
 }
+
+#info {
+  padding: 0 5px;
+}
+#info:empty {
+  display: none;
+}

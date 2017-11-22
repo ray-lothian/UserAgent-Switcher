@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>My Test Extension Options</title>
+  <style>
+    body { padding: 10px; }
+    textarea { width: 100%; }
+  </style>
+</head>
+
+<body>
+  <table width=100%>
+    <tr>
+      <td>
+        <label><input type="radio" name="mode" value="blacklist" id="mode-blacklist"> Black-list mode: Apply user-agent string to all tabs except the tabs with the following top-level hostnames (comma separated list of hostnames)</label>
+      </td>
+    </tr>
+    <tr>
+      <td><textarea id="blacklist" rows="3" placeholder="e.g.: www.google.com, www.bing.com"></textarea></td>
+    </tr>
+    <tr>
+      <td>
+        <label><input type="radio" name="mode" value="whitelist" id="mode-whitelist"> White-list mode: Only apply user-agent string to the tabs with following top-level hostnames</label>
+      </td>
+    </tr>
+    <tr>
+      <td><textarea id="whitelist" rows="3"></textarea></td>
+    </tr>
+  </table>
+  <p>
+    <button id="save">Save</button>
+    <span id="status"></span>
+  </p>
+
+  <script src="index.js"></script>
+</body>
+</html>
