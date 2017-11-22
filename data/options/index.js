@@ -8,6 +8,7 @@ function prepare(str) {
 
 function save() {
   chrome.storage.local.set({
+    faqs: document.getElementById('faqs').checked,
     blacklist: prepare(document.getElementById('blacklist').value),
     whitelist: prepare(document.getElementById('whitelist').value),
     mode: document.getElementById('mode-blacklist').checked ? 'blacklist' : 'whitelist'
@@ -22,10 +23,12 @@ function save() {
 
 function restore() {
   chrome.storage.local.get({
+    faqs: true,
     mode: 'blacklist',
     whitelist: [],
     blacklist: []
   }, prefs => {
+    document.getElementById('faqs').checked = prefs.faqs;
     document.getElementById('mode-blacklist').checked = prefs.mode === 'blacklist';
     document.getElementById('mode-whitelist').checked = prefs.mode === 'whitelist';
     document.getElementById('blacklist').value = prefs.blacklist.join(', ');
