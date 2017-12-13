@@ -5,6 +5,10 @@
   <style>
     body { padding: 10px; }
     textarea { width: 100%; }
+    #custom {
+      white-space: nowrap;
+      overflow: auto;
+    }
   </style>
 </head>
 
@@ -24,13 +28,22 @@
       </td>
     </tr>
     <tr>
-      <td><textarea id="whitelist" rows="3"></textarea></td>
+      <td><textarea id="whitelist" rows="3" placeholder="e.g.: www.google.com, www.bing.com"></textarea></td>
+    </tr>
+    <tr>
+      <td>
+        <label><input type="radio" name="mode" value="custom" id="mode-custom"> Custom mode: Only apply user-agent string to the tabs with a matching top-level hostnames.</label> <a href="#" id="sample">Insert</a> a sample.
+      </td>
+    </tr>
+    <tr>
+      <td><textarea id="custom" rows="5"></textarea></td>
     </tr>
     <tr>
       <td><label><input type="checkbox" id="faqs"> Open FAQs page on updates</label></td>
     </tr>
   </table>
   <p>
+    <button id="donate">Support Development</button>
     <button id="save">Save</button>
     <span id="status"></span>
   </p>

@@ -13,17 +13,21 @@ var prefs = {
   ua: '',
   blacklist: [],
   whitelist: [],
+  custom: {},
   mode: 'blacklist'
 };
 
 chrome.storage.local.get(prefs, ps => {
   Object.assign(prefs, ps);
-  update(prefs.ua);
+  update(prefs.mode === 'custom' ? 'Mapped from user\'s JSON object' : prefs.ua);
 });
 chrome.storage.onChanged.addListener(ps => {
   Object.keys(ps).forEach(key => prefs[key] = ps[key].newValue);
   if (ps.ua) {
     update(prefs.ua);
+  }
+  if (ps.mode) {
+    update(ps.mode.newValue === 'custom' ? 'Mapped from user\'s JSON object' : prefs.ua);
   }
 });
 
@@ -55,7 +59,7 @@ function match(url) {
       return prefs.blacklist.some(s => s === h);
     }
   }
-  else {
+  else if (prefs.mode === 'whitelist') {
     if (prefs.whitelist.length) {
       const h = hostname(url);
       return prefs.whitelist.some(s => s === h) === false;
@@ -63,6 +67,10 @@ function match(url) {
     else {
       return true;
     }
+  }
+  else {
+    const h = hostname(url);
+    return prefs.custom[h];
   }
 }
 
@@ -73,12 +81,22 @@ var onBeforeSendHeaders = ({tabId, url, requestHeaders, type}) => {
   if (type === 'main_frame') {
     cache[tabId] = match(url);
   }
-  if (cache[tabId]) {
+  if (cache[tabId] === true) {
     return;
   }
   for (let i = 0, name = requestHeaders[0].name; i < requestHeaders.length; i += 1, name = requestHeaders[i].name) {
     if (name === 'User-Agent' || name === 'user-agent') {
-      requestHeaders[i].value = ua.userAgent;
+      if (prefs.mode === 'custom') {
+        if (cache[tabId]) {
+          requestHeaders[i].value = cache[tabId];
+        }
+        else {
+          return;
+        }
+      }
+      else {
+        requestHeaders[i].value = ua.userAgent;
+      }
       return {
         requestHeaders
       };
@@ -145,23 +163,34 @@ User-Agent String: ${str || navigator.userAgent}`
 // FAQs & Feedback
 chrome.storage.local.get({
   'version': null,
-  'faqs': navigator.userAgent.indexOf('Firefox')
+  'faqs': navigator.userAgent.indexOf('Firefox') === -1,
+  'last-update': 0,
 }, prefs => {
   const version = chrome.runtime.getManifest().version;
 
   if (prefs.version ? (prefs.faqs && prefs.version !== version) : true) {
-    const p = Boolean(prefs.version);
-    chrome.storage.local.set({version}, () => {
-      chrome.tabs.create({
-        url: 'http://add0n.com/useragent-switcher.html?version=' + version +
-          '&type=' + (p ? ('upgrade&p=' + prefs.version) : 'install'),
-        active: p === false
-      });
+    const now = Date.now();
+    const doUpdate = (now - prefs['last-update']) / 1000 / 60 / 60 / 24 > 30;
+    chrome.storage.local.set({
+      version,
+      'last-update': doUpdate ? Date.now() : prefs['last-update']
+    }, () => {
+      // do not display the FAQs page if last-update occurred less than 30 days ago.
+      if (doUpdate) {
+        const p = Boolean(prefs.version);
+        chrome.tabs.create({
+          url: chrome.runtime.getManifest().homepage_url + '?version=' + version +
+            '&type=' + (p ? ('upgrade&p=' + prefs.version) : 'install'),
+          active: p === false
+        });
+      }
     });
   }
 });
 
 {
   const {name, version} = chrome.runtime.getManifest();
-  chrome.runtime.setUninstallURL('http://add0n.com/feedback.html?name=' + name + '&version=' + version);
+  chrome.runtime.setUninstallURL(
+    chrome.runtime.getManifest().homepage_url + '?rd=feedback&name=' + name + '&version=' + version
+  );
 }
