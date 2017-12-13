@@ -56,7 +56,7 @@ function match(url) {
     }
   }
   else {
-    if (prefs.blacklist.length) {
+    if (prefs.whitelist.length) {
       const h = hostname(url);
       return prefs.whitelist.some(s => s === h) === false;
     }
