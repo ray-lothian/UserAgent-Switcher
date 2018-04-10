@@ -94,7 +94,7 @@ document.addEventListener('change', ({target}) => {
     localStorage.setItem(target.id, target.value);
     update();
   }
-  if (target.closest('#list')) {
+  if (target.type === 'radio') {
     document.getElementById('ua').value = target.closest('tr').querySelector('td:nth-child(4)').textContent;
   }
 });

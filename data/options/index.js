@@ -54,7 +54,9 @@ function restore() {
 document.addEventListener('DOMContentLoaded', restore);
 document.getElementById('save').addEventListener('click', save);
 
-document.getElementById('sample').addEventListener('click', () => {
+document.getElementById('sample').addEventListener('click', e => {
+  e.preventDefault();
+
   document.getElementById('custom').value = JSON.stringify({
     'www.google.com': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.84 Safari/537.36',
     'www.bing.com': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:57.0) Gecko/20100101 Firefox/57.0'
@@ -63,6 +65,19 @@ document.getElementById('sample').addEventListener('click', () => {
 
 document.getElementById('donate').addEventListener('click', () => {
   chrome.tabs.create({
-    url: 'https://www.paypal.me/addondonation/10usd'
+    url: chrome.runtime.getManifest().homepage_url + '?rd=donate'
   });
+});
+
+document.getElementById('reset').addEventListener('click', e => {
+  if (e.detail === 1) {
+    notify('Double-click to reset!');
+  }
+  else {
+    localStorage.clear();
+    chrome.storage.local.clear(() => {
+      chrome.runtime.reload();
+      window.close();
+    });
+  }
 });

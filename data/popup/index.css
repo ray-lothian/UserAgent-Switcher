@@ -26,7 +26,7 @@ body {
   background-color: #fff;
   font-family: "Helvetica Neue",Helvetica,sans-serif;
   font-size: 13px;
-  width: 700px;
+  width: 600px;
 }
 table {
   width: 100%;
@@ -35,7 +35,6 @@ table {
 fieldset {
   border: solid 1px #ccc;
 }
-select,
 input[type=search],
 input[type=text] {
   width: 100%;
@@ -43,15 +42,15 @@ input[type=text] {
   text-indent: 5px;
   padding-right: 5px;
 }
-select,
 input {
   outline: none;
   background-color: #fff;
   color:  #000;
-  border: solid 1px #ccc;
+  border: solid 1px #e7e7e7;
   box-sizing: border-box;
   height: 24px;
   border-radius: 0;
+  font-size: 11px;
 }
 input[type=button] {
   cursor: pointer;
@@ -64,19 +63,36 @@ input[type=button]:disabled {
   opacity: 0.2;
   cursor: default;
 }
-
+select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  border: none;
+  user-select: none;
+  outline: none;
+  background: rgba(255,255,255,.5) url(list.svg) no-repeat center right 4px;
+  background-size: 8px;
+  font-size: 13px;
+  border-radius: 0;
+  padding: 2px 16px 2px 4px;
+}
 #list {
-  margin: 20px 0;
   overflow: auto;
   height: 300px;
-  background-color: rgba(0, 0, 0, 0.05);
+  margin-bottom: 10px;
+  background-color: #fdfafa;
+  background-position: top 120px center;
+  background-repeat: no-repeat;
 }
 #list[data-loading=true] {
-  background: url(loading.gif) top 120px center no-repeat;
+  background-image: url(loading.gif);
   background-size: 64px;
 }
 #list table {
   table-layout: fixed;
+}
+#list th {
+  height: 30px;
+  background-color: #e7e7e7;
 }
 #list tr {
   cursor: pointer;
@@ -84,8 +100,21 @@ input[type=button]:disabled {
 #list tr[data-matched=false] {
   opacity: 0.5;
 }
+#list tbody {
+  position: relative;
+}
 #list tbody tr:nth-child(odd) {
   background-color: #fff;
+}
+#list tbody tr:nth-child(even) {
+  background-color: #f5f5f5;
+}
+#list[data-loading=false] tbody:empty:before {
+  content: 'no user-agent string for this query!';
+  display: block;
+  position: absolute;
+  top: 50px;
+  left: 10px;
 }
 #list td:nth-child(1) {
   text-align: center;
@@ -116,4 +145,27 @@ input[type=button]:disabled {
 }
 #info:empty {
   display: none;
+}
+
+[data-cmd="apply"] {
+  color: #fff;
+  background-color: #3c923c;
+  border: solid 1px #327932;
+  margin-right: 2px;
+  margin-left: 2px;
+}
+
+[data-cmd="reset"] {
+  color: #fff;
+  background-color: #eea345;
+  border: solid 1px #ec9730;
+}
+
+[data-cmd="refresh"] {
+  background-color: #f5f5f5;
+}
+
+#explore:not([data-loaded="true"]) {
+  margin-top: -8px;
+  height: 16px;
 }

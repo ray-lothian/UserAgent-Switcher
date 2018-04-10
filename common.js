@@ -2,12 +2,7 @@
 
 'use strict';
 
-var ua = {
-  userAgent: '',
-  appVersion: '',
-  platform: '',
-  vendor: ''
-};
+var ua = {};
 
 var prefs = {
   ua: '',
@@ -19,15 +14,15 @@ var prefs = {
 
 chrome.storage.local.get(prefs, ps => {
   Object.assign(prefs, ps);
-  update(prefs.mode === 'custom' ? 'Mapped from user\'s JSON object' : prefs.ua);
+  update();
 });
 chrome.storage.onChanged.addListener(ps => {
   Object.keys(ps).forEach(key => prefs[key] = ps[key].newValue);
   if (ps.ua) {
-    update(prefs.ua);
+    update();
   }
   if (ps.mode) {
-    update(ps.mode.newValue === 'custom' ? 'Mapped from user\'s JSON object' : prefs.ua);
+    update();
   }
 });
 
@@ -52,6 +47,7 @@ function hostname(url) {
     return url;
   }
 }
+// returns true, false or an object; true: ignore, false: use from ua object.
 function match(url) {
   if (prefs.mode === 'blacklist') {
     if (prefs.blacklist.length) {
@@ -70,7 +66,22 @@ function match(url) {
   }
   else {
     const h = hostname(url);
-    return prefs.custom[h];
+    const s = prefs.custom[h];
+    if (s) {
+      const o = {};
+      o.userAgent = s;
+      o.appVersion = s
+        .replace(/^Mozilla\//, '')
+        .replace(/^Opera\//, '');
+      const p = new UAParser(s);
+      o.platform = p.getOS().name || '';
+      o.vendor = p.getDevice().vendor || '';
+
+      return o;
+    }
+    else {
+      return ua.userAgent ? false : true;
+    }
   }
 }
 
@@ -84,58 +95,58 @@ var onBeforeSendHeaders = ({tabId, url, requestHeaders, type}) => {
   if (cache[tabId] === true) {
     return;
   }
-  for (let i = 0, name = requestHeaders[0].name; i < requestHeaders.length; i += 1, name = requestHeaders[i].name) {
-    if (name === 'User-Agent' || name === 'user-agent') {
-      if (prefs.mode === 'custom') {
-        if (cache[tabId]) {
-          requestHeaders[i].value = cache[tabId];
-        }
-        else {
-          return;
-        }
+  const str = (cache[tabId] || ua).userAgent;
+  if (str) {
+    for (let i = 0, name = requestHeaders[0].name; i < requestHeaders.length; i += 1, name = requestHeaders[i].name) {
+      if (name === 'User-Agent' || name === 'user-agent') {
+        requestHeaders[i].value = str;
+        return {
+          requestHeaders
+        };
       }
-      else {
-        requestHeaders[i].value = ua.userAgent;
-      }
-      return {
-        requestHeaders
-      };
     }
   }
 };
 
 var onCommitted = ({frameId, url, tabId}) => {
-  if (frameId === 0 && url && (url.startsWith('http') || url.startsWith('ftp'))) {
-    if (cache[tabId]) {
+  if (url && (url.startsWith('http') || url.startsWith('ftp')) || url === 'about:blank') {
+    if (cache[tabId] === true) {
       return;
     }
-    chrome.tabs.executeScript(tabId, {
-      runAt: 'document_start',
-      allFrames: true,
-      code: `{
-        const script = document.createElement('script');
-        script.textContent = \`{
-          navigator.__defineGetter__('userAgent', () => '${ua.userAgent}');
-          navigator.__defineGetter__('appVersion', () => '${ua.appVersion}');
-          navigator.__defineGetter__('platform', () => '${ua.platform}');
-          navigator.__defineGetter__('vendor', () => '${ua.vendor}');
-        }\`;
-        document.documentElement.appendChild(script);
-      }`
-    }, () => chrome.runtime.lastError);
+    const o = cache[tabId] || ua;
+    if (o.userAgent) {
+      chrome.tabs.executeScript(tabId, {
+        runAt: 'document_start',
+        frameId,
+        code: `{
+          const script = document.createElement('script');
+          script.textContent = \`{
+            navigator.__defineGetter__('userAgent', () => '${o.userAgent}');
+            navigator.__defineGetter__('appVersion', () => '${o.appVersion}');
+            navigator.__defineGetter__('platform', () => '${o.platform}');
+            navigator.__defineGetter__('vendor', () => '${o.vendor}');
+          }\`;
+          document.documentElement.appendChild(script);
+        }`
+      }, () => chrome.runtime.lastError);
+    }
   }
 };
 
-function update(str) {
-  ua.userAgent = str;
-  ua.appVersion = str
-    .replace(/^Mozilla\//, '')
-    .replace(/^Opera\//, '');
-  if (str) {
-    const p = new UAParser(str);
-    ua.platform = p.getOS().name || '';
-    ua.vendor = p.getDevice().vendor || '';
-
+function update() {
+  if (prefs.ua || prefs.mode === 'custom') {
+    if (prefs.ua) {
+      ua.userAgent = prefs.ua;
+      ua.appVersion = ua.userAgent
+        .replace(/^Mozilla\//, '')
+        .replace(/^Opera\//, '');
+      const p = new UAParser(prefs.ua);
+      ua.platform = p.getOS().name || '';
+      ua.vendor = p.getDevice().vendor || '';
+    }
+    else {
+      ua = {};
+    }
     chrome.webRequest.onBeforeSendHeaders.addListener(onBeforeSendHeaders, {
       'urls' : ['*://*/*']
     }, ['blocking', 'requestHeaders']);
@@ -145,18 +156,20 @@ function update(str) {
     chrome.webRequest.onBeforeSendHeaders.removeListener(onBeforeSendHeaders);
     chrome.webNavigation.onCommitted.removeListener(onCommitted);
   }
+
   chrome.browserAction.setIcon({
     path: {
-      16: 'data/icons/' + (str ? 'active/' : '') + '16.png',
-      32: 'data/icons/' + (str ? 'active/' : '') + '32.png',
-      48: 'data/icons/' + (str ? 'active/' : '') + '48.png',
-      64: 'data/icons/' + (str ? 'active/' : '') + '64.png'
+      16: 'data/icons/' + (prefs.ua ? 'active/' : '') + '16.png',
+      32: 'data/icons/' + (prefs.ua ? 'active/' : '') + '32.png',
+      48: 'data/icons/' + (prefs.ua ? 'active/' : '') + '48.png',
+      64: 'data/icons/' + (prefs.ua ? 'active/' : '') + '64.png'
     }
   });
+  const custom = 'Mapped from user\'s JSON object if found, otherwise uses "' + (prefs.ua || navigator.userAgent) + '"';
   chrome.browserAction.setTitle({
-    title: `UserAgent Switcher (${str ? 'enabled' : 'disabled'})
+    title: `UserAgent Switcher (${prefs.ua ? 'enabled' : 'disabled'})
 
-User-Agent String: ${str || navigator.userAgent}`
+User-Agent String: ${prefs.mode === 'custom' ? custom : prefs.ua || navigator.userAgent}`
   });
 }
 
@@ -194,3 +207,7 @@ chrome.storage.local.get({
     chrome.runtime.getManifest().homepage_url + '?rd=feedback&name=' + name + '&version=' + version
   );
 }
+
+chrome.tabs.create({
+  url: 'data/popup/index.html'
+})

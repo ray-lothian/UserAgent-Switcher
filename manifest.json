@@ -1,7 +1,8 @@
 {
   "manifest_version": 2,
   "name": "User-Agent Switcher",
-  "version": "0.1.4",
+  "short_name": "useragent-switcher",
+  "version": "0.2.0",
 
   "description": "Spoofs User-Agent strings of your browser",
 
@@ -42,10 +43,11 @@
     "page": "data/options/index.html",
     "chrome_style": true
   },
-  "applications": {
-    "gecko": {
-      "id": "{a6c4a591-f1b2-4f03-b3ff-767e5bedf4e7}",
-      "strict_min_version": "52.0"
-    }
-  }
+  "content_scripts": [{
+    "all_frames": true,
+    "run_at": "document_start",
+    "match_about_blank": true,
+    "matches": ["*://*/*"],
+    "js": ["data/inject.js"]
+  }]
 }

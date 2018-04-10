@@ -3,12 +3,11 @@
 <head>
   <title>My Test Extension Options</title>
   <style>
-    body { padding: 10px; }
-    textarea { width: 100%; }
-    #custom {
-      white-space: nowrap;
-      overflow: auto;
+    body {
+      min-width: 400px;
+      padding: 10px;
     }
+    textarea { width: 100%; }
   </style>
 </head>
 
@@ -16,7 +15,7 @@
   <table width=100%>
     <tr>
       <td>
-        <label><input type="radio" name="mode" value="blacklist" id="mode-blacklist"> Black-list mode: Apply user-agent string to all tabs except the tabs with the following top-level hostnames (comma separated list of hostnames)</label>
+        <label><input type="radio" name="mode" value="blacklist" id="mode-blacklist"> Black-list mode: Apply the custom user-agent string to all tabs except the tabs with the following top-level hostnames (comma-separated list of hostnames)</label>
       </td>
     </tr>
     <tr>
@@ -24,7 +23,7 @@
     </tr>
     <tr>
       <td>
-        <label><input type="radio" name="mode" value="whitelist" id="mode-whitelist"> White-list mode: Only apply user-agent string to the tabs with following top-level hostnames</label>
+        <label><input type="radio" name="mode" value="whitelist" id="mode-whitelist"> White-list mode: Only apply the custom user-agent string to the tabs with following top-level hostnames</label>
       </td>
     </tr>
     <tr>
@@ -32,11 +31,11 @@
     </tr>
     <tr>
       <td>
-        <label><input type="radio" name="mode" value="custom" id="mode-custom"> Custom mode: Only apply user-agent string to the tabs with a matching top-level hostnames.</label> <a href="#" id="sample">Insert</a> a sample.
+        <label><input type="radio" name="mode" value="custom" id="mode-custom"> Custom mode: Try to resolve the user-agent string from the bellow JSON object; otherwise either use the default user-agent string or use the one that user is set from the popup.</label> <a href="#" id="sample">Insert</a> a sample JSON object.
       </td>
     </tr>
     <tr>
-      <td><textarea id="custom" rows="5"></textarea></td>
+      <td><textarea id="custom" rows="5" wrap="off"></textarea></td>
     </tr>
     <tr>
       <td><label><input type="checkbox" id="faqs"> Open FAQs page on updates</label></td>
@@ -44,6 +43,7 @@
   </table>
   <p>
     <button id="donate">Support Development</button>
+    <button id="reset">Reset</button>
     <button id="save">Save</button>
     <span id="status"></span>
   </p>
