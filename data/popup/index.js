@@ -182,5 +182,8 @@ document.addEventListener('click', ({target}) => {
         bypassCache: true
       }));
     }
+    else if (cmd === 'options') {
+      chrome.runtime.openOptionsPage();
+    }
   }
 });

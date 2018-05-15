@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "User-Agent Switcher",
   "short_name": "useragent-switcher",
-  "version": "0.2.0",
+  "version": "0.2.3",
 
   "description": "Spoofs User-Agent strings of your browser",
 
@@ -16,12 +16,16 @@
   ],
 
   "icons": {
-    "16": "data/icons/16.png",
-    "32": "data/icons/32.png",
-    "48": "data/icons/48.png",
-    "64": "data/icons/64.png",
-    "128": "data/icons/128.png",
-    "256": "data/icons/256.png"
+    "16": "data/icons/active/16.png",
+    "18": "data/icons/active/18.png",
+    "19": "data/icons/active/19.png",
+    "32": "data/icons/active/32.png",
+    "36": "data/icons/active/36.png",
+    "38": "data/icons/active/38.png",
+    "48": "data/icons/active/48.png",
+    "64": "data/icons/active/64.png",
+    "128": "data/icons/active/128.png",
+    "256": "data/icons/active/256.png"
   },
   "background":{
     "scripts":[
@@ -49,5 +53,11 @@
     "match_about_blank": true,
     "matches": ["*://*/*"],
     "js": ["data/inject.js"]
-  }]
+  }],
+  "applications": {
+    "gecko": {
+      "id": "{a6c4a591-f1b2-4f03-b3ff-767e5bedf4e7}",
+      "strict_min_version": "52.0"
+    }
+  }
 }

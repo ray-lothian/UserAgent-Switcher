@@ -69,6 +69,7 @@ select {
   border: none;
   user-select: none;
   outline: none;
+  color: #000;
   background: rgba(255,255,255,.5) url(list.svg) no-repeat center right 4px;
   background-size: 8px;
   font-size: 13px;
@@ -147,6 +148,10 @@ select {
   display: none;
 }
 
+[data-cmd="refresh"] {
+  margin-left: 2px;
+  margin-right: 2px;
+}
 [data-cmd="apply"] {
   color: #fff;
   background-color: #3c923c;
@@ -161,6 +166,7 @@ select {
   border: solid 1px #ec9730;
 }
 
+[data-cmd="options"],
 [data-cmd="refresh"] {
   background-color: #f5f5f5;
 }

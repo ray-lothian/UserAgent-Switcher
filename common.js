@@ -66,7 +66,11 @@ function match(url) {
   }
   else {
     const h = hostname(url);
-    const s = prefs.custom[h];
+    let s = prefs.custom[h] || prefs.custom['*'];
+    // if s is an array select a random string
+    if (Array.isArray(s)) {
+      s = s[Math.floor(Math.random() * s.length)];
+    }
     if (s) {
       const o = {};
       o.userAgent = s;
@@ -80,7 +84,7 @@ function match(url) {
       return o;
     }
     else {
-      return ua.userAgent ? false : true;
+      return !ua.userAgent;
     }
   }
 }
@@ -176,7 +180,7 @@ User-Agent String: ${prefs.mode === 'custom' ? custom : prefs.ua || navigator.us
 // FAQs & Feedback
 chrome.storage.local.get({
   'version': null,
-  'faqs': navigator.userAgent.indexOf('Firefox') === -1,
+  'faqs': true,
   'last-update': 0,
 }, prefs => {
   const version = chrome.runtime.getManifest().version;
@@ -207,7 +211,3 @@ chrome.storage.local.get({
     chrome.runtime.getManifest().homepage_url + '?rd=feedback&name=' + name + '&version=' + version
   );
 }
-
-chrome.tabs.create({
-  url: 'data/popup/index.html'
-})
