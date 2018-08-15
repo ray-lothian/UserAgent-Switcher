@@ -20,6 +20,7 @@ if (
       document.documentElement.dataset.fgdvcre = true;
     }`;
     document.documentElement.appendChild(script);
+    script.remove();
     // make sure the script is injected
     if (document.documentElement.dataset.fgdvcre !== 'true') {
       document.documentElement.dataset.fgdvcre = true;
@@ -38,6 +39,7 @@ if (
         `
       });
       top.document.documentElement.appendChild(script);
+      script.remove();
     }
     delete document.documentElement.dataset.fgdvcre;
   }

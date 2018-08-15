@@ -1,10 +1,10 @@
 {
   "manifest_version": 2,
-  "name": "User-Agent Switcher",
+  "name": "User-Agent Switcher and Manager",
   "short_name": "useragent-switcher",
   "version": "0.2.3",
 
-  "description": "Spoofs User-Agent strings of your browser",
+  "description": "Spoofs User-Agent strings of your browser with a new one globally, randomly or per hostname",
 
   "permissions": [
     "tabs",
