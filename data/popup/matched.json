@@ -1,0 +1,32 @@
+{
+  "country-flags": {
+    "name": "Country Flags & IP WHOIS"
+  },
+  "useragent-switcher": {
+    "name": "User Agent Switcher"
+  },
+  "work-offline": {
+    "name": "Work Offline"
+  },
+  "local-cdn": {
+    "name": "Local CDN"
+  },
+  "media-converter": {
+    "name": "Tor Control (Anonymity Layer)"
+  },
+  "save-images": {
+    "name": "Download All Images"
+  },
+  "privacy-settings": {
+    "name": "Privacy Settings"
+  },
+  "media-player": {
+    "name": "YouTube Media Player"
+  },
+  "tab-discard": {
+    "name": "Auto Tab Discard"
+  },
+  "send-to": {
+    "name": "Send to VLC"
+  }
+}
