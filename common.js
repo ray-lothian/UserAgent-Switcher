@@ -18,10 +18,7 @@ chrome.storage.local.get(prefs, ps => {
 });
 chrome.storage.onChanged.addListener(ps => {
   Object.keys(ps).forEach(key => prefs[key] = ps[key].newValue);
-  if (ps.ua) {
-    update();
-  }
-  if (ps.mode) {
+  if (ps.ua || ps.mode) {
     update();
   }
 });
@@ -180,7 +177,7 @@ User-Agent String: ${prefs.mode === 'custom' ? custom : prefs.ua || navigator.us
 // FAQs & Feedback
 chrome.storage.local.get({
   'version': null,
-  'faqs': true,
+  'faqs': false,
   'last-update': 0
 }, prefs => {
   const version = chrome.runtime.getManifest().version;
