@@ -80,6 +80,7 @@ select {
   overflow: auto;
   height: 300px;
   margin-bottom: 10px;
+  color: #000;
   background-color: #fdfafa;
   background-position: top 120px center;
   background-repeat: no-repeat;
@@ -93,6 +94,7 @@ select {
 }
 #list th {
   height: 30px;
+  color: #000;
   background-color: #e7e7e7;
 }
 #list tr {
@@ -105,12 +107,14 @@ select {
   position: relative;
 }
 #list tbody tr:nth-child(odd) {
+  color: #000;
   background-color: #fff;
 }
 #list tbody tr:nth-child(even) {
+  color: #000;
   background-color: #f5f5f5;
 }
-#list[data-loading=false] tbody:empty:before {
+#list[data-loading=false] tbody:empty::before {
   content: 'no user-agent string for this query!';
   display: block;
   position: absolute;
@@ -168,6 +172,7 @@ select {
 
 [data-cmd="options"],
 [data-cmd="refresh"] {
+  color: #000;
   background-color: #f5f5f5;
 }
 

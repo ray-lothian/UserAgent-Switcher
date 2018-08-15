@@ -181,18 +181,18 @@ User-Agent String: ${prefs.mode === 'custom' ? custom : prefs.ua || navigator.us
 chrome.storage.local.get({
   'version': null,
   'faqs': true,
-  'last-update': 0,
+  'last-update': 0
 }, prefs => {
   const version = chrome.runtime.getManifest().version;
 
   if (prefs.version ? (prefs.faqs && prefs.version !== version) : true) {
     const now = Date.now();
-    const doUpdate = (now - prefs['last-update']) / 1000 / 60 / 60 / 24 > 30;
+    const doUpdate = (now - prefs['last-update']) / 1000 / 60 / 60 / 24 > 45;
     chrome.storage.local.set({
       version,
       'last-update': doUpdate ? Date.now() : prefs['last-update']
     }, () => {
-      // do not display the FAQs page if last-update occurred less than 30 days ago.
+      // do not display the FAQs page if last-update occurred less than 45 days ago.
       if (doUpdate) {
         const p = Boolean(prefs.version);
         chrome.tabs.create({
