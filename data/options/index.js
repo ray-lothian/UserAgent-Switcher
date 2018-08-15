@@ -1,11 +1,11 @@
 'use strict';
 
-function notify(msg) {
+function notify(msg, period = 750) {
   // Update status to let user know options were saved.
   const status = document.getElementById('status');
   status.textContent = msg;
   clearTimeout(notify.id);
-  notify.id = setTimeout(() => status.textContent = '', 750);
+  notify.id = setTimeout(() => status.textContent = '', period);
 }
 
 function prepare(str) {
@@ -17,11 +17,15 @@ function prepare(str) {
 
 function save() {
   let custom = {};
+  const c = document.getElementById('custom').value;
   try {
-    custom = JSON.parse(document.getElementById('custom').value);
+    custom = JSON.parse(c);
   }
   catch (e) {
-    notify(e.message);
+    window.setTimeout(() => {
+      notify('Custom JSON error: ' + e.message, 5000);
+      document.getElementById('custom').value = c;
+    }, 1000);
   }
 
   chrome.storage.local.set({
