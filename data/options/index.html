@@ -20,7 +20,7 @@
   <table width=100%>
     <tr>
       <td>
-        <label><input type="radio" name="mode" value="blacklist" id="mode-blacklist"> <span class="h">Black-list mode</span>: Apply the custom user-agent string to all tabs except the tabs with the following top-level hostnames (comma-separated list of hostnames)</label>
+        <label><input type="radio" name="mode" value="blacklist" id="mode-blacklist"> <span class="h">Black-list mode</span>: Apply the custom user-agent string to all tabs except the tabs with the following top-level hostnames (comma-separated list of hostnames). Note that even if a window-based user-agent string is set from the toolbar popup, your browser's default user-agent string is used.</label>
       </td>
     </tr>
     <tr>
@@ -28,7 +28,7 @@
     </tr>
     <tr>
       <td>
-        <label><input type="radio" name="mode" value="whitelist" id="mode-whitelist"> <span class="h">White-list mode</span>: Only apply the custom user-agent string to the tabs with following top-level hostnames</label>
+        <label><input type="radio" name="mode" value="whitelist" id="mode-whitelist"> <span class="h">White-list mode</span>: Only apply the custom user-agent string to the tabs with following top-level hostnames. Note that if a window-based user-agent string is set from the toolbar popup, this user-agent will overwrite the global one.</label>
       </td>
     </tr>
     <tr>
