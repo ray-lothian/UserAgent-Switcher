@@ -96,6 +96,7 @@ document.addEventListener('change', ({target}) => {
   }
   if (target.type === 'radio') {
     document.getElementById('ua').value = target.closest('tr').querySelector('td:nth-child(4)').textContent;
+    document.getElementById('ua').dispatchEvent(new Event('input'));
   }
 });
 
@@ -127,6 +128,7 @@ chrome.storage.local.get({
 chrome.storage.onChanged.addListener(prefs => {
   if (prefs.ua) {
     document.getElementById('ua').value = prefs.ua.newValue || navigator.userAgent;
+    document.getElementById('ua').dispatchEvent(new Event('input'));
   }
 });
 window.addEventListener('load', () => {
@@ -145,7 +147,7 @@ window.addEventListener('load', () => {
 function msg(msg) {
   const info = document.getElementById('info');
   info.textContent = msg;
-  window.setTimeout(() => info.textContent = '', 750);
+  window.setTimeout(() => info.textContent = 'User-Agent String:', 2000);
 }
 
 // commands
@@ -155,7 +157,7 @@ document.addEventListener('click', ({target}) => {
     if (cmd === 'apply') {
       const value = document.getElementById('ua').value;
       if (value === navigator.userAgent) {
-        msg('Default user-agent');
+        msg('Default UA, press the reset button instead');
       }
       else {
         msg('user-agent is set');
@@ -163,6 +165,13 @@ document.addEventListener('click', ({target}) => {
       chrome.storage.local.set({
         ua: value === navigator.userAgent ? '' : value
       });
+    }
+    else if (cmd === 'window') {
+      const value = document.getElementById('ua').value;
+      chrome.tabs.query({
+        active: true,
+        currentWindow: true
+      }, ([tab]) => chrome.runtime.getBackgroundPage(bg => bg.ua.update(value, tab.windowId)));
     }
     else if (cmd === 'reset') {
       const input = document.querySelector('#list :checked');
@@ -185,5 +194,13 @@ document.addEventListener('click', ({target}) => {
     else if (cmd === 'options') {
       chrome.runtime.openOptionsPage();
     }
+    else if (cmd === 'reload') {
+      chrome.runtime.reload();
+    }
   }
+});
+
+document.getElementById('ua').addEventListener('input', e => {
+  document.querySelector('[data-cmd=apply]').disabled = e.target.value === '';
+  document.querySelector('[data-cmd=window]').disabled = e.target.value === '';
 });

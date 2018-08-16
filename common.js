@@ -2,26 +2,133 @@
 
 'use strict';
 
-var ua = {};
+var cache = {};
+var tabs = {};
+chrome.tabs.onRemoved.addListener(id => delete cache[id]);
+chrome.tabs.onCreated.addListener(tab => tabs[tab.id] = tab.windowId);
 
 var prefs = {
   ua: '',
   blacklist: [],
   whitelist: [],
   custom: {},
-  mode: 'blacklist'
+  mode: 'blacklist',
+  color: '#ffa643'
 };
-
 chrome.storage.local.get(prefs, ps => {
   Object.assign(prefs, ps);
-  update();
+  chrome.tabs.query({}, ts => {
+    ts.forEach(t => tabs[t.id] = t.windowId);
+    ua.update();
+  });
+  chrome.browserAction.setBadgeBackgroundColor({
+    color: prefs.color
+  });
 });
 chrome.storage.onChanged.addListener(ps => {
   Object.keys(ps).forEach(key => prefs[key] = ps[key].newValue);
   if (ps.ua || ps.mode) {
-    update();
+    ua.update();
   }
 });
+
+var ua = {
+  _obj: {
+    'global': {}
+  },
+  diff(tabId) { // returns true if there is per window object
+    const windowId = tabs[tabId];
+    return windowId in this._obj;
+  },
+  get windows() {
+    return Object.keys(this._obj).filter(id => id !== 'global').map(s => Number(s));
+  },
+  parse: s => {
+    const o = {};
+    o.userAgent = s;
+    o.appVersion = s
+      .replace(/^Mozilla\//, '')
+      .replace(/^Opera\//, '');
+    const p = new UAParser(s);
+    o.platform = p.getOS().name || '';
+    o.vendor = p.getDevice().vendor || '';
+
+    return o;
+  },
+  object(tabId, windowId) {
+    windowId = windowId || (tabId ? tabs[tabId] : 'global');
+    return this._obj[windowId] || this._obj.global;
+  },
+  string(str, windowId) {
+    if (str) {
+      this._obj[windowId] = this.parse(str);
+    }
+    else {
+      this._obj[windowId] = {};
+    }
+  },
+  toolbar: ({windowId, tabId, str = ua.object(tabId, windowId).userAgent}) => {
+    console.log(windowId, tabId, str);
+    const icon = {
+      path: {
+        16: 'data/icons/' + (str ? 'active/' : '') + '16.png',
+        32: 'data/icons/' + (str ? 'active/' : '') + '32.png',
+        48: 'data/icons/' + (str ? 'active/' : '') + '48.png',
+        64: 'data/icons/' + (str ? 'active/' : '') + '64.png'
+      }
+    };
+    const custom = 'Mapped from user\'s JSON object if found, otherwise uses "' + (str || navigator.userAgent) + '"';
+    const title = {
+      title: `UserAgent Switcher (${str ? 'enabled' : 'disabled'})
+
+User-Agent String: ${prefs.mode === 'custom' ? custom : str || navigator.userAgent}`
+    };
+    if (windowId) {
+      chrome.tabs.query({
+        windowId
+      }, tabs => tabs.forEach(tab => {
+        const tabId = tab.id;
+        chrome.browserAction.setTitle(Object.assign({tabId}, title));
+        chrome.browserAction.setBadgeText({
+          tabId,
+          text: ua.object(null, windowId).platform.substr(0, 3)
+        });
+      }));
+    }
+    else if (tabId) {
+      chrome.browserAction.setTitle(Object.assign({tabId}, title));
+      chrome.browserAction.setBadgeText({
+        tabId,
+        text: ua.object(tabId).platform.substr(0, 3)
+      });
+    }
+    else {
+      chrome.browserAction.setIcon(icon);
+      chrome.browserAction.setTitle(title);
+    }
+  },
+  update(str = prefs.ua, windowId = 'global') {
+    chrome.webRequest.onBeforeSendHeaders.removeListener(onBeforeSendHeaders);
+    chrome.webNavigation.onCommitted.removeListener(onCommitted);
+
+    if (str || prefs.mode === 'custom' || this.windows.length) {
+      ua.string(str, windowId);
+      chrome.webRequest.onBeforeSendHeaders.addListener(onBeforeSendHeaders, {
+        'urls': ['*://*/*']
+      }, ['blocking', 'requestHeaders']);
+      chrome.webNavigation.onCommitted.addListener(onCommitted);
+    }
+    if (windowId === 'global') {
+      this.toolbar({str});
+    }
+    // update per window
+    else {
+      this.windows.forEach(windowId => this.toolbar({windowId}));
+    }
+  }
+};
+// make sure to clean on window removal
+chrome.windows.onRemoved.addListener(windowId => delete ua._obj[windowId]);
 
 function hostname(url) {
   const s = url.indexOf('//') + 2;
@@ -45,7 +152,7 @@ function hostname(url) {
   }
 }
 // returns true, false or an object; true: ignore, false: use from ua object.
-function match(url) {
+function match({url, tabId}) {
   if (prefs.mode === 'blacklist') {
     if (prefs.blacklist.length) {
       const h = hostname(url);
@@ -69,34 +176,22 @@ function match(url) {
       s = s[Math.floor(Math.random() * s.length)];
     }
     if (s) {
-      const o = {};
-      o.userAgent = s;
-      o.appVersion = s
-        .replace(/^Mozilla\//, '')
-        .replace(/^Opera\//, '');
-      const p = new UAParser(s);
-      o.platform = p.getOS().name || '';
-      o.vendor = p.getDevice().vendor || '';
-
-      return o;
+      return ua.parse(s);
     }
     else {
-      return !ua.userAgent;
+      return !ua.object(tabId).userAgent;
     }
   }
 }
 
-var cache = {};
-chrome.tabs.onRemoved.addListener(id => delete cache[id]);
-
 var onBeforeSendHeaders = ({tabId, url, requestHeaders, type}) => {
   if (type === 'main_frame') {
-    cache[tabId] = match(url);
+    cache[tabId] = match({url, tabId});
   }
   if (cache[tabId] === true) {
     return;
   }
-  const str = (cache[tabId] || ua).userAgent;
+  const str = (cache[tabId] || ua.object(tabId)).userAgent;
   if (str) {
     for (let i = 0, name = requestHeaders[0].name; i < requestHeaders.length; i += 1, name = requestHeaders[i].name) {
       if (name === 'User-Agent' || name === 'user-agent') {
@@ -114,7 +209,7 @@ var onCommitted = ({frameId, url, tabId}) => {
     if (cache[tabId] === true) {
       return;
     }
-    const o = cache[tabId] || ua;
+    const o = cache[tabId] || ua.object(tabId);
     if (o.userAgent) {
       chrome.tabs.executeScript(tabId, {
         runAt: 'document_start',
@@ -128,51 +223,16 @@ var onCommitted = ({frameId, url, tabId}) => {
             navigator.__defineGetter__('vendor', () => '${o.vendor}');
           }\`;
           document.documentElement.appendChild(script);
+          script.remove();
         }`
       }, () => chrome.runtime.lastError);
     }
   }
+  // change the toolbar icon if there is a per window UA setting
+  if (frameId === 0 && ua.diff(tabId)) {
+    ua.toolbar({tabId});
+  }
 };
-
-function update() {
-  if (prefs.ua || prefs.mode === 'custom') {
-    if (prefs.ua) {
-      ua.userAgent = prefs.ua;
-      ua.appVersion = ua.userAgent
-        .replace(/^Mozilla\//, '')
-        .replace(/^Opera\//, '');
-      const p = new UAParser(prefs.ua);
-      ua.platform = p.getOS().name || '';
-      ua.vendor = p.getDevice().vendor || '';
-    }
-    else {
-      ua = {};
-    }
-    chrome.webRequest.onBeforeSendHeaders.addListener(onBeforeSendHeaders, {
-      'urls' : ['*://*/*']
-    }, ['blocking', 'requestHeaders']);
-    chrome.webNavigation.onCommitted.addListener(onCommitted);
-  }
-  else {
-    chrome.webRequest.onBeforeSendHeaders.removeListener(onBeforeSendHeaders);
-    chrome.webNavigation.onCommitted.removeListener(onCommitted);
-  }
-
-  chrome.browserAction.setIcon({
-    path: {
-      16: 'data/icons/' + (prefs.ua ? 'active/' : '') + '16.png',
-      32: 'data/icons/' + (prefs.ua ? 'active/' : '') + '32.png',
-      48: 'data/icons/' + (prefs.ua ? 'active/' : '') + '48.png',
-      64: 'data/icons/' + (prefs.ua ? 'active/' : '') + '64.png'
-    }
-  });
-  const custom = 'Mapped from user\'s JSON object if found, otherwise uses "' + (prefs.ua || navigator.userAgent) + '"';
-  chrome.browserAction.setTitle({
-    title: `UserAgent Switcher (${prefs.ua ? 'enabled' : 'disabled'})
-
-User-Agent String: ${prefs.mode === 'custom' ? custom : prefs.ua || navigator.userAgent}`
-  });
-}
 
 // FAQs & Feedback
 chrome.storage.local.get({

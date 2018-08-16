@@ -156,6 +156,7 @@ select {
   margin-left: 2px;
   margin-right: 2px;
 }
+[data-cmd="window"],
 [data-cmd="apply"] {
   color: #fff;
   background-color: #3c923c;
@@ -170,6 +171,7 @@ select {
   border: solid 1px #ec9730;
 }
 
+[data-cmd="reload"],
 [data-cmd="options"],
 [data-cmd="refresh"] {
   color: #000;
@@ -177,6 +179,5 @@ select {
 }
 
 #explore:not([data-loaded="true"]) {
-  margin-top: -8px;
   height: 16px;
 }

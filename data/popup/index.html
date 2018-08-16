@@ -146,16 +146,18 @@
     </div>
     <div hbox>
       <input type="search" id="custom" placeholder="Filter items">
-      <input type="button" value="Refresh Tab" title="Refresh the current page" data-cmd="refresh">
       <input type="button" value="Options" title="Open options page" style="margin-left: 2px;" data-cmd="options">
+      <input type="button" value="Refresh Tab" title="Refresh the current page" data-cmd="refresh">
+      <input type="button" value="Restart" title="Click to reload the extension. This will cause all the window-based user-agent strings to be cleared" data-cmd="reload">
     </div>
     <div hbox id="agent" pack="center" align="center">
-      User-Agent String:&nbsp;
-      <input id="ua" type="text" placeholder="Your preferred user-agent string">
-      <span id="info"></span>
+      <span id="info">User-Agent String:</span>&nbsp;
+      <span flex="1"></span>
       <input type="button" value="Apply" title="Set this string as the browser's User-Agent string" data-cmd="apply">
-      <input type="button" value="Reset" title="Reset User-Agent string to the default one" style="margin-left: 2px;" data-cmd="reset">
+      <input type="button" value="Window" title="Set this string as this window's User-Agent string" data-cmd="window">
+      <input type="button" value="Reset" title="Reset User-Agent string to the default one. This will not reset window-based UA strings. To reset them, use the 'Restart' button" style="margin-left: 2px;" data-cmd="reset">
     </div>
+    <input id="ua" type="text" placeholder="Your preferred user-agent string">
     <div id="explore"></div>
     <script src="ua-parser.min.js"></script>
     <script src="index.js"></script>
