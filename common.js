@@ -68,7 +68,6 @@ var ua = {
     }
   },
   toolbar: ({windowId, tabId, str = ua.object(tabId, windowId).userAgent}) => {
-    console.log(windowId, tabId, str);
     const icon = {
       path: {
         16: 'data/icons/' + (str ? 'active/' : '') + '16.png',
