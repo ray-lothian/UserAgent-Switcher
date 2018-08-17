@@ -1,6 +1,8 @@
 /* globals UAParser */
 'use strict';
 
+document.body.dataset.android = navigator.userAgent.indexOf('Android') !== -1;
+
 var json = [];
 
 function filter(list) {

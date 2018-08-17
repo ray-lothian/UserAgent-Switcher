@@ -21,9 +21,11 @@ chrome.storage.local.get(prefs, ps => {
     ts.forEach(t => tabs[t.id] = t.windowId);
     ua.update();
   });
-  chrome.browserAction.setBadgeBackgroundColor({
-    color: prefs.color
-  });
+  if (chrome.browserAction.setBadgeBackgroundColor) { // FF for Android
+    chrome.browserAction.setBadgeBackgroundColor({
+      color: prefs.color
+    });
+  }
 });
 chrome.storage.onChanged.addListener(ps => {
   Object.keys(ps).forEach(key => prefs[key] = ps[key].newValue);
@@ -127,7 +129,9 @@ User-Agent String: ${prefs.mode === 'custom' ? custom : str || navigator.userAge
   }
 };
 // make sure to clean on window removal
-chrome.windows.onRemoved.addListener(windowId => delete ua._obj[windowId]);
+if (chrome.windows) { // FF on Android
+  chrome.windows.onRemoved.addListener(windowId => delete ua._obj[windowId]);
+}
 
 function hostname(url) {
   const s = url.indexOf('//') + 2;

@@ -181,3 +181,8 @@ select {
 #explore:not([data-loaded="true"]) {
   height: 16px;
 }
+
+body[data-android="true"] [data-cmd="reload"],
+body[data-android="true"] [data-cmd="window"] {
+  display: none;
+}
