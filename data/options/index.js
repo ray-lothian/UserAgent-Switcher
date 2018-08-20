@@ -30,6 +30,7 @@ function save() {
 
   chrome.storage.local.set({
     faqs: document.getElementById('faqs').checked,
+    cache: document.getElementById('cache').checked,
     blacklist: prepare(document.getElementById('blacklist').value),
     whitelist: prepare(document.getElementById('whitelist').value),
     custom,
@@ -43,12 +44,14 @@ function save() {
 function restore() {
   chrome.storage.local.get({
     faqs: true,
+    cache: true,
     mode: 'blacklist',
     whitelist: [],
     blacklist: [],
     custom: {}
   }, prefs => {
     document.getElementById('faqs').checked = prefs.faqs;
+    document.getElementById('cache').checked = prefs.cache;
     document.querySelector(`[name="mode"][value="${prefs.mode}"`).checked = true;
     document.getElementById('blacklist').value = prefs.blacklist.join(', ');
     document.getElementById('whitelist').value = prefs.whitelist.join(', ');

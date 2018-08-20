@@ -13,7 +13,8 @@ var prefs = {
   whitelist: [],
   custom: {},
   mode: 'blacklist',
-  color: '#ffa643'
+  color: '#ffa643',
+  cache: true
 };
 chrome.storage.local.get(prefs, ps => {
   Object.assign(prefs, ps);
@@ -188,7 +189,7 @@ function match({url, tabId}) {
 }
 
 var onBeforeSendHeaders = ({tabId, url, requestHeaders, type}) => {
-  if (type === 'main_frame') {
+  if (type === 'main_frame' || prefs.cache === false) {
     cache[tabId] = match({url, tabId});
   }
   if (cache[tabId] === true) {
