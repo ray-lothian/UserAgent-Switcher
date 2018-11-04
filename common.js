@@ -199,7 +199,7 @@ var onBeforeSendHeaders = ({tabId, url, requestHeaders, type}) => {
   if (str) {
     for (let i = 0, name = requestHeaders[0].name; i < requestHeaders.length; i += 1, name = requestHeaders[i].name) {
       if (name === 'User-Agent' || name === 'user-agent') {
-        requestHeaders[i].value = str;
+        requestHeaders[i].value = str === 'empty' ? '' : str;
         return {
           requestHeaders
         };
@@ -215,16 +215,20 @@ var onCommitted = ({frameId, url, tabId}) => {
     }
     const o = cache[tabId] || ua.object(tabId);
     if (o.userAgent) {
+      let {userAgent, appVersion, platform, vendor} = o;
+      if (o.userAgent === 'empty') {
+        userAgent = appVersion = platform = vendor = '';
+      }
       chrome.tabs.executeScript(tabId, {
         runAt: 'document_start',
         frameId,
         code: `{
           const script = document.createElement('script');
           script.textContent = \`{
-            navigator.__defineGetter__('userAgent', () => '${o.userAgent}');
-            navigator.__defineGetter__('appVersion', () => '${o.appVersion}');
-            navigator.__defineGetter__('platform', () => '${o.platform}');
-            navigator.__defineGetter__('vendor', () => '${o.vendor}');
+            navigator.__defineGetter__('userAgent', () => '${userAgent}');
+            navigator.__defineGetter__('appVersion', () => '${appVersion}');
+            navigator.__defineGetter__('platform', () => '${platform}');
+            navigator.__defineGetter__('vendor', () => '${vendor}');
           }\`;
           document.documentElement.appendChild(script);
           script.remove();
