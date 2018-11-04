@@ -29,6 +29,7 @@ function save() {
   }
 
   chrome.storage.local.set({
+    exactMatch: document.getElementById('exactMatch').checked,
     faqs: document.getElementById('faqs').checked,
     cache: document.getElementById('cache').checked,
     blacklist: prepare(document.getElementById('blacklist').value),
@@ -43,6 +44,7 @@ function save() {
 
 function restore() {
   chrome.storage.local.get({
+    exactMatch: false,
     faqs: true,
     cache: true,
     mode: 'blacklist',
@@ -50,6 +52,7 @@ function restore() {
     blacklist: [],
     custom: {}
   }, prefs => {
+    document.getElementById('exactMatch').checked = prefs.exactMatch;
     document.getElementById('faqs').checked = prefs.faqs;
     document.getElementById('cache').checked = prefs.cache;
     document.querySelector(`[name="mode"][value="${prefs.mode}"`).checked = true;

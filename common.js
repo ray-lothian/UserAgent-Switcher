@@ -14,7 +14,8 @@ var prefs = {
   custom: {},
   mode: 'blacklist',
   color: '#ffa643',
-  cache: true
+  cache: true,
+  exactMatch: false
 };
 chrome.storage.local.get(prefs, ps => {
   Object.assign(prefs, ps);
@@ -160,13 +161,27 @@ function match({url, tabId}) {
   if (prefs.mode === 'blacklist') {
     if (prefs.blacklist.length) {
       const h = hostname(url);
-      return prefs.blacklist.some(s => s === h);
+      return prefs.blacklist.some(s => () => {
+        if (s === h) {
+          return true;
+        }
+        else if (prefs.exactMatch === false) {
+          return s.endsWith(h) || h.endsWith(s);
+        }
+      });
     }
   }
   else if (prefs.mode === 'whitelist') {
     if (prefs.whitelist.length) {
       const h = hostname(url);
-      return prefs.whitelist.some(s => s === h) === false;
+      return prefs.whitelist.some(s => {
+        if (s === h) {
+          return true;
+        }
+        else if (prefs.exactMatch === false) {
+          return s.endsWith(h) || h.endsWith(s);
+        }
+      }) === false;
     }
     else {
       return true;
