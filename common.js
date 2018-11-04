@@ -211,7 +211,15 @@ function match({url, tabId}) {
   }
   else {
     const h = hostname(url);
-    let s = prefs.custom[h] || prefs.custom['*'];
+    const key = Object.keys(prefs.custom).filter(s => {
+      if (s === h) {
+        return true;
+      }
+      else if (prefs.exactMatch === false) {
+        return s.endsWith(h) || h.endsWith(s);
+      }
+    }).shift();
+    let s = prefs.custom[key] || prefs.custom['*'];
     // if s is an array select a random string
     if (Array.isArray(s)) {
       s = s[Math.floor(Math.random() * s.length)];
