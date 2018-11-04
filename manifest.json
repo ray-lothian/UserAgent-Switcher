@@ -12,7 +12,8 @@
     "<all_urls>",
     "webNavigation",
     "webRequest",
-    "webRequestBlocking"
+    "webRequestBlocking",
+    "contextMenus"
   ],
 
   "icons": {

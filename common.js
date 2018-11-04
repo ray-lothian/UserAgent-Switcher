@@ -28,6 +28,28 @@ chrome.storage.local.get(prefs, ps => {
       color: prefs.color
     });
   }
+  // context menu
+  chrome.contextMenus.create({
+    id: 'blacklist',
+    title: 'Switch to "black-list" mode',
+    contexts: ['browser_action'],
+    type: 'radio',
+    checked: prefs.mode === 'blacklist'
+  });
+  chrome.contextMenus.create({
+    id: 'whitelist',
+    title: 'Switch to "white-list" mode',
+    contexts: ['browser_action'],
+    type: 'radio',
+    checked: prefs.mode === 'whitelist'
+  });
+  chrome.contextMenus.create({
+    id: 'custom',
+    title: 'Switch to "custom" mode',
+    contexts: ['browser_action'],
+    type: 'radio',
+    checked: prefs.mode === 'custom'
+  });
 });
 chrome.storage.onChanged.addListener(ps => {
   Object.keys(ps).forEach(key => prefs[key] = ps[key].newValue);
@@ -256,6 +278,10 @@ var onCommitted = ({frameId, url, tabId}) => {
     ua.toolbar({tabId});
   }
 };
+// context menu
+chrome.contextMenus.onClicked.addListener(info => chrome.storage.local.set({
+  mode: info.menuItemId
+}));
 
 // FAQs & Feedback
 chrome.storage.local.get({
