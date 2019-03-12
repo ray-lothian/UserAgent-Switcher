@@ -104,7 +104,7 @@ var ua = {
     };
     const custom = 'Mapped from user\'s JSON object if found, otherwise uses "' + (str || navigator.userAgent) + '"';
     const title = {
-      title: `UserAgent Switcher (${str ? 'enabled' : 'disabled'})
+      title: `UserAgent Switcher (${str ? 'enabled' : 'set to default'})
 
 User-Agent String: ${prefs.mode === 'custom' ? custom : str || navigator.userAgent}`
     };
