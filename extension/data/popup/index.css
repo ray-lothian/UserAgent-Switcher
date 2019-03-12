@@ -1,0 +1,194 @@
+[hbox] {
+  display: flex;
+  flex-direction: row;
+}
+[vbox] {
+  display: flex;
+  flex-direction: column;
+}
+[flex="1"] {
+  flex: 1;
+}
+[pack=center] {
+  justify-content: center;
+}
+[align=center] {
+  align-items: center;
+}
+[pack=end] {
+  justify-content: flex-end;
+}
+[align=end] {
+  align-items: flex-end;
+}
+
+body {
+  background-color: #fff;
+  font-family: "Helvetica Neue",Helvetica,sans-serif;
+  font-size: 13px;
+  width: 600px;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+fieldset {
+  border: solid 1px #ccc;
+}
+input[type=search],
+input[type=text] {
+  width: 100%;
+  margin-right: 2px;
+  text-indent: 5px;
+  padding-right: 5px;
+}
+input {
+  outline: none;
+  background-color: #fff;
+  color:  #000;
+  border: solid 1px #e7e7e7;
+  box-sizing: border-box;
+  height: 24px;
+  border-radius: 0;
+  font-size: 11px;
+}
+input[type=button] {
+  cursor: pointer;
+  min-width: 100px;
+}
+input[type=button]:active {
+  opacity: 0.5;
+}
+input[type=button]:disabled {
+  opacity: 0.2;
+  cursor: default;
+}
+select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  border: none;
+  user-select: none;
+  outline: none;
+  color: #000;
+  background: rgba(255,255,255,.5) url(list.svg) no-repeat center right 4px;
+  background-size: 8px;
+  font-size: 13px;
+  border-radius: 0;
+  padding: 2px 16px 2px 4px;
+}
+#list {
+  overflow: auto;
+  height: 300px;
+  margin-bottom: 10px;
+  color: #000;
+  background-color: #fdfafa;
+  background-position: top 120px center;
+  background-repeat: no-repeat;
+}
+#list[data-loading=true] {
+  background-image: url(loading.gif);
+  background-size: 64px;
+}
+#list table {
+  table-layout: fixed;
+}
+#list th {
+  height: 30px;
+  color: #000;
+  background-color: #e7e7e7;
+  white-space: nowrap;
+  padding-left: 10px;
+}
+#list tr {
+  cursor: pointer;
+}
+#list tr[data-matched=false] {
+  opacity: 0.5;
+}
+#list tbody {
+  position: relative;
+}
+#list tbody tr:nth-child(odd) {
+  color: #000;
+  background-color: #fff;
+}
+#list tbody tr:nth-child(even) {
+  color: #000;
+  background-color: #f5f5f5;
+}
+#list[data-loading=false] tbody:empty::before {
+  content: 'no user-agent string for this query!';
+  display: block;
+  position: absolute;
+  top: 50px;
+  left: 10px;
+}
+#list td:nth-child(1) {
+  text-align: center;
+}
+#list td {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding: 3px 5px;
+}
+
+#tools input {
+  width: 100px;
+  margin: 3px 0 0 5px;
+}
+
+#filter td:first-child {
+  width: 100px;
+}
+#filter th:last-of-type {
+  text-align: right;
+  padding-right: 10px;
+}
+
+#agent {
+  padding: 10px 0;
+  white-space: nowrap;
+}
+
+#info {
+  padding: 0 5px;
+}
+#info:empty {
+  display: none;
+}
+
+[data-cmd="refresh"] {
+  margin-left: 2px;
+  margin-right: 2px;
+}
+[data-cmd="window"],
+[data-cmd="apply"] {
+  color: #fff;
+  background-color: #3c923c;
+  border: solid 1px #327932;
+  margin-right: 2px;
+  margin-left: 2px;
+}
+
+[data-cmd="reset"] {
+  color: #fff;
+  background-color: #eea345;
+  border: solid 1px #ec9730;
+}
+
+[data-cmd="reload"],
+[data-cmd="options"],
+[data-cmd="refresh"] {
+  color: #000;
+  background-color: #f5f5f5;
+}
+
+#explore:not([data-loaded="true"]) {
+  height: 16px;
+}
+
+body[data-android="true"] [data-cmd="reload"],
+body[data-android="true"] [data-cmd="window"] {
+  display: none;
+}

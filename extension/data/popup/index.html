@@ -1,0 +1,83 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link rel="stylesheet" href="index.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head>
+  <body>
+    <div id="list" data-loading=true>
+      <table>
+        <colgroup>
+          <col width="40">
+          <col width="150">
+          <col width="100">
+          <col>
+        </colgroup>
+        <thead id="filter">
+          <tr>
+            <th colspan="3">
+              <select id="browser">
+                <optgroup label="Populars">
+                  <option value="Internet Explorer">Internet Explorer</option>
+                  <option value="Safari">Safari</option>
+                  <option value="Chrome">Chrome</option>
+                  <option value="Firefox">Firefox</option>
+                  <option value="Opera">Opera</option>
+                  <option value="Edge">Edge</option>
+                </optgroup>
+                <optgroup label="Others"></optgroup>
+              </select>&nbsp;
+              <select id="os">
+                <optgroup label="Populars">
+                  <option value="Windows">Windows</option>
+                  <option value="Mac OS">Mac OS</option>
+                  <option value="Linux">Linux</option>
+                  <option value="Chromium OS">Chromium OS</option>
+                  <option value="Ubuntu">Ubuntu</option>
+                  <option value="Debian">Debian</option>
+                  <option value="Android">Android</option>
+                  <option value="iOS">iOS</option>
+                </optgroup>
+                <optgroup label="Others"></optgroup>
+              </select>
+            </th>
+            <th>
+              User-Agent&nbsp;
+              <select id="sort">
+                <option value="true">descending</option>
+                <option value="false">ascending</option>
+              </select>
+            </th>
+          </tr>
+        </thead>
+        <template>
+          <tr>
+            <td><input type="radio" name="select"></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+        </template>
+        <tbody></tbody>
+      </table>
+    </div>
+    <div hbox>
+      <input type="search" id="custom" placeholder="Filter items">
+      <input type="button" value="Options" title="Open options page" style="margin-left: 2px;" data-cmd="options">
+      <input type="button" value="Refresh Tab" title="Refresh the current page" data-cmd="refresh">
+      <input type="button" value="Restart" title="Click to reload the extension. This will cause all the window-based user-agent strings to be cleared" data-cmd="reload">
+    </div>
+    <div hbox id="agent" pack="center" align="center">
+      <span id="info">User-Agent String:</span>&nbsp;
+      <span flex="1"></span>
+      <input type="button" value="Apply" title="Set this string as the browser's User-Agent string" data-cmd="apply">
+      <input type="button" value="Window" title="Set this string as this window's User-Agent string" data-cmd="window">
+      <input type="button" value="Reset" title="Reset User-Agent string to the default one. This will not reset window-based UA strings. To reset them, use the 'Restart' button" style="margin-left: 2px;" data-cmd="reset">
+    </div>
+    <input id="ua" type="text" placeholder="Your preferred user-agent string" title="To set blank user-agent string, use 'empty' keyword">
+    <div id="explore"></div>
+    <script src="index.js"></script>
+    <script async src="matched.js"></script>
+  </body>
+</html>
