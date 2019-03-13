@@ -188,7 +188,7 @@ function match({url, tabId}) {
           return true;
         }
         else if (prefs.exactMatch === false) {
-          return s.endsWith(h) || h.endsWith(s);
+          return s.endsWith('.' + h) || h.endsWith('.' + s);
         }
       });
     }
@@ -201,7 +201,7 @@ function match({url, tabId}) {
           return true;
         }
         else if (prefs.exactMatch === false) {
-          return s.endsWith(h) || h.endsWith(s);
+          return s.endsWith('.' + h) || h.endsWith('.' + s);
         }
       }) === false;
     }
@@ -216,7 +216,7 @@ function match({url, tabId}) {
         return true;
       }
       else if (prefs.exactMatch === false) {
-        return s.endsWith(h) || h.endsWith(s);
+        return s.endsWith('.' + h) || h.endsWith('.' + s);
       }
     }).shift();
     let s = prefs.custom[key] || prefs.custom['*'];
