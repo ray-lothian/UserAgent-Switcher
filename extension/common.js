@@ -35,21 +35,21 @@ chrome.storage.local.get(prefs, ps => {
     contexts: ['browser_action'],
     type: 'radio',
     checked: prefs.mode === 'blacklist'
-  });
+  }, () => chrome.runtime.lastError);
   chrome.contextMenus.create({
     id: 'whitelist',
     title: 'Switch to "white-list" mode',
     contexts: ['browser_action'],
     type: 'radio',
     checked: prefs.mode === 'whitelist'
-  });
+  }, () => chrome.runtime.lastError);
   chrome.contextMenus.create({
     id: 'custom',
     title: 'Switch to "custom" mode',
     contexts: ['browser_action'],
     type: 'radio',
     checked: prefs.mode === 'custom'
-  });
+  }, () => chrome.runtime.lastError);
 });
 chrome.storage.onChanged.addListener(ps => {
   Object.keys(ps).forEach(key => prefs[key] = ps[key].newValue);
@@ -264,17 +264,18 @@ var onCommitted = ({frameId, url, tabId}) => {
       if (o.userAgent === 'empty') {
         userAgent = appVersion = platform = vendor = '';
       }
+      const fix = s => s.replace(/`/g, String.fromCharCode(0));
       chrome.tabs.executeScript(tabId, {
         runAt: 'document_start',
         frameId,
         code: `{
           const script = document.createElement('script');
           script.textContent = \`{
-            navigator.__defineGetter__('userAgent', () => '${userAgent}');
-            navigator.__defineGetter__('appVersion', () => '${appVersion}');
-            navigator.__defineGetter__('platform', () => '${platform}');
-            navigator.__defineGetter__('vendor', () => '${vendor}');
-          }\`;
+            navigator.__defineGetter__('userAgent', () => '${fix(userAgent)}');
+            navigator.__defineGetter__('appVersion', () => '${fix(appVersion)}');
+            navigator.__defineGetter__('platform', () => '${fix(platform)}');
+            navigator.__defineGetter__('vendor', () => '${fix(vendor)}');
+          }\`.replace(new RegExp(String.fromCharCode(0), 'g'), '\`');
           document.documentElement.appendChild(script);
           script.remove();
         }`
