@@ -183,7 +183,7 @@ function match({url, tabId}) {
   if (prefs.mode === 'blacklist') {
     if (prefs.blacklist.length) {
       const h = hostname(url);
-      return prefs.blacklist.some(s => () => {
+      return prefs.blacklist.some(s => {
         if (s === h) {
           return true;
         }
@@ -254,11 +254,13 @@ var onBeforeSendHeaders = ({tabId, url, requestHeaders, type}) => {
 };
 
 var onCommitted = ({frameId, url, tabId}) => {
+  console.log(url, cache[tabId] === true);
   if (url && (url.startsWith('http') || url.startsWith('ftp')) || url === 'about:blank') {
     if (cache[tabId] === true) {
       return;
     }
     const o = cache[tabId] || ua.object(tabId);
+    console.log(o, url);
     if (o.userAgent) {
       let {userAgent, appVersion, platform, vendor} = o;
       if (o.userAgent === 'empty') {
