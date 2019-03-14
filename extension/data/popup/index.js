@@ -43,7 +43,10 @@ function update() {
   tbody.textContent = '';
 
   parent.dataset.loading = true;
-  fetch('browsers/' + browser + '-' + os.replace(/\//g, '-') + '.json').then(r => r.json()).catch(() => []).then(list => {
+  fetch('browsers/' + browser + '-' + os.replace(/\//g, '-') + '.json').then(r => r.json()).catch(e => {
+    console.error(e);
+    return [];
+  }).then(list => {
     if (list) {
       const fragment = document.createDocumentFragment();
       for (const o of sort(list)) {
