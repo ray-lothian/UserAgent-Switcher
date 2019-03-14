@@ -254,30 +254,31 @@ var onBeforeSendHeaders = ({tabId, url, requestHeaders, type}) => {
 };
 
 var onCommitted = ({frameId, url, tabId}) => {
-  console.log(url, cache[tabId] === true);
   if (url && (url.startsWith('http') || url.startsWith('ftp')) || url === 'about:blank') {
     if (cache[tabId] === true) {
       return;
     }
     const o = cache[tabId] || ua.object(tabId);
-    console.log(o, url);
     if (o.userAgent) {
       let {userAgent, appVersion, platform, vendor} = o;
       if (o.userAgent === 'empty') {
         userAgent = appVersion = platform = vendor = '';
       }
-      const fix = s => s.replace(/`/g, String.fromCharCode(0));
       chrome.tabs.executeScript(tabId, {
         runAt: 'document_start',
         frameId,
         code: `{
           const script = document.createElement('script');
           script.textContent = \`{
-            navigator.__defineGetter__('userAgent', () => '${fix(userAgent)}');
-            navigator.__defineGetter__('appVersion', () => '${fix(appVersion)}');
-            navigator.__defineGetter__('platform', () => '${fix(platform)}');
-            navigator.__defineGetter__('vendor', () => '${fix(vendor)}');
-          }\`.replace(new RegExp(String.fromCharCode(0), 'g'), '\`');
+            const userAgent = "${encodeURIComponent(userAgent)}";
+            const appVersion = "${encodeURIComponent(appVersion)}";
+            const platform = "${encodeURIComponent(platform)}";
+            const vendor = "${encodeURIComponent(vendor)}";
+            navigator.__defineGetter__('userAgent', () => decodeURIComponent(userAgent));
+            navigator.__defineGetter__('appVersion', () => decodeURIComponent(appVersion));
+            navigator.__defineGetter__('platform', () => decodeURIComponent(platform));
+            navigator.__defineGetter__('vendor', () => decodeURIComponent(vendor));
+          }\`;
           document.documentElement.appendChild(script);
           script.remove();
         }`
