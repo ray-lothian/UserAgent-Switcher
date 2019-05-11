@@ -1,4 +1,4 @@
-/* globals UAParser*/
+/* globals UAParser */
 
 'use strict';
 
@@ -75,9 +75,11 @@ var ua = {
     o.appVersion = s
       .replace(/^Mozilla\//, '')
       .replace(/^Opera\//, '');
-    const p = new UAParser(s);
-    o.platform = p.getOS().name || '';
-    o.vendor = p.getDevice().vendor || '';
+    const p = (new UAParser(s)).getResult();
+    o.platform = p.os.name || '';
+    o.vendor = p.device.vendor || '';
+    o.product = p.engine.name || '';
+    o.oscpu = ((p.os.name || '') + ' ' + (p.os.version || '')).trim();
 
     return o;
   },
@@ -260,9 +262,9 @@ var onCommitted = ({frameId, url, tabId}) => {
     }
     const o = cache[tabId] || ua.object(tabId);
     if (o.userAgent) {
-      let {userAgent, appVersion, platform, vendor} = o;
+      let {userAgent, appVersion, platform, vendor, product, oscpu} = o;
       if (o.userAgent === 'empty') {
-        userAgent = appVersion = platform = vendor = '';
+        userAgent = appVersion = platform = vendor = product = '';
       }
       chrome.tabs.executeScript(tabId, {
         runAt: 'document_start',
@@ -274,10 +276,15 @@ var onCommitted = ({frameId, url, tabId}) => {
             const appVersion = "${encodeURIComponent(appVersion)}";
             const platform = "${encodeURIComponent(platform)}";
             const vendor = "${encodeURIComponent(vendor)}";
+            const product = "${encodeURIComponent(product)}";
+            const oscpu = "${encodeURIComponent(oscpu)}";
             navigator.__defineGetter__('userAgent', () => decodeURIComponent(userAgent));
             navigator.__defineGetter__('appVersion', () => decodeURIComponent(appVersion));
             navigator.__defineGetter__('platform', () => decodeURIComponent(platform));
             navigator.__defineGetter__('vendor', () => decodeURIComponent(vendor));
+            navigator.__defineGetter__('product', () => decodeURIComponent(product));
+            navigator.__defineGetter__('oscpu', () => decodeURIComponent(oscpu));
+            navigator.__defineGetter__('productSub', () => '');
           }\`;
           document.documentElement.appendChild(script);
           script.remove();
@@ -296,36 +303,28 @@ chrome.contextMenus.onClicked.addListener(info => chrome.storage.local.set({
 }));
 
 // FAQs & Feedback
-chrome.storage.local.get({
-  'version': null,
-  'faqs': false,
-  'last-update': 0
-}, prefs => {
-  const version = chrome.runtime.getManifest().version;
-
-  if (prefs.version ? (prefs.faqs && prefs.version !== version) : true) {
-    const now = Date.now();
-    const doUpdate = (now - prefs['last-update']) / 1000 / 60 / 60 / 24 > 45;
-    chrome.storage.local.set({
-      version,
-      'last-update': doUpdate ? Date.now() : prefs['last-update']
-    }, () => {
-      // do not display the FAQs page if last-update occurred less than 45 days ago.
-      if (doUpdate) {
-        const p = Boolean(prefs.version);
-        chrome.tabs.create({
-          url: chrome.runtime.getManifest().homepage_url + '?version=' + version +
-            '&type=' + (p ? ('upgrade&p=' + prefs.version) : 'install'),
-          active: p === false
-        });
+{
+  const {onInstalled, setUninstallURL, getManifest} = chrome.runtime;
+  const {name, version} = getManifest();
+  const page = getManifest().homepage_url;
+  onInstalled.addListener(({reason, previousVersion}) => {
+    chrome.storage.local.get({
+      'faqs': true,
+      'last-update': 0
+    }, prefs => {
+      if (reason === 'install' || (prefs.faqs && reason === 'update')) {
+        const doUpdate = (Date.now() - prefs['last-update']) / 1000 / 60 / 60 / 24 > 45;
+        if (doUpdate && previousVersion !== version) {
+          chrome.tabs.create({
+            url: page + '?version=' + version +
+              (previousVersion ? '&p=' + previousVersion : '') +
+              '&type=' + reason,
+            active: reason === 'install'
+          });
+          chrome.storage.local.set({'last-update': Date.now()});
+        }
       }
     });
-  }
-});
-
-{
-  const {name, version} = chrome.runtime.getManifest();
-  chrome.runtime.setUninstallURL(
-    chrome.runtime.getManifest().homepage_url + '?rd=feedback&name=' + name + '&version=' + version
-  );
+  });
+  setUninstallURL(page + '?rd=feedback&name=' + encodeURIComponent(name) + '&version=' + version);
 }
