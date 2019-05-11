@@ -36,7 +36,7 @@
     </tr>
     <tr>
       <td>
-        <label><input type="radio" name="mode" value="custom" id="mode-custom"> <span class="h">Custom mode</span>: Try to resolve the user-agent string from a JSON object; otherwise either use the default user-agent string or use the one that user is set from the popup. Use "*" as the hostname to match all domains. You can randomly select from multiple user-agent strings by providing an array instead of a string.</label> <a href="#" id="sample">Insert</a> a sample JSON object.
+        <label><input type="radio" name="mode" value="custom" id="mode-custom"> <span class="h">Custom mode</span>: Try to resolve the user-agent string from a JSON object; otherwise either use the default user-agent string or use the one that the user is set from the popup interface. Use "*" as the hostname to match all domains. You can randomly select from multiple user-agent strings by providing an array instead of a fixed string. If there is a "_" key in your JSON object which refers to an array of hostnames, then the extension only randomly selects the user-agent string once for each hostname inside this list. This is useful if you don't want the random user-agent to change until this browser session is over.</label> Press <a href="#" id="sample">here</a> to insert a sample JSON object.
       </td>
     </tr>
     <tr>
@@ -53,9 +53,9 @@
     </tr>
   </table>
   <p>
+    <button id="help">FAQs Page (Help)</button>
     <button id="donate">Support Development</button>
-    <button id="reset">Reset</button>
-    <button id="save">Save</button>
+    <button id="reset">Reset</button> - <button id="save">Save</button>
     <span id="status"></span>
   </p>
 

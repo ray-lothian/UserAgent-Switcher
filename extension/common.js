@@ -225,6 +225,15 @@ function match({url, tabId}) {
     // if s is an array select a random string
     if (Array.isArray(s)) {
       s = s[Math.floor(Math.random() * s.length)];
+      // set session mode if key is either on _[key] or _['*'] lists
+      if (prefs.custom._ && Array.isArray(prefs.custom._)) {
+        if (prefs.custom._.indexOf(key) !== -1) {
+          prefs.custom[key] = s;
+        }
+        else if (prefs.custom._.indexOf('*') !== -1) {
+          prefs.custom['*'] = s;
+        }
+      }
     }
     if (s) {
       return ua.parse(s);

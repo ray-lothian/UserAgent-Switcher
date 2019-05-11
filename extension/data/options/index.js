@@ -93,3 +93,9 @@ document.getElementById('reset').addEventListener('click', e => {
     });
   }
 });
+
+document.getElementById('help').addEventListener('click', () => {
+  chrome.tabs.create({
+    url: chrome.runtime.getManifest().homepage_url
+  });
+});
