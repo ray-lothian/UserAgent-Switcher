@@ -231,7 +231,12 @@ function match({url, tabId}) {
           prefs.custom[key] = s;
         }
         else if (prefs.custom._.indexOf('*') !== -1) {
-          prefs.custom['*'] = s;
+          if (prefs.custom[key]) {
+            prefs.custom[key] = s;
+          }
+          else {
+            prefs.custom['*'] = s;
+          }
         }
       }
     }
