@@ -55,10 +55,12 @@ input {
 input[type=button] {
   cursor: pointer;
   min-width: 100px;
+  transition-delay: 0;
 }
-input[type=button]:active {
+input[type=button].active {
   opacity: 0.5;
 }
+
 input[type=button]:disabled {
   opacity: 0.2;
   cursor: default;
@@ -158,17 +160,19 @@ select {
   display: none;
 }
 
-[data-cmd="refresh"] {
-  margin-left: 2px;
+[data-cmd] {
   margin-right: 2px;
+}
+[data-cmd="test"] {
+  background-color: #4d72b7;
+  border: solid 1px #4a6dad;
+  color: #fff;
 }
 [data-cmd="window"],
 [data-cmd="apply"] {
   color: #fff;
   background-color: #3c923c;
   border: solid 1px #327932;
-  margin-right: 2px;
-  margin-left: 2px;
 }
 
 [data-cmd="reset"] {

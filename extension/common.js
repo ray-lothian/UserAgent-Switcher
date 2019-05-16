@@ -234,7 +234,7 @@ function match({url, tabId}) {
           if (prefs.custom[key]) {
             prefs.custom[key] = s;
           }
-          else {
+          else if (prefs.custom['*']) {
             prefs.custom['*'] = s;
           }
         }

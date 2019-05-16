@@ -189,6 +189,18 @@ document.addEventListener('click', ({target}) => {
     else if (cmd === 'reload') {
       chrome.runtime.reload();
     }
+    else if (cmd === 'test') {
+      chrome.storage.local.get({
+        'test': 'https://webbrowsertools.com/useragent/?method=normal&verbose=false'
+      }, prefs => chrome.tabs.create({
+        url: prefs.test
+      }));
+    }
+
+    if (cmd) {
+      target.classList.add('active');
+      window.setTimeout(() => target.classList.remove('active'), 500);
+    }
   }
 });
 
