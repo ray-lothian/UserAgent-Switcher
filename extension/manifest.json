@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "User-Agent Switcher and Manager",
   "short_name": "useragent-switcher",
-  "version": "0.2.9",
+  "version": "0.3.0",
 
   "description": "Spoofs User-Agent strings of your browser with a new one globally, randomly or per hostname",
 
