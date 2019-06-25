@@ -30,7 +30,7 @@ fs.readdir('./browsers/', async (err, files) => {
     ...require('./list-2.json'),
     ...require('./list-3.json'),
     ...require('./list-4.json')
-  ].filter((s, i, l) => l.indexOf(s) === i);
+  ].filter((s, i, l) => l.indexOf(s) === i && s.indexOf('bot') === -1);
   for (const ua of list) {
     parser.setUA(ua);
     const o = parser.getResult();
