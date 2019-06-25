@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "User-Agent Switcher and Manager",
   "short_name": "useragent-switcher",
-  "version": "0.3.0",
+  "version": "0.3.1",
 
   "description": "Spoofs User-Agent strings of your browser with a new one globally, randomly or per hostname",
 
@@ -57,8 +57,7 @@
   }],
   "applications": {
     "gecko": {
-      "id": "{a6c4a591-f1b2-4f03-b3ff-767e5bedf4e7}",
-      "strict_min_version": "57.0"
+      "id": "{a6c4a591-f1b2-4f03-b3ff-767e5bedf4e7}"
     }
   }
 }

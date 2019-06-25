@@ -43,7 +43,7 @@ function update() {
   tbody.textContent = '';
 
   parent.dataset.loading = true;
-  fetch('browsers/' + browser + '-' + os.replace(/\//g, '-') + '.json').then(r => r.json()).catch(e => {
+  fetch('browsers/' + browser.toLowerCase() + '-' + os.toLowerCase().replace(/\//g, '-') + '.json').then(r => r.json()).catch(e => {
     console.error(e);
     return [];
   }).then(list => {
@@ -62,7 +62,7 @@ function update() {
       tbody.appendChild(fragment);
       document.getElementById('custom').placeholder = `Filter among ${list.length} "User-Agent" strings`;
       [...document.getElementById('os').querySelectorAll('option')].forEach(option => {
-        option.disabled = map[browser][option.value] !== true;
+        option.disabled = map.matching[browser.toLowerCase()].indexOf(option.value.toLowerCase()) === -1;
       });
     }
     else {
@@ -86,24 +86,26 @@ document.addEventListener('change', ({target}) => {
 document.addEventListener('DOMContentLoaded', () => fetch('./map.json').then(r => r.json())
   .then(o => {
     Object.assign(map, o);
-    const OSs = new Set();
+
     const f1 = document.createDocumentFragment();
-    const f2 = document.createDocumentFragment();
-    Object.keys(map).sort().forEach(s => {
-      Object.keys(map[s]).forEach(s => OSs.add(s));
+    for (const browser of map.browser) {
       const option = document.createElement('option');
-      option.value = option.textContent = s;
+      option.value = option.textContent = browser;
       f1.appendChild(option);
-    });
-    document.querySelector('#browser optgroup:last-of-type').appendChild(f1);
-    document.getElementById('browser').value = localStorage.getItem('browser') || 'Chrome';
-    for (const os of Array.from(OSs).sort()) {
+    }
+    const f2 = document.createDocumentFragment();
+    for (const os of map.os) {
       const option = document.createElement('option');
       option.value = option.textContent = os;
       f2.appendChild(option);
     }
+
+    document.querySelector('#browser optgroup:last-of-type').appendChild(f1);
+    document.getElementById('browser').value = localStorage.getItem('browser') || 'Chrome';
+
     document.querySelector('#os optgroup:last-of-type').appendChild(f2);
     document.getElementById('os').value = localStorage.getItem('os') || 'Windows';
+
     update();
   }));
 
