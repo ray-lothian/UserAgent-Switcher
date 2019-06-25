@@ -13,6 +13,9 @@
       text-decoration: underline;
       text-decoration-style: dashed;
     }
+    .spacer {
+      padding-bottom: 10px;
+    }
   </style>
 </head>
 
@@ -24,7 +27,7 @@
       </td>
     </tr>
     <tr>
-      <td><textarea id="blacklist" rows="3" placeholder="e.g.: www.google.com, www.bing.com"></textarea></td>
+      <td class="spacer"><textarea id="blacklist" rows="3" placeholder="e.g.: www.google.com, www.bing.com"></textarea></td>
     </tr>
     <tr>
       <td>
@@ -32,7 +35,7 @@
       </td>
     </tr>
     <tr>
-      <td><textarea id="whitelist" rows="3" placeholder="e.g.: www.google.com, www.bing.com"></textarea></td>
+      <td class="spacer"><textarea id="whitelist" rows="3" placeholder="e.g.: www.google.com, www.bing.com"></textarea></td>
     </tr>
     <tr>
       <td>
@@ -40,16 +43,22 @@
       </td>
     </tr>
     <tr>
-      <td><textarea id="custom" rows="5" wrap="off"></textarea></td>
+      <td class="spacer"><textarea id="custom" rows="5" wrap="off"></textarea></td>
     </tr>
     <tr>
-      <td><label><input type="checkbox" id="cache"> Use caching to improve performance (recommended value is true). Uncheck this option only if you are using the custom mode and also you need the user-agent string to be altered from the provided list on every single request.</label></td>
+      <td class="spacer"><label><input type="checkbox" id="cache"> Use caching to improve performance (recommended value is true). Uncheck this option only if you are using the custom mode and also you need the user-agent string to be altered from the provided list on every single request.</label></td>
     </tr>
     <tr>
-      <td><label><input type="checkbox" id="exactMatch"> Use exact matching (if checked, you will need to insert all sub-domains in the white-list and black-list modes to be considered. If unchecked, all the sub-domains are passing the matching condition (e.g: www.google.com passes the matching if google.com is in the list))</label></td>
+      <td class="spacer"><label><input type="checkbox" id="exactMatch"> Use exact matching (if checked, you will need to insert all sub-domains in the white-list and black-list modes to be considered. If unchecked, all the sub-domains are passing the matching condition (e.g: www.google.com passes the matching if google.com is in the list))</label></td>
     </tr>
     <tr>
-      <td><label><input type="checkbox" id="faqs"> Open FAQs page on updates</label></td>
+      <td class="spacer"><label><input type="checkbox" id="faqs"> Open FAQs page on updates</label></td>
+    </tr>
+    <tr>
+      <td>A comma-separated list of keywords that the extension should not spoof the user-agent header. Use this list to protect URLs that contain these protected keywords. Each keyword need to be at least 5 char long.</td>
+    </tr>
+    <tr>
+      <td><textarea id="protected" rows="3" wrap="off"></textarea></td>
     </tr>
   </table>
   <p>

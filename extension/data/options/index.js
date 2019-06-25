@@ -10,9 +10,9 @@ function notify(msg, period = 750) {
 
 function prepare(str) {
   return str.split(/\s*,\s*/)
-  .map(s => s.replace('http://', '')
+    .map(s => s.replace('http://', '')
       .replace('https://', '').split('/')[0].trim())
-  .filter((h, i, l) => h && l.indexOf(h) === i);
+    .filter((h, i, l) => h && l.indexOf(h) === i);
 }
 
 function save() {
@@ -35,7 +35,8 @@ function save() {
     blacklist: prepare(document.getElementById('blacklist').value),
     whitelist: prepare(document.getElementById('whitelist').value),
     custom,
-    mode: document.querySelector('[name="mode"]:checked').value
+    mode: document.querySelector('[name="mode"]:checked').value,
+    protected: document.getElementById('protected').value.split(/\s*,\s*/).filter(s => s.length > 4)
   }, () => {
     restore();
     notify('Options saved.');
@@ -50,7 +51,8 @@ function restore() {
     mode: 'blacklist',
     whitelist: [],
     blacklist: [],
-    custom: {}
+    custom: {},
+    protected: ['google.com/recaptcha', 'gstatic.com/recaptcha']
   }, prefs => {
     document.getElementById('exactMatch').checked = prefs.exactMatch;
     document.getElementById('faqs').checked = prefs.faqs;
@@ -59,6 +61,7 @@ function restore() {
     document.getElementById('blacklist').value = prefs.blacklist.join(', ');
     document.getElementById('whitelist').value = prefs.whitelist.join(', ');
     document.getElementById('custom').value = JSON.stringify(prefs.custom, null, 2);
+    document.getElementById('protected').value = prefs.protected.join(', ');
   });
 }
 document.addEventListener('DOMContentLoaded', restore);

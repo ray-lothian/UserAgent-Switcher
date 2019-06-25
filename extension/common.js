@@ -15,7 +15,8 @@ var prefs = {
   mode: 'blacklist',
   color: '#ffa643',
   cache: true,
-  exactMatch: false
+  exactMatch: false,
+  protected: ['google.com/recaptcha', 'gstatic.com/recaptcha']
 };
 chrome.storage.local.get(prefs, ps => {
   Object.assign(prefs, ps);
@@ -255,6 +256,9 @@ var onBeforeSendHeaders = ({tabId, url, requestHeaders, type}) => {
   }
   if (cache[tabId] === true) {
     return;
+  }
+  if (prefs.protected.some(s => url.indexOf(s) !== -1)) {
+    return {};
   }
   const str = (cache[tabId] || ua.object(tabId)).userAgent;
   if (str) {
