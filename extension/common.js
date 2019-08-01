@@ -2,18 +2,18 @@
 
 'use strict';
 
-var cache = {};
-var tabs = {};
+const cache = {};
+const tabs = {};
 chrome.tabs.onRemoved.addListener(id => delete cache[id]);
 chrome.tabs.onCreated.addListener(tab => tabs[tab.id] = tab.windowId);
 
-var prefs = {
+const prefs = {
   ua: '',
   blacklist: [],
   whitelist: [],
   custom: {},
   mode: 'blacklist',
-  color: '#ffa643',
+  color: '#777',
   cache: true,
   exactMatch: false,
   protected: ['google.com/recaptcha', 'gstatic.com/recaptcha']
@@ -59,7 +59,7 @@ chrome.storage.onChanged.addListener(ps => {
   }
 });
 
-var ua = {
+const ua = {
   _obj: {
     'global': {}
   },
@@ -96,27 +96,32 @@ var ua = {
       this._obj[windowId] = {};
     }
   },
-  toolbar: ({windowId, tabId, str = ua.object(tabId, windowId).userAgent}) => {
-    const icon = {
+  tooltip(title, tabId) {
+    chrome.browserAction.setTitle({
+      title,
+      tabId
+    });
+  },
+  icon(mode, tabId) {
+    chrome.browserAction.setIcon({
+      tabId,
       path: {
-        16: 'data/icons/' + (str ? 'active/' : '') + '16.png',
-        32: 'data/icons/' + (str ? 'active/' : '') + '32.png',
-        48: 'data/icons/' + (str ? 'active/' : '') + '48.png',
-        64: 'data/icons/' + (str ? 'active/' : '') + '64.png'
+        '16': 'data/icons/' + (mode ? mode + '/' : '') + '16.png',
+        '18': 'data/icons/' + (mode ? mode + '/' : '') + '18.png',
+        '19': 'data/icons/' + (mode ? mode + '/' : '') + '19.png',
+        '32': 'data/icons/' + (mode ? mode + '/' : '') + '32.png',
+        '36': 'data/icons/' + (mode ? mode + '/' : '') + '36.png',
+        '38': 'data/icons/' + (mode ? mode + '/' : '') + '38.png',
+        '48': 'data/icons/' + (mode ? mode + '/' : '') + '48.png'
       }
-    };
-    const custom = 'Mapped from user\'s JSON object if found, otherwise uses "' + (str || navigator.userAgent) + '"';
-    const title = {
-      title: `UserAgent Switcher (${str ? 'enabled' : 'set to default'})
-
-User-Agent String: ${prefs.mode === 'custom' ? custom : str || navigator.userAgent}`
-    };
+    });
+  },
+  toolbar: ({windowId, tabId, str = ua.object(tabId, windowId).userAgent}) => {
     if (windowId) {
       chrome.tabs.query({
         windowId
       }, tabs => tabs.forEach(tab => {
         const tabId = tab.id;
-        chrome.browserAction.setTitle(Object.assign({tabId}, title));
         chrome.browserAction.setBadgeText({
           tabId,
           text: ua.object(null, windowId).platform.substr(0, 3)
@@ -124,15 +129,10 @@ User-Agent String: ${prefs.mode === 'custom' ? custom : str || navigator.userAge
       }));
     }
     else if (tabId) {
-      chrome.browserAction.setTitle(Object.assign({tabId}, title));
       chrome.browserAction.setBadgeText({
         tabId,
         text: ua.object(tabId).platform.substr(0, 3)
       });
-    }
-    else {
-      chrome.browserAction.setIcon(icon);
-      chrome.browserAction.setTitle(title);
     }
   },
   update(str = prefs.ua, windowId = 'global') {
@@ -145,7 +145,14 @@ User-Agent String: ${prefs.mode === 'custom' ? custom : str || navigator.userAge
         'urls': ['*://*/*']
       }, ['blocking', 'requestHeaders']);
       chrome.webNavigation.onCommitted.addListener(onCommitted);
+      ua.tooltip('[Default] ' + navigator.userAgent);
+      ua.icon('ignored');
     }
+    else {
+      ua.icon('');
+      ua.tooltip('[Disabled] to enable, use the popup window');
+    }
+
     if (windowId === 'global') {
       this.toolbar({str});
     }
@@ -155,6 +162,7 @@ User-Agent String: ${prefs.mode === 'custom' ? custom : str || navigator.userAge
     }
   }
 };
+window.ua = ua; // using from popup
 // make sure to clean on window removal
 if (chrome.windows) { // FF on Android
   chrome.windows.onRemoved.addListener(windowId => delete ua._obj[windowId]);
@@ -250,12 +258,12 @@ function match({url, tabId}) {
   }
 }
 
-var onBeforeSendHeaders = ({tabId, url, requestHeaders, type}) => {
+const onBeforeSendHeaders = ({tabId, url, requestHeaders, type}) => {
   if (type === 'main_frame' || prefs.cache === false) {
     cache[tabId] = match({url, tabId});
   }
   if (cache[tabId] === true) {
-    return;
+    return {};
   }
   if (prefs.protected.some(s => url.indexOf(s) !== -1)) {
     return {};
@@ -273,7 +281,7 @@ var onBeforeSendHeaders = ({tabId, url, requestHeaders, type}) => {
   }
 };
 
-var onCommitted = ({frameId, url, tabId}) => {
+const onCommitted = ({frameId, url, tabId}) => {
   if (url && (url.startsWith('http') || url.startsWith('ftp')) || url === 'about:blank') {
     if (cache[tabId] === true) {
       return;
@@ -307,7 +315,18 @@ var onCommitted = ({frameId, url, tabId}) => {
           document.documentElement.appendChild(script);
           script.remove();
         }`
-      }, () => chrome.runtime.lastError);
+      }, () => {
+        if (chrome.runtime.lastError) {
+          if (frameId === 0) {
+            ua.tooltip('[Default] ' + navigator.userAgent);
+            ua.icon('ignored', tabId);
+          }
+        }
+        else if (frameId === 0) {
+          ua.tooltip('[Custom] ' + userAgent);
+          ua.icon('active', tabId);
+        }
+      });
     }
   }
   // change the toolbar icon if there is a per window UA setting

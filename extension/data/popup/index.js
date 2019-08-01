@@ -87,7 +87,9 @@ function update(ua) {
 document.addEventListener('change', ({target}) => {
   if (target.closest('#filter')) {
     localStorage.setItem(target.id, target.value);
-    update();
+    chrome.storage.local.get({
+      ua: ''
+    }, prefs => update(prefs.ua || navigator.userAgent));
   }
   if (target.type === 'radio') {
     document.getElementById('ua').value = target.closest('tr').querySelector('td:nth-child(4)').textContent;
