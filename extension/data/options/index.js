@@ -40,6 +40,9 @@ function save() {
   }, () => {
     restore();
     notify('Options saved.');
+    chrome.contextMenus.update(document.querySelector('[name="mode"]:checked').value, {
+      checked: true
+    });
   });
 }
 

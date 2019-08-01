@@ -209,7 +209,7 @@ document.addEventListener('click', ({target}) => {
     }
     else if (cmd === 'test') {
       chrome.storage.local.get({
-        'test': 'https://webbrowsertools.com/useragent/?method=normal&verbose=false'
+        'test': 'https://webbrowsertools.com/useragent/?method=normal&verbose=false&r=' + Math.random()
       }, prefs => chrome.tabs.create({
         url: prefs.test
       }));
