@@ -2,7 +2,7 @@
 
 document.body.dataset.android = navigator.userAgent.indexOf('Android') !== -1;
 
-var map = {};
+const map = {};
 
 function sort(arr) {
   function sort(a = '', b = '') {
@@ -33,7 +33,7 @@ function sort(arr) {
   return list;
 }
 
-function update() {
+function update(ua) {
   const browser = document.getElementById('browser').value;
   const os = document.getElementById('os').value;
 
@@ -49,6 +49,7 @@ function update() {
   }).then(list => {
     if (list) {
       const fragment = document.createDocumentFragment();
+      let radio;
       for (const o of sort(list)) {
         const clone = document.importNode(t.content, true);
         const second = clone.querySelector('td:nth-child(2)');
@@ -57,9 +58,19 @@ function update() {
         third.title = third.textContent = o.os.name + ' ' + (o.os.version || ' ');
         const forth = clone.querySelector('td:nth-child(4)');
         forth.title = forth.textContent = o.ua;
+        if (o.ua === ua) {
+          radio = clone.querySelector('input[type=radio]');
+        }
         fragment.appendChild(clone);
       }
       tbody.appendChild(fragment);
+      if (radio) {
+        radio.checked = true;
+        radio.scrollIntoView({
+          block: 'center',
+          inline: 'nearest'
+        });
+      }
       document.getElementById('custom').placeholder = `Filter among ${list.length} "User-Agent" strings`;
       [...document.getElementById('os').querySelectorAll('option')].forEach(option => {
         option.disabled = map.matching[browser.toLowerCase()].indexOf(option.value.toLowerCase()) === -1;
@@ -106,7 +117,13 @@ document.addEventListener('DOMContentLoaded', () => fetch('./map.json').then(r =
     document.querySelector('#os optgroup:last-of-type').appendChild(f2);
     document.getElementById('os').value = localStorage.getItem('os') || 'Windows';
 
-    update();
+    chrome.storage.local.get({
+      ua: ''
+    }, prefs => {
+      const ua = prefs.ua || navigator.userAgent;
+      update(ua);
+      document.getElementById('ua').value = ua;
+    });
   }));
 
 document.getElementById('list').addEventListener('click', ({target}) => {
@@ -128,9 +145,6 @@ document.getElementById('custom').addEventListener('keyup', ({target}) => {
     .forEach(tr => tr.dataset.matched = tr.textContent.toLowerCase().indexOf(value.toLowerCase()) !== -1);
 });
 
-chrome.storage.local.get({
-  ua: ''
-}, prefs => document.getElementById('ua').value = prefs.ua || navigator.userAgent);
 chrome.storage.onChanged.addListener(prefs => {
   if (prefs.ua) {
     document.getElementById('ua').value = prefs.ua.newValue || navigator.userAgent;

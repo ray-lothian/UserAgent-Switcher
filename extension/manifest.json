@@ -54,10 +54,5 @@
     "match_about_blank": true,
     "matches": ["*://*/*"],
     "js": ["data/inject.js"]
-  }],
-  "applications": {
-    "gecko": {
-      "id": "{a6c4a591-f1b2-4f03-b3ff-767e5bedf4e7}"
-    }
-  }
+  }]
 }

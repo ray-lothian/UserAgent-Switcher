@@ -80,6 +80,7 @@ select {
 }
 #list {
   overflow: auto;
+  scroll-behavior: smooth;
   height: 300px;
   margin-bottom: 10px;
   color: #000;
