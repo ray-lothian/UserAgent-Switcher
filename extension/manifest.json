@@ -16,6 +16,11 @@
     "contextMenus"
   ],
 
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "{a6c4a591-f1b2-4f03-b3ff-767e5bedf4e7}"
+    }
+  },
   "icons": {
     "16": "data/icons/active/16.png",
     "18": "data/icons/active/18.png",
