@@ -19,8 +19,22 @@ const prefs = {
   protected: ['google.com/recaptcha', 'gstatic.com/recaptcha'],
   parser: {} // maps ua string to a ua object
 };
+// exand comma-separated keys of prefs.custom
+const expand = () => {
+  expand.rules = {};
+  for (const key of Object.keys(prefs.custom)) {
+    for (const k of key.split(/\s*,\s*/)) {
+      if (k) {
+        expand.rules[k] = prefs.custom[key];
+      }
+    }
+  }
+};
+expand.rules = {};
+
 chrome.storage.local.get(prefs, ps => {
   Object.assign(prefs, ps);
+  expand();
   chrome.tabs.query({}, ts => {
     ts.forEach(t => tabs[t.id] = t.windowId);
     ua.update();
@@ -57,6 +71,9 @@ chrome.storage.onChanged.addListener(ps => {
   Object.keys(ps).forEach(key => prefs[key] = ps[key].newValue);
   if (ps.ua || ps.mode) {
     ua.update();
+  }
+  else if (ps.custom) {
+    expand();
   }
 });
 
@@ -229,9 +246,10 @@ function hostname(url) {
 }
 // returns true, false or an object; true: ignore, false: use from ua object.
 function match({url, tabId}) {
+  const h = hostname(url);
+
   if (prefs.mode === 'blacklist') {
     if (prefs.blacklist.length) {
-      const h = hostname(url);
       return prefs.blacklist.some(s => {
         if (s === h) {
           return true;
@@ -244,7 +262,6 @@ function match({url, tabId}) {
   }
   else if (prefs.mode === 'whitelist') {
     if (prefs.whitelist.length) {
-      const h = hostname(url);
       return prefs.whitelist.some(s => {
         if (s === h) {
           return true;
@@ -259,30 +276,30 @@ function match({url, tabId}) {
     }
   }
   else {
-    const h = hostname(url);
-    const key = Object.keys(prefs.custom).filter(s => {
-      if (s === h) {
+    const [hh] = h.split(':');
+    const key = Object.keys(expand.rules).filter(s => {
+      if (s === h || s === hh) {
         return true;
       }
       else if (prefs.exactMatch === false) {
-        return s.endsWith('.' + h) || h.endsWith('.' + s);
+        return s.endsWith('.' + h) || h.endsWith('.' + s) || s.endsWith('.' + hh) || hh.endsWith('.' + s);
       }
     }).shift();
-    let s = prefs.custom[key] || prefs.custom['*'];
+    let s = expand.rules[key] || expand.rules['*'];
     // if s is an array select a random string
     if (Array.isArray(s)) {
       s = s[Math.floor(Math.random() * s.length)];
       // set session mode if key is either on _[key] or _['*'] lists
-      if (prefs.custom._ && Array.isArray(prefs.custom._)) {
-        if (prefs.custom._.indexOf(key) !== -1) {
-          prefs.custom[key] = s;
+      if (expand.rules._ && Array.isArray(expand.rules._)) {
+        if (expand.rules._.indexOf(key) !== -1) {
+          expand.rules[key] = s;
         }
-        else if (prefs.custom._.indexOf('*') !== -1) {
-          if (prefs.custom[key]) {
-            prefs.custom[key] = s;
+        else if (expand.rules._.indexOf('*') !== -1) {
+          if (expand.rules[key]) {
+            expand.rules[key] = s;
           }
-          else if (prefs.custom['*']) {
-            prefs.custom['*'] = s;
+          else if (expand.rules['*']) {
+            expand.rules['*'] = s;
           }
         }
       }
@@ -351,12 +368,12 @@ const onCommitted = ({frameId, url, tabId}) => {
       }, () => {
         if (chrome.runtime.lastError) {
           if (frameId === 0) {
-            ua.tooltip('[Default] ' + navigator.userAgent);
+            ua.tooltip('[Default] ' + navigator.userAgent, tabId);
             ua.icon('ignored', tabId);
           }
         }
         else if (frameId === 0) {
-          ua.tooltip('[Custom] ' + o.userAgent);
+          ua.tooltip('[Custom] ' + o.userAgent, tabId);
           ua.icon('active', tabId);
         }
       });
