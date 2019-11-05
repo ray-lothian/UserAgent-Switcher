@@ -71,7 +71,7 @@ function update(ua) {
           inline: 'nearest'
         });
       }
-      document.getElementById('custom').placeholder = `Filter among ${list.length} "User-Agent" strings`;
+      document.getElementById('custom').placeholder = `Filter among ${list.length}`;
       [...document.getElementById('os').querySelectorAll('option')].forEach(option => {
         option.disabled = map.matching[browser.toLowerCase()].indexOf(option.value.toLowerCase()) === -1;
       });
@@ -85,6 +85,7 @@ function update(ua) {
 }
 
 document.addEventListener('change', ({target}) => {
+  console.log(target);
   if (target.closest('#filter')) {
     localStorage.setItem(target.id, target.value);
     chrome.storage.local.get({
@@ -125,15 +126,16 @@ document.addEventListener('DOMContentLoaded', () => fetch('./map.json').then(r =
       const ua = prefs.ua || navigator.userAgent;
       update(ua);
       document.getElementById('ua').value = ua;
+      document.getElementById('ua').dispatchEvent(new Event('input'));
     });
   }));
 
 document.getElementById('list').addEventListener('click', ({target}) => {
-  const tr = target.closest('tr');
+  const tr = target.closest('tbody tr');
   if (tr) {
     const input = tr.querySelector('input');
     if (input && input !== target) {
-      input.checked = !input.checked;
+      input.checked = true;
       input.dispatchEvent(new Event('change', {
         bubbles: true
       }));
@@ -143,7 +145,7 @@ document.getElementById('list').addEventListener('click', ({target}) => {
 
 document.getElementById('custom').addEventListener('keyup', ({target}) => {
   const value = target.value;
-  [...document.querySelectorAll('#list tr')]
+  [...document.querySelectorAll('#list tbody tr')]
     .forEach(tr => tr.dataset.matched = tr.textContent.toLowerCase().indexOf(value.toLowerCase()) !== -1);
 });
 
@@ -155,9 +157,9 @@ chrome.storage.onChanged.addListener(prefs => {
 });
 
 function msg(msg) {
-  const info = document.getElementById('info');
-  info.textContent = msg;
-  window.setTimeout(() => info.textContent = 'User-Agent String:', 2000);
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  window.setTimeout(() => toast.textContent = '', 2000);
 }
 
 // commands
@@ -170,7 +172,7 @@ document.addEventListener('click', ({target}) => {
         msg('Default UA, press the reset button instead');
       }
       else {
-        msg('user-agent is set');
+        msg('User-Agent is Set');
       }
       chrome.storage.local.set({
         ua: value === navigator.userAgent ? '' : value
@@ -191,7 +193,7 @@ document.addEventListener('click', ({target}) => {
       chrome.storage.local.set({
         ua: ''
       });
-      msg('reset to default');
+      msg('Reset to Default');
     }
     else if (cmd === 'refresh') {
       chrome.tabs.query({
@@ -223,6 +225,18 @@ document.addEventListener('click', ({target}) => {
 });
 
 document.getElementById('ua').addEventListener('input', e => {
-  document.querySelector('[data-cmd=apply]').disabled = e.target.value === '';
-  document.querySelector('[data-cmd=window]').disabled = e.target.value === '';
+  const value = e.target.value;
+  document.querySelector('[data-cmd=apply]').disabled = value === '';
+  document.querySelector('[data-cmd=window]').disabled = value === '';
+
+  if (value) {
+    chrome.runtime.getBackgroundPage(bg => {
+      const o = bg.ua.parse(value);
+      document.getElementById('appVersion').value = o.appVersion;
+      document.getElementById('platform').value = o.platform;
+      document.getElementById('vendor').value = o.vendor;
+      document.getElementById('product').value = o.product;
+      document.getElementById('oscpu').value = o.oscpu;
+    });
+  }
 });

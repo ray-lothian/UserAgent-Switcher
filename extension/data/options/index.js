@@ -28,6 +28,18 @@ function save() {
     }, 1000);
   }
 
+  let parser = {};
+  const p = document.getElementById('parser').value;
+  try {
+    parser = JSON.parse(p);
+  }
+  catch (e) {
+    window.setTimeout(() => {
+      notify('Parser JSON error: ' + e.message, 5000);
+      document.getElementById('parser').value = c;
+    }, 1000);
+  }
+
   chrome.storage.local.set({
     exactMatch: document.getElementById('exactMatch').checked,
     faqs: document.getElementById('faqs').checked,
@@ -35,6 +47,7 @@ function save() {
     blacklist: prepare(document.getElementById('blacklist').value),
     whitelist: prepare(document.getElementById('whitelist').value),
     custom,
+    parser,
     mode: document.querySelector('[name="mode"]:checked').value,
     protected: document.getElementById('protected').value.split(/\s*,\s*/).filter(s => s.length > 4)
   }, () => {
@@ -55,6 +68,7 @@ function restore() {
     whitelist: [],
     blacklist: [],
     custom: {},
+    parser: {},
     protected: ['google.com/recaptcha', 'gstatic.com/recaptcha']
   }, prefs => {
     document.getElementById('exactMatch').checked = prefs.exactMatch;
@@ -64,6 +78,7 @@ function restore() {
     document.getElementById('blacklist').value = prefs.blacklist.join(', ');
     document.getElementById('whitelist').value = prefs.whitelist.join(', ');
     document.getElementById('custom').value = JSON.stringify(prefs.custom, null, 2);
+    document.getElementById('parser').value = JSON.stringify(prefs.parser, null, 2);
     document.getElementById('protected').value = prefs.protected.join(', ');
   });
 }
@@ -78,6 +93,21 @@ document.getElementById('sample').addEventListener('click', e => {
     'www.bing.com': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:57.0) Gecko/20100101 Firefox/57.0',
     'www.example.com': ['random-useragent-1', 'random-user-agent-2'],
     '*': 'useragent-for-all-hostnames'
+  }, null, 2);
+});
+
+document.getElementById('sample-2').addEventListener('click', e => {
+  e.preventDefault();
+
+  document.getElementById('parser').value = JSON.stringify({
+    'my-custom-useragent': {
+      'appVersion': 'custom app version',
+      'platform': 'custom platform',
+      'vendor': '[delete]',
+      'product': 'custom product',
+      'oscpu': 'custom oscpu',
+      'custom-variable': 'this is a custom variable'
+    }
   }, null, 2);
 });
 

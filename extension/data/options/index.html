@@ -12,6 +12,7 @@
     .h {
       text-decoration: underline;
       text-decoration-style: dashed;
+      font-weight: bold;
     }
     .spacer {
       padding-bottom: 10px;
@@ -44,6 +45,14 @@
     </tr>
     <tr>
       <td class="spacer"><textarea id="custom" rows="5" wrap="off"></textarea></td>
+    </tr>
+    <tr>
+      <td>
+        <label><span class="h">Custom user-agent string parsing</span>: A JSON object to bypass the internal user-agent string parsing method. The keys are the actual user-agent strings and the value of each key is an object of the keys that need to be set for the "navigator" object. You can use the "[delete]" keyword if you want a key in the "navigator" object to get deleted.</label> Press <a href="#" id="sample-2">here</a> to insert a sample JSON object.
+      </td>
+    </tr>
+    <tr>
+      <td class="spacer"><textarea id="parser" rows="5" wrap="off"></textarea></td>
     </tr>
     <tr>
       <td class="spacer"><label><input type="checkbox" id="cache"> Use caching to improve performance (recommended value is true). Uncheck this option only if you are using the custom mode and also you need the user-agent string to be altered from the provided list on every single request.</label></td>

@@ -16,7 +16,8 @@ const prefs = {
   color: '#777',
   cache: true,
   exactMatch: false,
-  protected: ['google.com/recaptcha', 'gstatic.com/recaptcha']
+  protected: ['google.com/recaptcha', 'gstatic.com/recaptcha'],
+  parser: {} // maps ua string to a ua object
 };
 chrome.storage.local.get(prefs, ps => {
   Object.assign(prefs, ps);
@@ -71,16 +72,53 @@ const ua = {
     return Object.keys(this._obj).filter(id => id !== 'global').map(s => Number(s));
   },
   parse: s => {
+    if (prefs.parser[s]) {
+      return Object.assign({
+        userAgent: s
+      }, prefs.parser[s]);
+    }
+    // build ua string from browser defaults;
+    s = s.replace(/\${([^}]+)}/g, (a, b) => navigator[b]);
     const o = {};
     o.userAgent = s;
     o.appVersion = s
       .replace(/^Mozilla\//, '')
       .replace(/^Opera\//, '');
+
+    const isFF = /Firefox/.test(s);
+    const isCH = /Chrome/.test(s);
+    const isSF = /Safari/.test(s) && isCH === false;
+
+    if (isFF) {
+      o.appVersion = '5.0 ' + o.appVersion.replace('5.0 ', '').split(/[\s;]/)[0] + ')';
+    }
     const p = (new UAParser(s)).getResult();
     o.platform = p.os.name || '';
     o.vendor = p.device.vendor || '';
+    if (isSF) {
+      o.vendor = 'Apple Computer, Inc.';
+    }
+    else if (isFF === false) {
+      o.vendor = 'Google Inc.';
+    }
     o.product = p.engine.name || '';
-    o.oscpu = ((p.os.name || '') + ' ' + (p.os.version || '')).trim();
+    if (s.indexOf('Gecko') !== -1) {
+      o.product = 'Gecko';
+    }
+    if (isFF) {
+      o.oscpu = ((p.os.name || '') + ' ' + (p.os.version || '')).trim();
+    }
+    else {
+      o.oscpu = '[delete]';
+    }
+
+    if (o.userAgent === 'empty') {
+      Object.keys(o).forEach(key => {
+        if (key !== 'userAgent') {
+          o[key] = '';
+        }
+      });
+    }
 
     return o;
   },
@@ -116,7 +154,7 @@ const ua = {
       }
     });
   },
-  toolbar: ({windowId, tabId, str = ua.object(tabId, windowId).userAgent}) => {
+  toolbar: ({windowId, tabId}) => {
     if (windowId) {
       chrome.tabs.query({
         windowId
@@ -288,29 +326,24 @@ const onCommitted = ({frameId, url, tabId}) => {
     }
     const o = cache[tabId] || ua.object(tabId);
     if (o.userAgent) {
-      let {userAgent, appVersion, platform, vendor, product, oscpu} = o;
-      if (o.userAgent === 'empty') {
-        userAgent = appVersion = platform = vendor = product = '';
-      }
       chrome.tabs.executeScript(tabId, {
         runAt: 'document_start',
         frameId,
         code: `{
           const script = document.createElement('script');
           script.textContent = \`{
-            const userAgent = "${encodeURIComponent(userAgent)}";
-            const appVersion = "${encodeURIComponent(appVersion)}";
-            const platform = "${encodeURIComponent(platform)}";
-            const vendor = "${encodeURIComponent(vendor)}";
-            const product = "${encodeURIComponent(product)}";
-            const oscpu = "${encodeURIComponent(oscpu)}";
-            navigator.__defineGetter__('userAgent', () => decodeURIComponent(userAgent));
-            navigator.__defineGetter__('appVersion', () => decodeURIComponent(appVersion));
-            navigator.__defineGetter__('platform', () => decodeURIComponent(platform));
-            navigator.__defineGetter__('vendor', () => decodeURIComponent(vendor));
-            navigator.__defineGetter__('product', () => decodeURIComponent(product));
-            navigator.__defineGetter__('oscpu', () => decodeURIComponent(oscpu));
-            navigator.__defineGetter__('productSub', () => '');
+            const o = JSON.parse('${JSON.stringify(o)}');
+            for (const key of Object.keys(o)) {
+              navigator.__defineGetter__(key, () => {
+                if (o[key] === '[delete]') {
+                 return undefined;
+                }
+                else if (o[key] === 'empty') {
+                  return '';
+                }
+                return o[key];
+              });
+            }
           }\`;
           document.documentElement.appendChild(script);
           script.remove();
@@ -323,7 +356,7 @@ const onCommitted = ({frameId, url, tabId}) => {
           }
         }
         else if (frameId === 0) {
-          ua.tooltip('[Custom] ' + userAgent);
+          ua.tooltip('[Custom] ' + o.userAgent);
           ua.icon('active', tabId);
         }
       });
