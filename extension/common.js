@@ -2,6 +2,7 @@
 
 'use strict';
 
+
 const cache = {};
 const tabs = {};
 chrome.tabs.onRemoved.addListener(id => delete cache[id]);
@@ -17,10 +18,15 @@ const prefs = {
   cache: true,
   exactMatch: false,
   protected: ['google.com/recaptcha', 'gstatic.com/recaptcha'],
-  parser: {} // maps ua string to a ua object
+  parser: {}, // maps ua string to a ua object,
+  log: false
 };
+
+const log = (...args) => prefs.log && console.log(...args);
+
 // exand comma-separated keys of prefs.custom
 const expand = () => {
+  log('expanding custom rules');
   expand.rules = {};
   for (const key of Object.keys(prefs.custom)) {
     for (const k of key.split(/\s*,\s*/)) {
@@ -82,14 +88,18 @@ const ua = {
     'global': {}
   },
   diff(tabId) { // returns true if there is per window object
+    log('ua.diff is called', tabId);
     const windowId = tabs[tabId];
     return windowId in this._obj;
   },
   get windows() {
+    log('ua.windows is called');
     return Object.keys(this._obj).filter(id => id !== 'global').map(s => Number(s));
   },
   parse: s => {
+    log('ua.parse is called', s);
     if (prefs.parser[s]) {
+      log('ua.parse is resolved using parser');
       return Object.assign({
         userAgent: s
       }, prefs.parser[s]);
@@ -140,10 +150,12 @@ const ua = {
     return o;
   },
   object(tabId, windowId) {
+    log('ua.object is called', tabId, windowId);
     windowId = windowId || (tabId ? tabs[tabId] : 'global');
     return this._obj[windowId] || this._obj.global;
   },
   string(str, windowId) {
+    log('ua.string is called', str, windowId);
     if (str) {
       this._obj[windowId] = this.parse(str);
     }
@@ -152,12 +164,14 @@ const ua = {
     }
   },
   tooltip(title, tabId) {
+    log('ua.tooltip is called', title, tabId);
     chrome.browserAction.setTitle({
       title,
       tabId
     });
   },
   icon(mode, tabId) {
+    log('ua.icon is called', mode, tabId);
     chrome.browserAction.setIcon({
       tabId,
       path: {
@@ -172,6 +186,7 @@ const ua = {
     });
   },
   toolbar: ({windowId, tabId}) => {
+    log('ua.toolbar is called', windowId, tabId);
     if (windowId) {
       chrome.tabs.query({
         windowId
@@ -191,9 +206,13 @@ const ua = {
     }
   },
   update(str = prefs.ua, windowId = 'global') {
+    log('ua.update is called', str, windowId);
+    // clear caching
+    Object.keys(cache).forEach(key => delete cache[key]);
+    // remove old listeners
     chrome.webRequest.onBeforeSendHeaders.removeListener(onBeforeSendHeaders);
     chrome.webNavigation.onCommitted.removeListener(onCommitted);
-
+    // apply new ones
     if (str || prefs.mode === 'custom' || this.windows.length) {
       ua.string(str, windowId);
       chrome.webRequest.onBeforeSendHeaders.addListener(onBeforeSendHeaders, {
@@ -224,6 +243,7 @@ if (chrome.windows) { // FF on Android
 }
 
 function hostname(url) {
+  log('hostname', url);
   const s = url.indexOf('//') + 2;
   if (s > 1) {
     let o = url.indexOf('/', s);
@@ -246,6 +266,7 @@ function hostname(url) {
 }
 // returns true, false or an object; true: ignore, false: use from ua object.
 function match({url, tabId}) {
+  log('match', url, tabId);
   const h = hostname(url);
 
   if (prefs.mode === 'blacklist') {
@@ -364,10 +385,16 @@ const onCommitted = ({frameId, url, tabId}) => {
           }\`;
           document.documentElement.appendChild(script);
           script.remove();
+          navigator.userAgent
         }`
-      }, () => {
-        if (chrome.runtime.lastError) {
+      }, r => {
+        const lastError = chrome.runtime.lastError;
+        if (lastError &&
+          lastError.message !== 'No matching message handler' && // Firefox on Windows
+          lastError.message !== 'document.documentElement is null' // Firefox on Windows
+        ) {
           if (frameId === 0) {
+            console.log(lastError);
             ua.tooltip('[Default] ' + navigator.userAgent, tabId);
             ua.icon('ignored', tabId);
           }

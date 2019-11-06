@@ -85,7 +85,6 @@ function update(ua) {
 }
 
 document.addEventListener('change', ({target}) => {
-  console.log(target);
   if (target.closest('#filter')) {
     localStorage.setItem(target.id, target.value);
     chrome.storage.local.get({

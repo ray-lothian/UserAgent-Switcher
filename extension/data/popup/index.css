@@ -26,7 +26,7 @@ body {
   background-color: #fff;
   font-family: "Helvetica Neue", Helvetica, sans-serif;
   font-size: 13px;
-  width: 650px;
+  min-width: 650px;
   margin: 0;
 }
 table {
@@ -89,10 +89,10 @@ select {
 #list {
   overflow: auto;
   scroll-behavior: smooth;
-  height: 200px;
+  height: 268px;
   margin-bottom: 16px;
   color: #000;
-  background-position: top 88px center;
+  background-position: top 120px center;
   background-repeat: no-repeat;
   font-size: 11px;
 }
@@ -210,6 +210,7 @@ body[data-android="true"] [data-cmd="window"] {
 }
 #view {
   background-color: #f5f5f5;
+  padding: 5px 0;
 }
 #view td {
   text-align: right;

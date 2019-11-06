@@ -24,7 +24,7 @@
   <table width=100%>
     <tr>
       <td>
-        <label><input type="radio" name="mode" value="blacklist" id="mode-blacklist"> <span class="h">Black-list mode</span>: Apply the custom user-agent string to all tabs except the tabs with the following top-level hostnames (comma-separated list of hostnames). Note that even if a window-based user-agent string is set from the toolbar popup, your browser's default user-agent string is used.</label>
+        <label><input type="radio" name="mode" value="blacklist" id="mode-blacklist"> <span class="h">Black-List Mode</span>: Apply the custom user-agent string to all tabs except the tabs with the following top-level hostnames (comma-separated list of hostnames). Note that even if a window-based user-agent string is set from the toolbar popup, your browser's default user-agent string is used.</label>
       </td>
     </tr>
     <tr>
@@ -32,7 +32,7 @@
     </tr>
     <tr>
       <td>
-        <label><input type="radio" name="mode" value="whitelist" id="mode-whitelist"> <span class="h">White-list mode</span>: Only apply the custom user-agent string to the tabs with following top-level hostnames. Note that if a window-based user-agent string is set from the toolbar popup, this user-agent will overwrite the global one.</label>
+        <label><input type="radio" name="mode" value="whitelist" id="mode-whitelist"> <span class="h">White-List Mode</span>: Only apply the custom user-agent string to the tabs with following top-level hostnames. Note that if a window-based user-agent string is set from the toolbar popup, this user-agent will overwrite the global one.</label>
       </td>
     </tr>
     <tr>
@@ -40,19 +40,11 @@
     </tr>
     <tr>
       <td>
-        <label><input type="radio" name="mode" value="custom" id="mode-custom"> <span class="h">Custom mode</span>: Try to resolve the user-agent string from a JSON object; otherwise either use the default user-agent string or use the one that the user is set from the popup interface. Use "*" as the hostname to match all domains. You can randomly select from multiple user-agent strings by providing an array instead of a fixed string. If there is a "_" key in your JSON object which refers to an array of hostnames, then the extension only randomly selects the user-agent string once for each hostname inside this list. This is useful if you don't want the random user-agent to change until this browser session is over.</label> Press <a href="#" id="sample">here</a> to insert a sample JSON object.
+        <label><input type="radio" name="mode" value="custom" id="mode-custom"> <span class="h">Custom Mode</span>: Try to resolve the user-agent string from a JSON object; otherwise either use the default user-agent string or use the one that the user is set from the popup interface. Use "*" as the hostname to match all domains. You can randomly select from multiple user-agent strings by providing an array instead of a fixed string. If there is a "_" key in your JSON object which refers to an array of hostnames, then the extension only randomly selects the user-agent string once for each hostname inside this list. This is useful if you don't want the random user-agent to change until this browser session is over.</label> Press <a href="#" id="sample">here</a> to insert a sample JSON object.
       </td>
     </tr>
     <tr>
       <td class="spacer"><textarea id="custom" rows="5" wrap="off"></textarea></td>
-    </tr>
-    <tr>
-      <td>
-        <label><span class="h">Custom user-agent string parsing</span>: A JSON object to bypass the internal user-agent string parsing method. The keys are the actual user-agent strings and the value of each key is an object of the keys that need to be set for the "navigator" object. You can use the "[delete]" keyword if you want a key in the "navigator" object to get deleted.</label> Press <a href="#" id="sample-2">here</a> to insert a sample JSON object.
-      </td>
-    </tr>
-    <tr>
-      <td class="spacer"><textarea id="parser" rows="5" wrap="off"></textarea></td>
     </tr>
     <tr>
       <td class="spacer"><label><input type="checkbox" id="cache"> Use caching to improve performance (recommended value is true). Uncheck this option only if you are using the custom mode and also you need the user-agent string to be altered from the provided list on every single request.</label></td>
@@ -64,10 +56,21 @@
       <td class="spacer"><label><input type="checkbox" id="faqs"> Open FAQs page on updates</label></td>
     </tr>
     <tr>
-      <td>A comma-separated list of keywords that the extension should not spoof the user-agent header. Use this list to protect URLs that contain these protected keywords. Each keyword need to be at least 5 char long.</td>
+      <td class="spacer"><label><input type="checkbox" id="log"> Display debuging info in the browser console</label></td>
+    </tr>
+    <tr>
+      <td><span class="h">Disable Spoofing</span> A comma-separated list of keywords that the extension should not spoof the user-agent header. Use this list to protect URLs that contain these protected keywords. Each keyword need to be at least 5 char long.</td>
     </tr>
     <tr>
       <td><textarea id="protected" rows="3" wrap="off"></textarea></td>
+    </tr>
+    <tr>
+      <td>
+        <span class="h">Custom User-Agent Parsing</span>: A JSON object to bypass the internal user-agent string parsing method. The keys are the actual user-agent strings and the value of each key is an object of the keys that need to be set for the "navigator" object. You can use the "[delete]" keyword if you want a key in the "navigator" object to get deleted. Press <a href="#" id="sample-2">here</a> to insert a sample JSON object.
+      </td>
+    </tr>
+    <tr>
+      <td class="spacer"><textarea id="parser" rows="5" wrap="off"></textarea></td>
     </tr>
   </table>
 
