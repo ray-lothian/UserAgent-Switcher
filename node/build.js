@@ -1,19 +1,19 @@
 'use strict';
 
-var fs = require('fs');
-var path = require('path');
-var UAParser = require('./ua-parser.min.js');
+const fs = require('fs');
+const path = require('path');
+const UAParser = require('./ua-parser.min.js');
 
-var cache = {};
-var map = {
+const cache = {};
+const map = {
   browser: {},
   os: {},
   matching: {}
 };
 
-var parser = new UAParser();
+const parser = new UAParser();
 
-var write = ({name, content}, callback) => fs.writeFile('./browsers/' + name, content, 'utf8', e => {
+const write = ({name, content}, callback) => fs.writeFile('./browsers/' + name, content, 'utf8', e => {
   if (e) {
     console.log(e);
   }
@@ -34,7 +34,10 @@ fs.readdir('./browsers/', async (err, files) => {
     ...require('./list-2.json'),
     ...require('./list-3.json'),
     ...require('./list-4.json'),
-    ...require('./list-5.json')
+    ...require('./list-5.json'),
+    ...require('./list-6.json'),
+    ...require('./list-7.json'),
+    ...require('./list-8.json')
   ].filter((s, i, l) => l.indexOf(s) === i && ['bot', 'fb_iab', 'fbsv', 'w3m', 'elinks'].some(k => s.toLowerCase().indexOf(k) !== -1) === false);
   for (const ua of list) {
     parser.setUA(ua);
@@ -101,7 +104,8 @@ fs.readdir('./browsers/', async (err, files) => {
           'iceweasel',
           'midori',
           'Palemoon',
-          'Seamonkey'
+          'Seamonkey',
+          'chrome'
         ].some(k => k === s) === false);
         if (map.browser[browser].length > 1) {
           console.log(map.browser[browser]);

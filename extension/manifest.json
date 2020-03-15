@@ -4,7 +4,7 @@
   "short_name": "useragent-switcher",
   "version": "0.3.4",
 
-  "description": "A highly customizable extension to spoof the User-Agent string of your browser with a new one globally, randomly or per hostname",
+  "description": "Spoof websites trying to gather information about your web navigation to deliver distinct content you may not want",
 
   "permissions": [
     "tabs",

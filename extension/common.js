@@ -385,16 +385,14 @@ const onCommitted = ({frameId, url, tabId}) => {
           }\`;
           document.documentElement.appendChild(script);
           script.remove();
-          navigator.userAgent
         }`
-      }, r => {
+      }, () => {
         const lastError = chrome.runtime.lastError;
         if (lastError &&
           lastError.message !== 'No matching message handler' && // Firefox on Windows
           lastError.message !== 'document.documentElement is null' // Firefox on Windows
         ) {
           if (frameId === 0) {
-            console.log(lastError);
             ua.tooltip('[Default] ' + navigator.userAgent, tabId);
             ua.icon('ignored', tabId);
           }
@@ -416,29 +414,31 @@ chrome.contextMenus.onClicked.addListener(info => chrome.storage.local.set({
   mode: info.menuItemId
 }));
 
-// FAQs & Feedback
+/* FAQs & Feedback */
 {
   const {onInstalled, setUninstallURL, getManifest} = chrome.runtime;
   const {name, version} = getManifest();
   const page = getManifest().homepage_url;
-  onInstalled.addListener(({reason, previousVersion}) => {
-    chrome.storage.local.get({
-      'faqs': true,
-      'last-update': 0
-    }, prefs => {
-      if (reason === 'install' || (prefs.faqs && reason === 'update')) {
-        const doUpdate = (Date.now() - prefs['last-update']) / 1000 / 60 / 60 / 24 > 45;
-        if (doUpdate && previousVersion !== version) {
-          chrome.tabs.create({
-            url: page + '?version=' + version +
-              (previousVersion ? '&p=' + previousVersion : '') +
-              '&type=' + reason,
-            active: reason === 'install'
-          });
-          chrome.storage.local.set({'last-update': Date.now()});
+  if (navigator.webdriver !== true) {
+    onInstalled.addListener(({reason, previousVersion}) => {
+      chrome.storage.local.get({
+        'faqs': true,
+        'last-update': 0
+      }, prefs => {
+        if (reason === 'install' || (prefs.faqs && reason === 'update')) {
+          const doUpdate = (Date.now() - prefs['last-update']) / 1000 / 60 / 60 / 24 > 45;
+          if (doUpdate && previousVersion !== version) {
+            chrome.tabs.create({
+              url: page + '?version=' + version +
+                (previousVersion ? '&p=' + previousVersion : '') +
+                '&type=' + reason,
+              active: reason === 'install'
+            });
+            chrome.storage.local.set({'last-update': Date.now()});
+          }
         }
-      }
+      });
     });
-  });
-  setUninstallURL(page + '?rd=feedback&name=' + encodeURIComponent(name) + '&version=' + version);
+    setUninstallURL(page + '?rd=feedback&name=' + encodeURIComponent(name) + '&version=' + version);
+  }
 }
