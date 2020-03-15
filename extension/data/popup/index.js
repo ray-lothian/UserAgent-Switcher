@@ -27,7 +27,7 @@ function sort(arr) {
     return 0;
   }
   const list = arr.sort((a, b) => sort(a.browser.version, b.browser.version));
-  if (document.getElementById('sort').value === 'true') {
+  if (document.getElementById('sort').value === 'descending') {
     return list.reverse();
   }
   return list;
@@ -73,7 +73,7 @@ function update(ua) {
       }
       document.getElementById('custom').placeholder = `Filter among ${list.length}`;
       [...document.getElementById('os').querySelectorAll('option')].forEach(option => {
-        option.disabled = map.matching[browser.toLowerCase()].indexOf(option.value.toLowerCase()) === -1;
+        option.disabled = (map.matching[browser.toLowerCase()] || []).indexOf(option.value.toLowerCase()) === -1;
       });
     }
     else {
@@ -84,9 +84,18 @@ function update(ua) {
   });
 }
 
+document.getElementById('browser').addEventListener('change', e => chrome.storage.local.set({
+  'popup-browser': e.target.value
+}));
+document.getElementById('os').addEventListener('change', e => chrome.storage.local.set({
+  'popup-os': e.target.value
+}));
+document.getElementById('sort').addEventListener('change', e => chrome.storage.local.set({
+  'popup-sort': e.target.value
+}));
+
 document.addEventListener('change', ({target}) => {
   if (target.closest('#filter')) {
-    localStorage.setItem(target.id, target.value);
     chrome.storage.local.get({
       ua: ''
     }, prefs => update(prefs.ua || navigator.userAgent));
@@ -114,14 +123,20 @@ document.addEventListener('DOMContentLoaded', () => fetch('./map.json').then(r =
     }
 
     document.querySelector('#browser optgroup:last-of-type').appendChild(f1);
-    document.getElementById('browser').value = localStorage.getItem('browser') || 'Chrome';
-
     document.querySelector('#os optgroup:last-of-type').appendChild(f2);
-    document.getElementById('os').value = localStorage.getItem('os') || 'Windows';
 
     chrome.storage.local.get({
-      ua: ''
+      'ua': '',
+      'popup-browser': 'Chrome',
+      'popup-os': 'Windows',
+      'popup-sort': 'descending'
     }, prefs => {
+      document.getElementById('browser').value = prefs['popup-browser'];
+      document.getElementById('os').value = prefs['popup-os'];
+      document.getElementById('sort').value = prefs['popup-sort'];
+
+      console.log(prefs);
+
       const ua = prefs.ua || navigator.userAgent;
       update(ua);
       document.getElementById('ua').value = ua;

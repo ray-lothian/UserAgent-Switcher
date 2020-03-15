@@ -24,10 +24,15 @@
 
 body {
   background-color: #fff;
-  font-family: "Helvetica Neue", Helvetica, sans-serif;
+  font-family: "Helvetica Neue", Helvetica, arial, sans-serif;
   font-size: 13px;
-  min-width: 650px;
+  width: 600px;
   margin: 0;
+}
+@media (pointer: none), (pointer: coarse) {
+  body {
+    width: unset;
+  }
 }
 table {
   width: 100%;
@@ -88,7 +93,6 @@ select {
 }
 #list {
   overflow: auto;
-  scroll-behavior: smooth;
   height: 268px;
   margin-bottom: 16px;
   color: #000;
@@ -128,11 +132,17 @@ select {
   background-color: #f5f5f5;
 }
 #list[data-loading=false] tbody:empty::before {
-  content: 'no user-agent string for this query!';
-  display: block;
+  content: 'No matching user-agent string for this query';
   position: absolute;
-  top: 50px;
-  left: 10px;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 268px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: initial;
+  pointer-events: none;
 }
 #list td:nth-child(1) {
   text-align: center;
@@ -166,9 +176,9 @@ select {
 
 #agent {
   white-space: nowrap;
-}
-#agent input:not(:last-child) {
-  margin-right: 1px;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  grid-gap: 1px;
 }
 
 #info {

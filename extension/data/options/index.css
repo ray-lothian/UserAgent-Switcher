@@ -93,9 +93,6 @@ textarea {
   align-items: center;
 }
 @media screen and (max-width: 600px) {
-  body {
-    min-width: unset;
-  }
   #backup {
     grid-template-columns: 1fr 1fr;
   }
