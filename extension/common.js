@@ -78,7 +78,7 @@ chrome.storage.onChanged.addListener(ps => {
   if (ps.ua || ps.mode) {
     ua.update();
   }
-  else if (ps.custom) {
+  if (ps.custom) {
     expand();
   }
 });

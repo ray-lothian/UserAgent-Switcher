@@ -188,3 +188,20 @@ document.getElementById('import').addEventListener('click', () => {
     }
   }
 });
+
+/* toggle */
+document.getElementById('toggle-blacklist-desc').addEventListener('click', () => {
+  document.querySelector('[for="toggle-blacklist-desc"]').classList.toggle('hidden');
+});
+document.getElementById('toggle-whitelist-desc').addEventListener('click', () => {
+  document.querySelector('[for="toggle-whitelist-desc"]').classList.toggle('hidden');
+});
+document.getElementById('toggle-custom-desc').addEventListener('click', () => {
+  document.querySelector('[for="toggle-custom-desc"]').classList.toggle('hidden');
+});
+document.getElementById('toggle-protected-desc').addEventListener('click', () => {
+  document.querySelector('[for="toggle-protected-desc"]').classList.toggle('hidden');
+});
+document.getElementById('toggle-parser-desc').addEventListener('click', () => {
+  document.querySelector('[for="toggle-parser-desc"]').classList.toggle('hidden');
+});
