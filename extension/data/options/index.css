@@ -100,3 +100,11 @@ textarea {
     grid-template-columns: 1fr 1fr;
   }
 }
+
+@media (prefers-color-scheme: dark) {
+  body,
+  textarea {
+    background-color: #313131;
+    color: #bfbfbf;
+}
+}

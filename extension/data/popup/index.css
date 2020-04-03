@@ -243,3 +243,15 @@ body[data-android="true"] [data-cmd="window"] {
 #toast:empty {
   display: none;
 }
+
+@media (prefers-color-scheme: dark) {
+  body,
+  th,
+  select,
+  input,
+  #view,
+  table {
+    background-color: #313131;
+    color: #bfbfbf;
+}
+}
