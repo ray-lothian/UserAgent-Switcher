@@ -21,6 +21,18 @@ const write = ({name, content}, callback) => fs.writeFile('./browsers/' + name, 
   console.log(name);
 });
 
+// reduce total number to < 400 entries
+const reduce = (arr, length = 400) => {
+  let pos = 1;
+  while (arr.length > length) {
+    arr.splice(pos, 1);
+    pos += 1;
+    pos = pos % (arr.length - Math.round(length / 10));
+  }
+
+  return arr;
+};
+
 fs.readdir('./browsers/', async (err, files) => {
   if (err) throw err;
   for (const file of files) {
@@ -64,7 +76,8 @@ fs.readdir('./browsers/', async (err, files) => {
   for (const browser of Object.keys(cache)) {
     for (const os of Object.keys(cache[browser])) {
       const name = browser + '-' + os.replace(/\//g, '-') + '.json';
-      const content = JSON.stringify(cache[browser][os]);
+      const uas = cache[browser][os];
+      const content = JSON.stringify(reduce(uas));
       contents.push({
         name,
         content
