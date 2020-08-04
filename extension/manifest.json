@@ -28,6 +28,9 @@
     "128": "data/icons/active/128.png",
     "256": "data/icons/active/256.png"
   },
+  "storage": {
+    "managed_schema": "schema.json"
+  },
   "background":{
     "scripts":[
       "ua-parser.min.js",

@@ -1,0 +1,9 @@
+{
+  "type": "object",
+  "properties": {
+    "ua": {
+      "title": "Custom User-Agent String",
+      "type": "string"
+    }
+  }
+}

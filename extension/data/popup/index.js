@@ -156,7 +156,6 @@ document.addEventListener('DOMContentLoaded', () => fetch('./map.json').then(r =
   document.querySelector('#os optgroup:last-of-type').appendChild(f2);
 
   chrome.storage.local.get({
-    'ua': '',
     'popup-browser': 'Chrome',
     'popup-os': 'Windows',
     'popup-sort': 'descending'
@@ -165,10 +164,12 @@ document.addEventListener('DOMContentLoaded', () => fetch('./map.json').then(r =
     document.getElementById('os').value = prefs['popup-os'];
     document.getElementById('sort').value = prefs['popup-sort'];
 
-    const ua = prefs.ua || navigator.userAgent;
-    update(ua);
-    document.getElementById('ua').value = ua;
-    document.getElementById('ua').dispatchEvent(new Event('input'));
+    chrome.runtime.getBackgroundPage(bg => {
+      const ua = bg.prefs.ua || navigator.userAgent;
+      update(ua);
+      document.getElementById('ua').value = ua;
+      document.getElementById('ua').dispatchEvent(new Event('input'));
+    });
   });
 }));
 

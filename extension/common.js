@@ -21,6 +21,7 @@ const prefs = {
   parser: {}, // maps ua string to a ua object,
   log: false
 };
+window.prefs = prefs; // access from popup
 
 const log = (...args) => prefs.log && console.log(...args);
 
@@ -40,11 +41,20 @@ expand.rules = {};
 
 chrome.storage.local.get(prefs, ps => {
   Object.assign(prefs, ps);
-  expand();
-  chrome.tabs.query({}, ts => {
-    ts.forEach(t => tabs[t.id] = t.windowId);
-    ua.update();
+  // update prefs.ua from the managed storage
+  chrome.storage.managed.get({
+    ua: ''
+  }, rps => {
+    if (!chrome.runtime.lastError && rps.ua) {
+      prefs.ua = rps.ua;
+    }
+    expand();
+    chrome.tabs.query({}, ts => {
+      ts.forEach(t => tabs[t.id] = t.windowId);
+      ua.update();
+    });
   });
+
   if (chrome.browserAction.setBadgeBackgroundColor) { // FF for Android
     chrome.browserAction.setBadgeBackgroundColor({
       color: prefs.color
