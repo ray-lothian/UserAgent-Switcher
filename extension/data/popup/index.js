@@ -34,12 +34,31 @@ function sort(arr) {
 }
 
 function get(path) {
-  return caches.open('agents').then(cache => {
+  return (typeof caches !== 'undefined' ? caches : {
+    open() {
+      return Promise.resolve({
+        match() {
+          return Promise.resolve();
+        },
+        add() {
+          return Promise.resolve();
+        }
+      });
+    }
+  }).open('agents').then(cache => {
     const link = 'https://cdn.jsdelivr.net/gh/ray-lothian/UserAgent-Switcher/node/' + path;
-    cache.add(link);
-    return cache.match(link).then(resp => {
-      return resp || fetch(path);
+    // updating agents once per 7 days
+    chrome.storage.local.get({
+      ['cache.' + path]: 0
+    }, prefs => {
+      const now = Date.now();
+      if (now - prefs['cache.' + path] > 7 * 24 * 60 * 60 * 1000) {
+        cache.add(link).then(() => chrome.storage.local.set({
+          ['cache.' + path]: now
+        }));
+      }
     });
+    return cache.match(link).then(resp => resp || fetch(path));
   });
 }
 
@@ -116,44 +135,42 @@ document.addEventListener('change', ({target}) => {
     document.getElementById('ua').dispatchEvent(new Event('input'));
   }
 });
-document.addEventListener('DOMContentLoaded', () => fetch('./map.json').then(r => r.json())
-  .then(o => {
-    Object.assign(map, o);
 
-    const f1 = document.createDocumentFragment();
-    for (const browser of map.browser) {
-      const option = document.createElement('option');
-      option.value = option.textContent = browser;
-      f1.appendChild(option);
-    }
-    const f2 = document.createDocumentFragment();
-    for (const os of map.os) {
-      const option = document.createElement('option');
-      option.value = option.textContent = os;
-      f2.appendChild(option);
-    }
+document.addEventListener('DOMContentLoaded', () => fetch('./map.json').then(r => r.json()).then(o => {
+  Object.assign(map, o);
 
-    document.querySelector('#browser optgroup:last-of-type').appendChild(f1);
-    document.querySelector('#os optgroup:last-of-type').appendChild(f2);
+  const f1 = document.createDocumentFragment();
+  for (const browser of map.browser) {
+    const option = document.createElement('option');
+    option.value = option.textContent = browser;
+    f1.appendChild(option);
+  }
+  const f2 = document.createDocumentFragment();
+  for (const os of map.os) {
+    const option = document.createElement('option');
+    option.value = option.textContent = os;
+    f2.appendChild(option);
+  }
 
-    chrome.storage.local.get({
-      'ua': '',
-      'popup-browser': 'Chrome',
-      'popup-os': 'Windows',
-      'popup-sort': 'descending'
-    }, prefs => {
-      document.getElementById('browser').value = prefs['popup-browser'];
-      document.getElementById('os').value = prefs['popup-os'];
-      document.getElementById('sort').value = prefs['popup-sort'];
+  document.querySelector('#browser optgroup:last-of-type').appendChild(f1);
+  document.querySelector('#os optgroup:last-of-type').appendChild(f2);
 
-      console.log(prefs);
+  chrome.storage.local.get({
+    'ua': '',
+    'popup-browser': 'Chrome',
+    'popup-os': 'Windows',
+    'popup-sort': 'descending'
+  }, prefs => {
+    document.getElementById('browser').value = prefs['popup-browser'];
+    document.getElementById('os').value = prefs['popup-os'];
+    document.getElementById('sort').value = prefs['popup-sort'];
 
-      const ua = prefs.ua || navigator.userAgent;
-      update(ua);
-      document.getElementById('ua').value = ua;
-      document.getElementById('ua').dispatchEvent(new Event('input'));
-    });
-  }));
+    const ua = prefs.ua || navigator.userAgent;
+    update(ua);
+    document.getElementById('ua').value = ua;
+    document.getElementById('ua').dispatchEvent(new Event('input'));
+  });
+}));
 
 document.getElementById('list').addEventListener('click', ({target}) => {
   const tr = target.closest('tbody tr');
@@ -236,7 +253,7 @@ document.addEventListener('click', ({target}) => {
     }
     else if (cmd === 'test') {
       chrome.storage.local.get({
-        'test': 'https://webbrowsertools.com/useragent/?method=normal&verbose=false&r=' + Math.random()
+        'test': 'https://webbrowsertools.com/useragent/?method=normal&verbose=false'
       }, prefs => chrome.tabs.create({
         url: prefs.test
       }));

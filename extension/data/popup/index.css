@@ -23,6 +23,7 @@
 }
 
 body {
+  color: #000;
   background-color: #fff;
   font-family: "Helvetica Neue", Helvetica, arial, sans-serif;
   font-size: 13px;
@@ -38,9 +39,6 @@ table {
   width: 100%;
   border-collapse: collapse;
 }
-fieldset {
-  border: solid 1px #ccc;
-}
 input[type=search],
 input[type=text] {
   box-sizing: border-box;
@@ -52,15 +50,16 @@ input[type=text] {
   width: 100%;
 }
 input[type=text]:read-only {
+  color: #636363;
   background-color: transparent;
 }
 input {
   outline: none;
   background-color: #fff;
   color: #000;
-  border: solid 1px #e7e7e7;
+  border: none;
   box-sizing: border-box;
-  height: 24px;
+  height: 28px;
   border-radius: 0;
   font-size: 11px;
 }
@@ -88,8 +87,8 @@ select {
   background-size: 8px;
   font-size: 13px;
   border-radius: 0;
-  padding: 2px 16px 2px 4px;
-  border: solid 1px #e7e7e7;
+  padding: 6px 16px 6px 4px;
+  border: none;
 }
 #list {
   overflow: auto;
@@ -210,7 +209,7 @@ select {
 }
 
 #explore:not([data-loaded="true"]) {
-  height: 16px;
+  height: 18px;
 }
 
 body[data-android="true"] [data-cmd="reload"],
@@ -232,7 +231,7 @@ body[data-android="true"] [data-cmd="window"] {
 
 #toast {
   position: fixed;
-  bottom: 50px;
+  bottom: 95px;
   right: 10px;
   background-color: #e68509;
   color: #fff;
