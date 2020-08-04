@@ -33,6 +33,16 @@ function sort(arr) {
   return list;
 }
 
+function get(path) {
+  return caches.open('agents').then(cache => {
+    const link = 'https://cdn.jsdelivr.net/gh/ray-lothian/UserAgent-Switcher/node/' + path;
+    cache.add(link);
+    return cache.match(link).then(resp => {
+      return resp || fetch(path);
+    });
+  });
+}
+
 function update(ua) {
   const browser = document.getElementById('browser').value;
   const os = document.getElementById('os').value;
@@ -43,7 +53,7 @@ function update(ua) {
   tbody.textContent = '';
 
   parent.dataset.loading = true;
-  fetch('browsers/' + browser.toLowerCase() + '-' + os.toLowerCase().replace(/\//g, '-') + '.json')
+  get('browsers/' + browser.toLowerCase() + '-' + os.toLowerCase().replace(/\//g, '-') + '.json')
     .then(r => r.json()).catch(e => {
       console.error(e);
       return [];
