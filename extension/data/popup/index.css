@@ -93,8 +93,7 @@ select {
 }
 #list {
   overflow: auto;
-  height: 268px;
-  margin-bottom: 16px;
+  height: 240px;
   color: #000;
   background-position: top 120px center;
   background-repeat: no-repeat;
@@ -177,7 +176,7 @@ select {
 #agent {
   white-space: nowrap;
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   grid-gap: 1px;
 }
 

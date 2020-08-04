@@ -43,45 +43,46 @@ function update(ua) {
   tbody.textContent = '';
 
   parent.dataset.loading = true;
-  fetch('browsers/' + browser.toLowerCase() + '-' + os.toLowerCase().replace(/\//g, '-') + '.json').then(r => r.json()).catch(e => {
-    console.error(e);
-    return [];
-  }).then(list => {
-    if (list) {
-      const fragment = document.createDocumentFragment();
-      let radio;
-      for (const o of sort(list)) {
-        const clone = document.importNode(t.content, true);
-        const second = clone.querySelector('td:nth-child(2)');
-        second.title = second.textContent = o.browser.name + ' ' + (o.browser.version || ' ');
-        const third = clone.querySelector('td:nth-child(3)');
-        third.title = third.textContent = o.os.name + ' ' + (o.os.version || ' ');
-        const forth = clone.querySelector('td:nth-child(4)');
-        forth.title = forth.textContent = o.ua;
-        if (o.ua === ua) {
-          radio = clone.querySelector('input[type=radio]');
+  fetch('browsers/' + browser.toLowerCase() + '-' + os.toLowerCase().replace(/\//g, '-') + '.json')
+    .then(r => r.json()).catch(e => {
+      console.error(e);
+      return [];
+    }).then(list => {
+      if (list) {
+        const fragment = document.createDocumentFragment();
+        let radio;
+        for (const o of sort(list)) {
+          const clone = document.importNode(t.content, true);
+          const second = clone.querySelector('td:nth-child(2)');
+          second.title = second.textContent = o.browser.name + ' ' + (o.browser.version || ' ');
+          const third = clone.querySelector('td:nth-child(3)');
+          third.title = third.textContent = o.os.name + ' ' + (o.os.version || ' ');
+          const forth = clone.querySelector('td:nth-child(4)');
+          forth.title = forth.textContent = o.ua;
+          if (o.ua === ua) {
+            radio = clone.querySelector('input[type=radio]');
+          }
+          fragment.appendChild(clone);
         }
-        fragment.appendChild(clone);
-      }
-      tbody.appendChild(fragment);
-      if (radio) {
-        radio.checked = true;
-        radio.scrollIntoView({
-          block: 'center',
-          inline: 'nearest'
+        tbody.appendChild(fragment);
+        if (radio) {
+          radio.checked = true;
+          radio.scrollIntoView({
+            block: 'center',
+            inline: 'nearest'
+          });
+        }
+        document.getElementById('custom').placeholder = `Filter among ${list.length}`;
+        [...document.getElementById('os').querySelectorAll('option')].forEach(option => {
+          option.disabled = (map.matching[browser.toLowerCase()] || []).indexOf(option.value.toLowerCase()) === -1;
         });
       }
-      document.getElementById('custom').placeholder = `Filter among ${list.length}`;
-      [...document.getElementById('os').querySelectorAll('option')].forEach(option => {
-        option.disabled = (map.matching[browser.toLowerCase()] || []).indexOf(option.value.toLowerCase()) === -1;
-      });
-    }
-    else {
-      throw Error('OS is not found');
-    }
-  }).finally(() => {
-    parent.dataset.loading = false;
-  });
+      else {
+        throw Error('OS is not found');
+      }
+    }).finally(() => {
+      parent.dataset.loading = false;
+    });
 }
 
 document.getElementById('browser').addEventListener('change', e => chrome.storage.local.set({
