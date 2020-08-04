@@ -21,7 +21,7 @@ const write = ({name, content}, callback) => fs.writeFile('./browsers/' + name, 
   console.log(name);
 });
 
-// reduce total number to < 400 entries
+// reduce total number to < 400 entries while keeping the last 10 percent of uas
 const reduce = (arr, length = 400) => {
   let pos = 1;
   while (arr.length > length) {
@@ -49,7 +49,8 @@ fs.readdir('./browsers/', async (err, files) => {
     ...require('./list-5.json'),
     ...require('./list-6.json'),
     ...require('./list-7.json'),
-    ...require('./list-8.json')
+    ...require('./list-8.json'),
+    ...require('./list-9.json')
   ].filter((s, i, l) => l.indexOf(s) === i && ['bot', 'fb_iab', 'fbsv', 'w3m', 'elinks'].some(k => s.toLowerCase().indexOf(k) !== -1) === false);
   for (const ua of list) {
     parser.setUA(ua);
