@@ -84,6 +84,7 @@ chrome.storage.local.get(prefs, ps => {
   }, () => chrome.runtime.lastError);
 });
 chrome.storage.onChanged.addListener(ps => {
+  console.log(ps);
   Object.keys(ps).forEach(key => prefs[key] = ps[key].newValue);
   if (ps.ua || ps.mode) {
     ua.update();
@@ -156,7 +157,6 @@ const ua = {
         }
       });
     }
-
     return o;
   },
   object(tabId, windowId) {
@@ -216,6 +216,7 @@ const ua = {
     }
   },
   update(str = prefs.ua, windowId = 'global') {
+    console.log(str);
     log('ua.update is called', str, windowId);
     // clear caching
     Object.keys(cache).forEach(key => delete cache[key]);
@@ -356,7 +357,7 @@ const onBeforeSendHeaders = ({tabId, url, requestHeaders, type}) => {
   }
   const str = (cache[tabId] || ua.object(tabId)).userAgent;
   if (str) {
-    for (let i = 0, name = requestHeaders[0].name; i < requestHeaders.length; i += 1, name = requestHeaders[i].name) {
+    for (let i = 0, name = requestHeaders[0].name; i < requestHeaders.length; i += 1, name = (requestHeaders[i] || {}).name) {
       if (name === 'User-Agent' || name === 'user-agent') {
         requestHeaders[i].value = str === 'empty' ? '' : str;
         return {

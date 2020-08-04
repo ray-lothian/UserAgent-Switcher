@@ -18,7 +18,6 @@ const write = ({name, content}, callback) => fs.writeFile('./browsers/' + name, 
     console.log(e);
   }
   setTimeout(callback, 0);
-  console.log(name);
 });
 
 // reduce total number to < 400 entries while keeping the last 10 percent of uas
@@ -42,6 +41,7 @@ fs.readdir('./browsers/', async (err, files) => {
   }
   //
   const list = [
+    ...require('./bots.json'),
     ...require('./list-1.json'),
     ...require('./list-2.json'),
     ...require('./list-3.json'),
@@ -51,7 +51,7 @@ fs.readdir('./browsers/', async (err, files) => {
     ...require('./list-7.json'),
     ...require('./list-8.json'),
     ...require('./list-9.json')
-  ].filter((s, i, l) => l.indexOf(s) === i && ['bot', 'fb_iab', 'fbsv', 'w3m', 'elinks'].some(k => s.toLowerCase().indexOf(k) !== -1) === false);
+  ].filter((s, i, l) => l.indexOf(s) === i && ['fb_iab', 'fbsv', 'w3m', 'elinks'].some(k => s.toLowerCase().indexOf(k) !== -1) === false);
   for (const ua of list) {
     parser.setUA(ua);
     const o = parser.getResult();
@@ -69,10 +69,19 @@ fs.readdir('./browsers/', async (err, files) => {
       map.os[ss] = map.os[ss] || [];
       map.os[ss].push(o.os.name);
     }
+    else if (ua.toLowerCase().indexOf('bot') !== -1) {
+      cache.bot = cache.bot || {
+        'misc': []
+      };
+      cache.bot.misc.push(o);
+      map.browser.bot = map.browser.bot || ['Bot'];
+      map.os.misc = map.os.misc || ['Misc'];
+    }
     else {
-      // console.log(ua);
+      // console.log('skipped', ua);
     }
   }
+
   const contents = [];
   for (const browser of Object.keys(cache)) {
     for (const os of Object.keys(cache[browser])) {
@@ -122,7 +131,6 @@ fs.readdir('./browsers/', async (err, files) => {
           'chrome'
         ].some(k => k === s) === false);
         if (map.browser[browser].length > 1) {
-          console.log(map.browser[browser]);
           throw Error('Duplicated browser; add the ones that need to be removed to the list');
         }
       }

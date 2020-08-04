@@ -83,9 +83,19 @@ function update(ua) {
         for (const o of sort(list)) {
           const clone = document.importNode(t.content, true);
           const second = clone.querySelector('td:nth-child(2)');
-          second.title = second.textContent = o.browser.name + ' ' + (o.browser.version || ' ');
+          if (o.browser.name && o.browser.version) {
+            second.title = second.textContent = o.browser.name + ' ' + (o.browser.version || ' ');
+          }
+          else {
+            second.title = second.textContent = '-';
+          }
           const third = clone.querySelector('td:nth-child(3)');
-          third.title = third.textContent = o.os.name + ' ' + (o.os.version || ' ');
+          if (o.os.name && o.os.version) {
+            third.title = third.textContent = o.os.name + ' ' + (o.os.version || ' ');
+          }
+          else {
+            third.title = third.textContent = '-';
+          }
           const forth = clone.querySelector('td:nth-child(4)');
           forth.title = forth.textContent = o.ua;
           if (o.ua === ua) {
@@ -218,7 +228,13 @@ document.addEventListener('click', ({target}) => {
         msg('User-Agent is Set');
       }
       chrome.storage.local.set({
-        ua: value === navigator.userAgent ? '' : value
+        ua: '' // since we set from managed storage, the value might already be this one and hence onChanged is not being called
+      }, () => {
+        if (value !== navigator.userAgent) {
+          chrome.storage.local.set({
+            ua: value
+          });
+        }
       });
     }
     else if (cmd === 'window') {
