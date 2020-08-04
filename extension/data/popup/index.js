@@ -237,12 +237,27 @@ document.addEventListener('click', ({target}) => {
         }
       });
     }
-    else if (cmd === 'window') {
+    else if (cmd === 'window' || cmd === 'container') {
       const value = document.getElementById('ua').value;
-      chrome.tabs.query({
+      const next = () => chrome.tabs.query({
         active: true,
         currentWindow: true
-      }, ([tab]) => chrome.runtime.getBackgroundPage(bg => bg.ua.update(value, tab.windowId)));
+      }, ([tab]) => {
+        if (cmd === 'window') {
+          chrome.runtime.getBackgroundPage(bg => bg.ua.update(value, tab.windowId, tab.cookieStoreId));
+        }
+        else {
+          chrome.runtime.getBackgroundPage(bg => bg.ua.update(value, undefined, tab.cookieStoreId));
+        }
+      });
+      if (cmd === 'container') {
+        chrome.permissions.request({
+          permissions: ['cookies']
+        }, granted => granted && next());
+      }
+      else {
+        next();
+      }
     }
     else if (cmd === 'reset') {
       const input = document.querySelector('#list :checked');

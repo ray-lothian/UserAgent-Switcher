@@ -13,7 +13,11 @@
     "webNavigation",
     "webRequest",
     "webRequestBlocking",
+    "contextualIdentities",
     "contextMenus"
+  ],
+  "optional_permissions": [
+    "cookies"
   ],
 
   "icons": {

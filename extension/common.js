@@ -5,8 +5,16 @@
 
 const cache = {};
 const tabs = {};
-chrome.tabs.onRemoved.addListener(id => delete cache[id]);
-chrome.tabs.onCreated.addListener(tab => tabs[tab.id] = tab.windowId);
+const cookieStoreIds = {};
+chrome.tabs.onRemoved.addListener(id => {
+  delete cache[id];
+  delete tabs[id];
+  delete cookieStoreIds[id];
+});
+chrome.tabs.onCreated.addListener(tab => {
+  tabs[tab.id] = tab.windowId;
+  cookieStoreIds[tab.id] = tab.cookieStoreId;
+});
 
 const prefs = {
   ua: '',
@@ -50,7 +58,10 @@ chrome.storage.local.get(prefs, ps => {
     }
     expand();
     chrome.tabs.query({}, ts => {
-      ts.forEach(t => tabs[t.id] = t.windowId);
+      ts.forEach(t => {
+        tabs[t.id] = t.windowId;
+        cookieStoreIds[t.id] = t.cookieStoreId;
+      });
       ua.update();
     });
   });
@@ -84,7 +95,6 @@ chrome.storage.local.get(prefs, ps => {
   }, () => chrome.runtime.lastError);
 });
 chrome.storage.onChanged.addListener(ps => {
-  console.log(ps);
   Object.keys(ps).forEach(key => prefs[key] = ps[key].newValue);
   if (ps.ua || ps.mode) {
     ua.update();
@@ -95,17 +105,19 @@ chrome.storage.onChanged.addListener(ps => {
 });
 
 const ua = {
-  _obj: {
-    'global': {}
-  },
-  diff(tabId) { // returns true if there is per window object
-    log('ua.diff is called', tabId);
+  _obj: {},
+  diff(tabId, cookieStoreId = 'default-container') { // returns true if there is per window object
+    log('ua.diff is called', tabId, cookieStoreId);
     const windowId = tabs[tabId];
-    return windowId in this._obj;
+    return windowId in (this._obj[cookieStoreId] || this._obj['default-container'] || {});
   },
   get windows() {
     log('ua.windows is called');
-    return Object.keys(this._obj).filter(id => id !== 'global').map(s => Number(s));
+    const ids = [];
+    for (const cookieStoreId of Object.keys(this._obj)) {
+      ids.push(...Object.keys(this._obj[cookieStoreId]).filter(id => id !== 'global').map(s => Number(s)));
+    }
+    return ids.filter((n, i, l) => n && l.indexOf(n) === i);
   },
   parse: s => {
     log('ua.parse is called', s);
@@ -159,18 +171,23 @@ const ua = {
     }
     return o;
   },
-  object(tabId, windowId) {
-    log('ua.object is called', tabId, windowId);
+  object(tabId, windowId, cookieStoreId = 'default-container') {
     windowId = windowId || (tabId ? tabs[tabId] : 'global');
-    return this._obj[windowId] || this._obj.global;
+    log('ua.object is called', tabId, windowId, cookieStoreId);
+
+    if (this._obj[cookieStoreId]) {
+      return this._obj[cookieStoreId][windowId] || this._obj[cookieStoreId].global || this._obj['default-container'].global;
+    }
+    return (this._obj['default-container'] || {}).global;
   },
-  string(str, windowId) {
+  string(str, windowId, cookieStoreId) {
     log('ua.string is called', str, windowId);
+    this._obj[cookieStoreId] = this._obj[cookieStoreId] || {};
     if (str) {
-      this._obj[windowId] = this.parse(str);
+      this._obj[cookieStoreId][windowId] = this.parse(str);
     }
     else {
-      this._obj[windowId] = {};
+      this._obj[cookieStoreId][windowId] = {};
     }
   },
   tooltip(title, tabId) {
@@ -195,7 +212,7 @@ const ua = {
       }
     });
   },
-  toolbar: ({windowId, tabId}) => {
+  toolbar: ({windowId, tabId, cookieStoreId}) => {
     log('ua.toolbar is called', windowId, tabId);
     if (windowId) {
       chrome.tabs.query({
@@ -204,20 +221,19 @@ const ua = {
         const tabId = tab.id;
         chrome.browserAction.setBadgeText({
           tabId,
-          text: ua.object(null, windowId).platform.substr(0, 3)
+          text: ua.object(null, windowId, tab.cookieStoreId).platform.substr(0, 3)
         });
       }));
     }
     else if (tabId) {
       chrome.browserAction.setBadgeText({
         tabId,
-        text: ua.object(tabId).platform.substr(0, 3)
+        text: ua.object(tabId, undefined, cookieStoreId).platform.substr(0, 3)
       });
     }
   },
-  update(str = prefs.ua, windowId = 'global') {
-    console.log(str);
-    log('ua.update is called', str, windowId);
+  update(str = prefs.ua, windowId = 'global', cookieStoreId = 'default-container') {
+    log('ua.update is called', str, windowId, cookieStoreId);
     // clear caching
     Object.keys(cache).forEach(key => delete cache[key]);
     // remove old listeners
@@ -225,7 +241,7 @@ const ua = {
     chrome.webNavigation.onCommitted.removeListener(onCommitted);
     // apply new ones
     if (str || prefs.mode === 'custom' || this.windows.length) {
-      ua.string(str, windowId);
+      ua.string(str, windowId, cookieStoreId);
       chrome.webRequest.onBeforeSendHeaders.addListener(onBeforeSendHeaders, {
         'urls': ['*://*/*']
       }, ['blocking', 'requestHeaders']);
@@ -250,7 +266,11 @@ const ua = {
 window.ua = ua; // using from popup
 // make sure to clean on window removal
 if (chrome.windows) { // FF on Android
-  chrome.windows.onRemoved.addListener(windowId => delete ua._obj[windowId]);
+  chrome.windows.onRemoved.addListener(windowId => {
+    Object.keys(ua._obj).forEach(cookieStoreId => {
+      delete ua._obj[cookieStoreId][windowId];
+    });
+  });
 }
 
 function hostname(url) {
@@ -276,8 +296,8 @@ function hostname(url) {
   }
 }
 // returns true, false or an object; true: ignore, false: use from ua object.
-function match({url, tabId}) {
-  log('match', url, tabId);
+function match({url, tabId, cookieStoreId = 'default-container'}) {
+  log('match', url, tabId, cookieStoreId);
   const h = hostname(url);
 
   if (prefs.mode === 'blacklist') {
@@ -307,55 +327,57 @@ function match({url, tabId}) {
       return true;
     }
   }
-  else {
-    const [hh] = h.split(':');
-    const key = Object.keys(expand.rules).filter(s => {
-      if (s === h || s === hh) {
-        return true;
+  const [hh] = h.split(':');
+  const key = Object.keys(expand.rules).filter(s => {
+    if (s === h || s === hh) {
+      return true;
+    }
+    else if (prefs.exactMatch === false) {
+      return s.endsWith('.' + h) || h.endsWith('.' + s) || s.endsWith('.' + hh) || hh.endsWith('.' + s);
+    }
+  }).shift();
+  let s = expand.rules[key] || expand.rules['*'];
+  // if s is an array select a random string
+  if (Array.isArray(s)) {
+    s = s[Math.floor(Math.random() * s.length)];
+    // set session mode if key is either on _[key] or _['*'] lists
+    if (expand.rules._ && Array.isArray(expand.rules._)) {
+      if (expand.rules._.indexOf(key) !== -1) {
+        expand.rules[key] = s;
       }
-      else if (prefs.exactMatch === false) {
-        return s.endsWith('.' + h) || h.endsWith('.' + s) || s.endsWith('.' + hh) || hh.endsWith('.' + s);
-      }
-    }).shift();
-    let s = expand.rules[key] || expand.rules['*'];
-    // if s is an array select a random string
-    if (Array.isArray(s)) {
-      s = s[Math.floor(Math.random() * s.length)];
-      // set session mode if key is either on _[key] or _['*'] lists
-      if (expand.rules._ && Array.isArray(expand.rules._)) {
-        if (expand.rules._.indexOf(key) !== -1) {
+      else if (expand.rules._.indexOf('*') !== -1) {
+        if (expand.rules[key]) {
           expand.rules[key] = s;
         }
-        else if (expand.rules._.indexOf('*') !== -1) {
-          if (expand.rules[key]) {
-            expand.rules[key] = s;
-          }
-          else if (expand.rules['*']) {
-            expand.rules['*'] = s;
-          }
+        else if (expand.rules['*']) {
+          expand.rules['*'] = s;
         }
       }
     }
-    if (s) {
-      return ua.parse(s);
-    }
-    else {
-      return !ua.object(tabId).userAgent;
-    }
+  }
+  if (s) {
+    return ua.parse(s);
+  }
+  else {
+    const o = ua.object(tabId, undefined, cookieStoreId);
+    return o ? !o.userAgent : true;
   }
 }
 
-const onBeforeSendHeaders = ({tabId, url, requestHeaders, type}) => {
+const onBeforeSendHeaders = d => {
+  const {tabId, url, requestHeaders, type, cookieStoreId} = d;
   if (type === 'main_frame' || prefs.cache === false) {
-    cache[tabId] = match({url, tabId});
+    cache[tabId] = match({url, tabId, cookieStoreId});
   }
+  console.log(cache[tabId]);
+
   if (cache[tabId] === true) {
     return {};
   }
   if (prefs.protected.some(s => url.indexOf(s) !== -1)) {
     return {};
   }
-  const str = (cache[tabId] || ua.object(tabId)).userAgent;
+  const str = (cache[tabId] || ua.object(tabId, undefined, d.cookieStoreId)).userAgent;
   if (str) {
     for (let i = 0, name = requestHeaders[0].name; i < requestHeaders.length; i += 1, name = (requestHeaders[i] || {}).name) {
       if (name === 'User-Agent' || name === 'user-agent') {
@@ -368,12 +390,15 @@ const onBeforeSendHeaders = ({tabId, url, requestHeaders, type}) => {
   }
 };
 
-const onCommitted = ({frameId, url, tabId}) => {
+const onCommitted = d => {
+  const {frameId, url, tabId} = d;
+  const cookieStoreId = cookieStoreIds[tabId] || 'default-container';
+
   if (url && (url.startsWith('http') || url.startsWith('ftp')) || url === 'about:blank') {
     if (cache[tabId] === true) {
       return;
     }
-    const o = cache[tabId] || ua.object(tabId);
+    const o = cache[tabId] || ua.object(tabId, undefined, cookieStoreId);
     if (o.userAgent) {
       chrome.tabs.executeScript(tabId, {
         runAt: 'document_start',
@@ -416,8 +441,8 @@ const onCommitted = ({frameId, url, tabId}) => {
     }
   }
   // change the toolbar icon if there is a per window UA setting
-  if (frameId === 0 && ua.diff(tabId)) {
-    ua.toolbar({tabId});
+  if (frameId === 0 && ua.diff(tabId, cookieStoreId)) {
+    ua.toolbar({tabId, cookieStoreId});
   }
 };
 // context menu

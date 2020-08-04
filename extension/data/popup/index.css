@@ -190,6 +190,7 @@ select {
   background-color: #4d72b7;
   color: #fff;
 }
+[data-cmd="container"],
 [data-cmd="window"],
 [data-cmd="apply"] {
   color: #fff;
