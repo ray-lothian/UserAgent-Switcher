@@ -2,6 +2,7 @@
 
 'use strict';
 
+const DCSI = 'firefox-default';
 
 const cache = {}; // cache how a tab's request get handled (true, false, object)
 const tabs = {};
@@ -51,7 +52,7 @@ const currentCookieStoreId = () => new Promise(resolve => chrome.tabs.query({
   active: true,
   currentWindow: true
 }, tbs => {
-  resolve((tbs.length ? tbs[0].cookieStoreId : '') || 'firefox-default');
+  resolve((tbs.length ? tbs[0].cookieStoreId : '') || DCSI);
 }));
 
 chrome.storage.local.get(prefs, ps => {
@@ -74,7 +75,7 @@ chrome.storage.local.get(prefs, ps => {
         });
       }
       else {
-        ua.update(undefined, undefined, 'firefox-default');
+        ua.update(undefined, undefined, DCSI);
       }
     });
   });
@@ -114,7 +115,6 @@ chrome.storage.onChanged.addListener(ps => {
     currentCookieStoreId().then(cookieStoreId => {
       if (ps.ua) {
         if (ps.ua.newValue === '') {
-          console.log('delete from onChanged', cookieStoreId);
           delete ua._obj[cookieStoreId];
         }
       }
@@ -128,10 +128,10 @@ chrome.storage.onChanged.addListener(ps => {
 
 const ua = {
   _obj: {},
-  diff(tabId, cookieStoreId = 'default-container') { // returns true if there is per window object
+  diff(tabId, cookieStoreId = DCSI) { // returns true if there is per window object
     log('ua.diff is called', tabId, cookieStoreId);
     const windowId = tabs[tabId];
-    return windowId in (this._obj[cookieStoreId] || this._obj['default-container'] || {});
+    return windowId in (this._obj[cookieStoreId] || this._obj[DCSI] || {});
   },
   get windows() {
     log('ua.windows is called');
@@ -193,7 +193,7 @@ const ua = {
     }
     return o;
   },
-  object(tabId, windowId, cookieStoreId = 'default-container') {
+  object(tabId, windowId, cookieStoreId = DCSI) {
     windowId = windowId || (tabId ? tabs[tabId] : 'global');
     log('ua.object is called', tabId, windowId, cookieStoreId);
 
@@ -255,13 +255,7 @@ const ua = {
       });
     }
   },
-  update(str = prefs.ua, windowId = 'global', cookieStoreId = 'default-container') {
-
-    console.log(new Error().stack, cookieStoreId);
-    console.log(str, prefs.mode === 'custom', this.windows.length, Object.keys(this._obj).length);
-
-
-
+  update(str = prefs.ua, windowId = 'global', cookieStoreId = DCSI) {
     log('ua.update is called', str, windowId, cookieStoreId);
     // clear caching
     Object.keys(cache).forEach(key => delete cache[key]);
@@ -270,7 +264,6 @@ const ua = {
     chrome.webNavigation.onCommitted.removeListener(onCommitted);
     // apply new ones
     if (str || prefs.mode === 'custom' || this.windows.length || Object.keys(this._obj).length) {
-      console.log('reinstall');
       if (str) {
         ua.string(str, windowId, cookieStoreId);
       }
@@ -298,13 +291,10 @@ const ua = {
 window.ua = ua; // using from popup
 // make sure to clean on window removal
 if (chrome.windows) { // FF on Android
-  console.log('windowId');
   chrome.windows.onRemoved.addListener(windowId => {
-    console.log(windowId, Object.keys(ua._obj), ua._obj);
     let update = false;
     Object.keys(ua._obj).forEach(cookieStoreId => {
       if (windowId in ua._obj[cookieStoreId]) {
-        console.log('DELETE from windows', cookieStoreId);
         delete ua._obj[cookieStoreId][windowId];
         // delete the entire object if it is empty
         if (Object.keys(ua._obj[cookieStoreId]).length === 0) {
@@ -313,7 +303,6 @@ if (chrome.windows) { // FF on Android
         update = true;
       }
     });
-    console.log('upda', update);
     // if nothing is left to monitor, disable the extension
     if (update) {
       currentCookieStoreId().then(cookieStoreId => ua.update(undefined, undefined, cookieStoreId));
@@ -344,7 +333,7 @@ function hostname(url) {
   }
 }
 // returns true, false or an object; true: ignore, false: use from ua object.
-function match({url, tabId, cookieStoreId = 'default-container'}) {
+function match({url, tabId, cookieStoreId = DCSI}) {
   log('match', url, tabId, cookieStoreId);
   const h = hostname(url);
 
@@ -413,8 +402,11 @@ function match({url, tabId, cookieStoreId = 'default-container'}) {
 }
 
 const onBeforeSendHeaders = d => {
-  const {tabId, url, requestHeaders, type, cookieStoreId} = d;
+  const {tabId, url, requestHeaders, type} = d;
+  const cookieStoreId = d.cookieStoreId || cookieStoreIds[tabId] || DCSI;
+
   if (type === 'main_frame' || prefs.cache === false) {
+    cookieStoreIds[tabId] = cookieStoreId;
     cache[tabId] = match({url, tabId, cookieStoreId});
   }
 
@@ -424,7 +416,7 @@ const onBeforeSendHeaders = d => {
   if (prefs.protected.some(s => url.indexOf(s) !== -1)) {
     return {};
   }
-  const o = (cache[tabId] || ua.object(tabId, undefined, d.cookieStoreId));
+  const o = (cache[tabId] || ua.object(tabId, undefined, cookieStoreId));
   const str = o ? o.userAgent : '';
   if (str) {
     for (let i = 0, name = requestHeaders[0].name; i < requestHeaders.length; i += 1, name = (requestHeaders[i] || {}).name) {
@@ -440,14 +432,14 @@ const onBeforeSendHeaders = d => {
 
 const onCommitted = d => {
   const {frameId, url, tabId} = d;
-  const cookieStoreId = cookieStoreIds[tabId] || 'default-container';
+  const cookieStoreId = d.cookieStoreId || cookieStoreIds[tabId] || DCSI;
 
   if (url && (url.startsWith('http') || url.startsWith('ftp')) || url === 'about:blank') {
     if (cache[tabId] === true) {
       return;
     }
     const o = cache[tabId] || ua.object(tabId, undefined, cookieStoreId);
-    if (o.userAgent) {
+    if (o && o.userAgent) {
       chrome.tabs.executeScript(tabId, {
         runAt: 'document_start',
         frameId,
@@ -497,6 +489,15 @@ const onCommitted = d => {
 chrome.contextMenus.onClicked.addListener(info => chrome.storage.local.set({
   mode: info.menuItemId
 }));
+
+// restore container agents
+chrome.storage.local.get({
+  'container-uas': {}
+}, prefs => {
+  for (const cookieStoreId of Object.keys(prefs['container-uas'])) {
+    ua.string(prefs['container-uas'][cookieStoreId], 'global', cookieStoreId);
+  }
+});
 
 /* FAQs & Feedback */
 {
