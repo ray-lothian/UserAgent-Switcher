@@ -190,11 +190,14 @@ select {
   background-color: #4d72b7;
   color: #fff;
 }
-[data-cmd="container"],
+[data-cmd="container"] {
+  background-color: #92773c;
+  color: #fff;
+}
 [data-cmd="window"],
 [data-cmd="apply"] {
-  color: #fff;
   background-color: #3c923c;
+  color: #fff;
 }
 
 [data-cmd="reset"] {
@@ -241,4 +244,8 @@ body[data-android="true"] [data-cmd="window"] {
 }
 #toast:empty {
   display: none;
+}
+
+.hide {
+  visibility: hidden;
 }

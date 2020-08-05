@@ -3,7 +3,7 @@
 'use strict';
 
 
-const cache = {};
+const cache = {}; // cache how a tab's request get handled (true, false, object)
 const tabs = {};
 const cookieStoreIds = {};
 chrome.tabs.onRemoved.addListener(id => {
@@ -47,22 +47,35 @@ const expand = () => {
 };
 expand.rules = {};
 
+const currentCookieStoreId = () => new Promise(resolve => chrome.tabs.query({
+  active: true,
+  currentWindow: true
+}, tbs => {
+  resolve((tbs.length ? tbs[0].cookieStoreId : '') || 'firefox-default');
+}));
+
 chrome.storage.local.get(prefs, ps => {
   Object.assign(prefs, ps);
-  // update prefs.ua from the managed storage
-  chrome.storage.managed.get({
-    ua: ''
-  }, rps => {
-    if (!chrome.runtime.lastError && rps.ua) {
-      prefs.ua = rps.ua;
-    }
-    expand();
-    chrome.tabs.query({}, ts => {
-      ts.forEach(t => {
-        tabs[t.id] = t.windowId;
-        cookieStoreIds[t.id] = t.cookieStoreId;
-      });
-      ua.update();
+  expand();
+
+  chrome.tabs.query({}, ts => {
+    ts.forEach(t => {
+      tabs[t.id] = t.windowId;
+      cookieStoreIds[t.id] = t.cookieStoreId;
+    });
+
+    // update prefs.ua from the managed storage
+    chrome.storage.managed.get({
+      ua: ''
+    }, rps => {
+      if (!chrome.runtime.lastError && rps.ua) {
+        chrome.storage.local.set({
+          ua: rps.ua
+        });
+      }
+      else {
+        ua.update(undefined, undefined, 'firefox-default');
+      }
     });
   });
 
@@ -96,8 +109,17 @@ chrome.storage.local.get(prefs, ps => {
 });
 chrome.storage.onChanged.addListener(ps => {
   Object.keys(ps).forEach(key => prefs[key] = ps[key].newValue);
+
   if (ps.ua || ps.mode) {
-    ua.update();
+    currentCookieStoreId().then(cookieStoreId => {
+      if (ps.ua) {
+        if (ps.ua.newValue === '') {
+          console.log('delete from onChanged', cookieStoreId);
+          delete ua._obj[cookieStoreId];
+        }
+      }
+      ua.update(undefined, undefined, cookieStoreId);
+    });
   }
   if (ps.custom) {
     expand();
@@ -176,9 +198,8 @@ const ua = {
     log('ua.object is called', tabId, windowId, cookieStoreId);
 
     if (this._obj[cookieStoreId]) {
-      return this._obj[cookieStoreId][windowId] || this._obj[cookieStoreId].global || this._obj['default-container'].global;
+      return this._obj[cookieStoreId][windowId] || this._obj[cookieStoreId].global;
     }
-    return (this._obj['default-container'] || {}).global;
   },
   string(str, windowId, cookieStoreId) {
     log('ua.string is called', str, windowId);
@@ -219,20 +240,28 @@ const ua = {
         windowId
       }, tabs => tabs.forEach(tab => {
         const tabId = tab.id;
+        const o = ua.object(null, windowId, tab.cookieStoreId);
         chrome.browserAction.setBadgeText({
           tabId,
-          text: ua.object(null, windowId, tab.cookieStoreId).platform.substr(0, 3)
+          text: o && o.platform ? o.platform.substr(0, 3) : ''
         });
       }));
     }
     else if (tabId) {
+      const o = ua.object(tabId, undefined, cookieStoreId);
       chrome.browserAction.setBadgeText({
         tabId,
-        text: ua.object(tabId, undefined, cookieStoreId).platform.substr(0, 3)
+        text: o.platform ? o.platform.substr(0, 3) : 'BOT'
       });
     }
   },
   update(str = prefs.ua, windowId = 'global', cookieStoreId = 'default-container') {
+
+    console.log(new Error().stack, cookieStoreId);
+    console.log(str, prefs.mode === 'custom', this.windows.length, Object.keys(this._obj).length);
+
+
+
     log('ua.update is called', str, windowId, cookieStoreId);
     // clear caching
     Object.keys(cache).forEach(key => delete cache[key]);
@@ -240,8 +269,11 @@ const ua = {
     chrome.webRequest.onBeforeSendHeaders.removeListener(onBeforeSendHeaders);
     chrome.webNavigation.onCommitted.removeListener(onCommitted);
     // apply new ones
-    if (str || prefs.mode === 'custom' || this.windows.length) {
-      ua.string(str, windowId, cookieStoreId);
+    if (str || prefs.mode === 'custom' || this.windows.length || Object.keys(this._obj).length) {
+      console.log('reinstall');
+      if (str) {
+        ua.string(str, windowId, cookieStoreId);
+      }
       chrome.webRequest.onBeforeSendHeaders.addListener(onBeforeSendHeaders, {
         'urls': ['*://*/*']
       }, ['blocking', 'requestHeaders']);
@@ -266,10 +298,26 @@ const ua = {
 window.ua = ua; // using from popup
 // make sure to clean on window removal
 if (chrome.windows) { // FF on Android
+  console.log('windowId');
   chrome.windows.onRemoved.addListener(windowId => {
+    console.log(windowId, Object.keys(ua._obj), ua._obj);
+    let update = false;
     Object.keys(ua._obj).forEach(cookieStoreId => {
-      delete ua._obj[cookieStoreId][windowId];
+      if (windowId in ua._obj[cookieStoreId]) {
+        console.log('DELETE from windows', cookieStoreId);
+        delete ua._obj[cookieStoreId][windowId];
+        // delete the entire object if it is empty
+        if (Object.keys(ua._obj[cookieStoreId]).length === 0) {
+          delete ua._obj[cookieStoreId];
+        }
+        update = true;
+      }
     });
+    console.log('upda', update);
+    // if nothing is left to monitor, disable the extension
+    if (update) {
+      currentCookieStoreId().then(cookieStoreId => ua.update(undefined, undefined, cookieStoreId));
+    }
   });
 }
 
@@ -369,7 +417,6 @@ const onBeforeSendHeaders = d => {
   if (type === 'main_frame' || prefs.cache === false) {
     cache[tabId] = match({url, tabId, cookieStoreId});
   }
-  console.log(cache[tabId]);
 
   if (cache[tabId] === true) {
     return {};
@@ -377,7 +424,8 @@ const onBeforeSendHeaders = d => {
   if (prefs.protected.some(s => url.indexOf(s) !== -1)) {
     return {};
   }
-  const str = (cache[tabId] || ua.object(tabId, undefined, d.cookieStoreId)).userAgent;
+  const o = (cache[tabId] || ua.object(tabId, undefined, d.cookieStoreId));
+  const str = o ? o.userAgent : '';
   if (str) {
     for (let i = 0, name = requestHeaders[0].name; i < requestHeaders.length; i += 1, name = (requestHeaders[i] || {}).name) {
       if (name === 'User-Agent' || name === 'user-agent') {
