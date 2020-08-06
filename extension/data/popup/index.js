@@ -60,18 +60,19 @@ function sort(arr) {
 }
 
 function get(path) {
+  const cf = Promise.resolve({
+    match() {
+      return Promise.resolve();
+    },
+    add() {
+      return Promise.resolve();
+    }
+  });
   return (typeof caches !== 'undefined' ? caches : {
     open() {
-      return Promise.resolve({
-        match() {
-          return Promise.resolve();
-        },
-        add() {
-          return Promise.resolve();
-        }
-      });
+      return cf;
     }
-  }).open('agents').then(cache => {
+  }).open('agents').catch(() => cf).then(cache => {
     const link = 'https://cdn.jsdelivr.net/gh/ray-lothian/UserAgent-Switcher/node/' + path;
     // updating agents once per 7 days
     chrome.storage.local.get({
@@ -255,7 +256,6 @@ document.addEventListener('click', ({target}) => {
       }
       if (value !== navigator.userAgent) {
         // prevent a container ua string from overwriting the default one
-        console.log(tab);
         if ('cookieStoreId' in tab && tab.cookieStoreId !== DCSI) {
           chrome.runtime.getBackgroundPage(bg => bg.ua.update(value, undefined, tab.cookieStoreId));
           chrome.storage.local.get({
@@ -263,7 +263,6 @@ document.addEventListener('click', ({target}) => {
           }, prefs => {
             prefs['container-uas'][tab.cookieStoreId] = value;
             chrome.storage.local.set(prefs);
-            console.log(prefs);
           });
         }
         else {
