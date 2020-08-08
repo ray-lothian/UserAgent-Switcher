@@ -202,7 +202,8 @@ document.addEventListener('DOMContentLoaded', () => fetch('./map.json').then(r =
     document.getElementById('sort').value = prefs['popup-sort'];
 
     chrome.runtime.getBackgroundPage(bg => {
-      const ua = bg.prefs.ua || navigator.userAgent;
+      // Firefox in private mode -> there is no bg!
+      const ua = (bg ? bg.prefs.ua : '') || navigator.userAgent;
       update(ua);
       document.getElementById('ua').value = ua;
       document.getElementById('ua').dispatchEvent(new Event('input'));
