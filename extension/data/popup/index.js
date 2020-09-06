@@ -146,7 +146,8 @@ function update(ua) {
       else {
         throw Error('OS is not found');
       }
-    }).finally(() => {
+    // FF 55.0 does not support finally
+    }).catch(() => {}).then(() => {
       parent.dataset.loading = false;
     });
 }

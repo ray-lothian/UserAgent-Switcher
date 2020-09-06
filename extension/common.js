@@ -89,18 +89,23 @@ chrome.storage.local.get(prefs, ps => {
     });
 
     // update prefs.ua from the managed storage
-    chrome.storage.managed.get({
-      ua: ''
-    }, rps => {
-      if (!chrome.runtime.lastError && rps.ua) {
-        chrome.storage.local.set({
-          ua: rps.ua
-        });
-      }
-      else {
-        ua.update(undefined, undefined, DCSI);
-      }
-    });
+    try {
+      chrome.storage.managed.get({
+        ua: ''
+      }, rps => {
+        if (!chrome.runtime.lastError && rps.ua) {
+          chrome.storage.local.set({
+            ua: rps.ua
+          });
+        }
+        else {
+          ua.update(undefined, undefined, DCSI);
+        }
+      });
+    }
+    catch (e) {
+      ua.update(undefined, undefined, DCSI);
+    }
   });
 
   if (chrome.browserAction.setBadgeBackgroundColor) { // FF for Android
@@ -409,7 +414,6 @@ function match({url, tabId, cookieStoreId = DCSI}) {
   s = s || expand.rules[key];
   // use '*' when the hostname specific key is not found
   s = s || expand.rules['*'];
-  console.log(s);
   // if s is an array select a random string
   if (Array.isArray(s)) {
     s = s[Math.floor(Math.random() * s.length)];
