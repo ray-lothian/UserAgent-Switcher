@@ -41,16 +41,17 @@ fs.readdir('./browsers/', async (err, files) => {
   }
   //
   const list = [
-    ...require('./bots.json'),
-    ...require('./list-1.json'),
-    ...require('./list-2.json'),
-    ...require('./list-3.json'),
-    ...require('./list-4.json'),
-    ...require('./list-5.json'),
-    ...require('./list-6.json'),
-    ...require('./list-7.json'),
-    ...require('./list-8.json'),
-    ...require('./list-9.json')
+    ...require('./assets/bots.json'),
+    ...require('./assets/list-01.json'),
+    ...require('./assets/list-02.json'),
+    ...require('./assets/list-03.json'),
+    ...require('./assets/list-04.json'),
+    ...require('./assets/list-05.json'),
+    ...require('./assets/list-06.json'),
+    ...require('./assets/list-07.json'),
+    ...require('./assets/list-08.json'),
+    ...require('./assets/list-09.json'),
+    ...require('./assets/list-10.json')
   ].filter((s, i, l) => l.indexOf(s) === i && ['fb_iab', 'fbsv', 'w3m', 'elinks'].some(k => s.toLowerCase().indexOf(k) !== -1) === false);
   for (const ua of list) {
     parser.setUA(ua);
