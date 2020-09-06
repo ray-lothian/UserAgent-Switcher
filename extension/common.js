@@ -22,6 +22,10 @@ const prefs = {
   blacklist: [],
   whitelist: [],
   custom: {},
+  siblings: {
+    'www.google.com': 0,
+    'www.youtube.com': 0
+  }, // a list of domains that are considered siblings (use same index for all)
   mode: 'blacklist',
   color: '#777',
   cache: true,
@@ -34,7 +38,7 @@ window.prefs = prefs; // access from popup
 
 const log = (...args) => prefs.log && console.log(...args);
 
-// exand comma-separated keys of prefs.custom
+// expand comma-separated keys of prefs.custom and add missing keys
 const expand = () => {
   log('expanding custom rules');
   expand.rules = {};
@@ -42,6 +46,25 @@ const expand = () => {
     for (const k of key.split(/\s*,\s*/)) {
       if (k) {
         expand.rules[k] = prefs.custom[key];
+        // make sure all siblings have the same expanded rule
+        const i = prefs.siblings[key];
+        if (i !== undefined) {
+          for (const [hostname, j] of Object.entries(prefs.siblings)) {
+            if (i === j) {
+              expand.rules[hostname] = expand.rules[hostname] || prefs.custom[key];
+              if (expand.rules._) {
+                const x = expand.rules._.indexOf(key);
+                const y = expand.rules._.indexOf(hostname);
+                if (x !== -1 && y === -1) {
+                  expand.rules._.push(hostname);
+                }
+                if (x === -1 && y !== -1) {
+                  expand.rules._.push(key);
+                }
+              }
+            }
+          }
+        }
       }
     }
   }
@@ -373,7 +396,20 @@ function match({url, tabId, cookieStoreId = DCSI}) {
       return s.endsWith('.' + h) || h.endsWith('.' + s) || s.endsWith('.' + hh) || hh.endsWith('.' + s);
     }
   }).shift();
-  let s = expand.rules[key] || expand.rules['*'];
+  let s;
+  // try to use an already resolved sibling hostname
+  const i = prefs.siblings[key];
+  if (i !== undefined) {
+    for (const [hostname, j] of Object.entries(prefs.siblings)) {
+      if (j === i && expand.rules[hostname] && typeof expand.rules[hostname] === 'string') {
+        s = expand.rules[hostname];
+      }
+    }
+  }
+  s = s || expand.rules[key];
+  // use '*' when the hostname specific key is not found
+  s = s || expand.rules['*'];
+  console.log(s);
   // if s is an array select a random string
   if (Array.isArray(s)) {
     s = s[Math.floor(Math.random() * s.length)];
@@ -418,7 +454,7 @@ const onBeforeSendHeaders = d => {
   }
   const o = (cache[tabId] || ua.object(tabId, undefined, cookieStoreId));
   const str = o ? o.userAgent : '';
-  if (str) {
+  if (str && requestHeaders.length) {
     for (let i = 0, name = requestHeaders[0].name; i < requestHeaders.length; i += 1, name = (requestHeaders[i] || {}).name) {
       if (name === 'User-Agent' || name === 'user-agent') {
         requestHeaders[i].value = str === 'empty' ? '' : str;

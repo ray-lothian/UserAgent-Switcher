@@ -36,9 +36,27 @@ function save() {
   catch (e) {
     window.setTimeout(() => {
       notify('Parser JSON error: ' + e.message, 5000);
-      document.getElementById('parser').value = c;
+      document.getElementById('parser').value = p;
     }, 1000);
   }
+
+  let siblings = {};
+  const s = document.getElementById('siblings').value;
+  try {
+    siblings = JSON.parse(s);
+    siblings = siblings.reduce((p, c, i) => {
+      c.forEach(hostname => p[hostname] = i);
+      return p;
+    }, {});
+  }
+  catch (e) {
+    window.setTimeout(() => {
+      notify('Sibling JSON error: ' + e.message, 5000);
+      document.getElementById('siblings').value = c;
+    }, 1000);
+  }
+  console.log(siblings);
+
 
   chrome.storage.local.set({
     exactMatch: document.getElementById('exactMatch').checked,
@@ -49,6 +67,7 @@ function save() {
     whitelist: prepare(document.getElementById('whitelist').value),
     custom,
     parser,
+    siblings,
     mode: document.querySelector('[name="mode"]:checked').value,
     protected: document.getElementById('protected').value.split(/\s*,\s*/).filter(s => s.length > 4)
   }, () => {
@@ -71,6 +90,10 @@ function restore() {
     blacklist: [],
     custom: {},
     parser: {},
+    siblings: {
+      'www.google.com': 0,
+      'www.youtube.com': 0
+    },
     protected: ['google.com/recaptcha', 'gstatic.com/recaptcha']
   }, prefs => {
     document.getElementById('exactMatch').checked = prefs.exactMatch;
@@ -82,6 +105,11 @@ function restore() {
     document.getElementById('whitelist').value = prefs.whitelist.join(', ');
     document.getElementById('custom').value = JSON.stringify(prefs.custom, null, 2);
     document.getElementById('parser').value = JSON.stringify(prefs.parser, null, 2);
+    document.getElementById('siblings').value = JSON.stringify(Object.entries(prefs.siblings).reduce((p, [hostname, index]) => {
+      p[index] = p[index] || [];
+      p[index].push(hostname);
+      return p;
+    }, []), null, 2);
     document.getElementById('protected').value = prefs.protected.join(', ');
   });
 }
@@ -112,6 +140,16 @@ document.getElementById('sample-2').addEventListener('click', e => {
       'custom-variable': 'this is a custom variable'
     }
   }, null, 2);
+});
+
+document.getElementById('sample-3').addEventListener('click', e => {
+  e.preventDefault();
+
+  document.getElementById('siblings').value = JSON.stringify([[
+    'www.google.com', 'www.youtube.com', 'www.youtube.be'
+  ], [
+    'www.gmx.com', 'www.mail.com'
+  ]], null, 2);
 });
 
 document.getElementById('donate').addEventListener('click', () => {
@@ -204,4 +242,7 @@ document.getElementById('toggle-protected-desc').addEventListener('click', () =>
 });
 document.getElementById('toggle-parser-desc').addEventListener('click', () => {
   document.querySelector('[for="toggle-parser-desc"]').classList.toggle('hidden');
+});
+document.getElementById('toggle-sibling-desc').addEventListener('click', () => {
+  document.querySelector('[for="toggle-sibling-desc"]').classList.toggle('hidden');
 });

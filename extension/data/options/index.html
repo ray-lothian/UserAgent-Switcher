@@ -29,7 +29,7 @@
     <span id="toggle-custom-desc">Description</span>
   </div>
   <p for="toggle-custom-desc" class="note hidden">Try to resolve the user-agent string from a JSON object; otherwise either use the default user-agent string or use the one that the user is set from the popup interface. Use "*" as the hostname to match all domains. You can randomly select from multiple user-agent strings by providing an array instead of a fixed string. If there is a "_" key in your JSON object which refers to an array of hostnames, then the extension only randomly selects the user-agent string once for each hostname inside this list. This is useful if you don't want the random user-agent to change until this browser session is over.</label> Press <a href="#" id="sample">here</a> to insert a sample JSON object.</p>
-  <textarea id="custom" rows="5" wrap="off"></textarea>
+  <textarea id="custom" rows="8" wrap="off"></textarea>
 
   <div class="checked">
     <input type="checkbox" id="cache">
@@ -55,6 +55,13 @@
   </div>
   <p for="toggle-parser-desc" class="note hidden">A JSON object to bypass the internal user-agent string parsing method. The keys are the actual user-agent strings and the value of each key is an object of the keys that need to be set for the "navigator" object. You can use the "[delete]" keyword if you want a key in the "navigator" object to get deleted. Press <a href="#" id="sample-2">here</a> to insert a sample JSON object.</p>
   <textarea id="parser" rows="5" wrap="off"></textarea>
+
+  <div class="mode-2">
+    <h1>Sibling Hostnames</h1>
+    <span id="toggle-sibling-desc">Description</span>
+  </div>
+  <p for="toggle-sibling-desc" class="note hidden">A JSON array that contains one or more groups of hostnames to have a single user-agent string per group for the "Custom Mode". For all hostnames in one group, the user-agent string calculation only occurs once, and all the other members use the same calculated string. This is useful to make sure a group of connected websites only access to the same user-agent string. Press <a href="#" id="sample-3">here</a> to insert a sample JSON array.</p>
+  <textarea id="siblings" rows="5" wrap="off"></textarea>
 
   <div id="backup">
     <button id="import">Import Settings</button>

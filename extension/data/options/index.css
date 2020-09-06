@@ -52,6 +52,7 @@ textarea {
 .mode-2 {
   grid-template-columns: min-content min-content;
 }
+#toggle-sibling-desc,
 #toggle-parser-desc,
 #toggle-protected-desc,
 #toggle-custom-desc,
