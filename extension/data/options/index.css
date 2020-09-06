@@ -101,3 +101,9 @@ textarea {
     grid-template-columns: 1fr 1fr;
   }
 }
+.admin {
+  background-color: #ffffed;
+  border: solid 1px #e8ec3a;
+  padding: 10px;
+  margin: 15px 0;
+}

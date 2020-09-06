@@ -18,21 +18,19 @@ chrome.tabs.onCreated.addListener(tab => {
 });
 
 const prefs = {
-  ua: '',
-  blacklist: [],
-  whitelist: [],
-  custom: {},
-  siblings: {
-    'www.google.com': 0,
-    'www.youtube.com': 0
-  }, // a list of domains that are considered siblings (use same index for all)
-  mode: 'blacklist',
-  color: '#777',
-  cache: true,
-  exactMatch: false,
-  protected: ['google.com/recaptcha', 'gstatic.com/recaptcha'],
-  parser: {}, // maps ua string to a ua object,
-  log: false
+  'ua': '',
+  'blacklist': [],
+  'whitelist': [],
+  'custom': {},
+  'siblings': {}, // a list of domains that are considered siblings (use same index for all)
+  'mode': 'blacklist',
+  'color': '#777',
+  'cache': true,
+  'exactMatch': false,
+  'protected': ['google.com/recaptcha', 'gstatic.com/recaptcha'],
+  'parser': {}, // maps ua string to a ua object,
+  'log': false,
+  'json-guid': 'na'
 };
 window.prefs = prefs; // access from popup
 
@@ -91,11 +89,29 @@ chrome.storage.local.get(prefs, ps => {
     // update prefs.ua from the managed storage
     try {
       chrome.storage.managed.get({
-        ua: ''
+        'ua': '',
+        'json': ''
       }, rps => {
-        if (!chrome.runtime.lastError && rps.ua) {
-          chrome.storage.local.set({
-            ua: rps.ua
+        if (!chrome.runtime.lastError) {
+          const p = {};
+          if (rps.json) {
+            try {
+              const j = JSON.parse(rps.json);
+              if (prefs['json-guid'] !== j['json-guid'] || j['json-forced']) {
+                Object.assign(p, j);
+                console.warn('preferences are updated by an admin');
+              }
+            }
+            catch (e) {
+              console.warn('cannot parse remote JSON', e);
+            }
+          }
+          if (rps.ua) {
+            p.ua = rps.ua;
+            console.warn('user-agent string is updated by an admin');
+          }
+          chrome.storage.local.set(p, () => {
+            ua.update(undefined, undefined, DCSI);
           });
         }
         else {

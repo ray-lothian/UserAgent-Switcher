@@ -4,6 +4,10 @@
     "ua": {
       "title": "Custom User-Agent String",
       "type": "string"
+    },
+    "json": {
+      "title": "JSON String of all Preferences",
+      "type": "string"
     }
   }
 }

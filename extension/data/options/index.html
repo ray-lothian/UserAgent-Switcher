@@ -60,12 +60,13 @@
     <h1>Sibling Hostnames</h1>
     <span id="toggle-sibling-desc">Description</span>
   </div>
-  <p for="toggle-sibling-desc" class="note hidden">A JSON array that contains one or more groups of hostnames to have a single user-agent string per group for the "Custom Mode". For all hostnames in one group, the user-agent string calculation only occurs once, and all the other members use the same calculated string. This is useful to make sure a group of connected websites only access to the same user-agent string. Press <a href="#" id="sample-3">here</a> to insert a sample JSON array.</p>
+  <p for="toggle-sibling-desc" class="note hidden">A JSON array that contains one or more groups of hostnames to have a single user-agent string per group. For all hostnames in one group, the user-agent string calculation only occurs once, and all the other members use the same calculated string. This is useful to make sure a group of connected websites only access to the same user-agent string. Press <a href="#" id="sample-3">here</a> to insert a sample JSON array.</p>
   <textarea id="siblings" rows="5" wrap="off"></textarea>
 
+  <div class="admin">This extension supports managed storage. All the preferences can be pre-configured by <a href="https://add0n.com/useragent-switcher.html#faq20">the domain administrator</a></div>
   <div id="backup">
     <button id="import">Import Settings</button>
-    <button id="export">Export Settings</button>
+    <button title="to generate minified version, press Shift key while pressing this button" id="export">Export Settings</button>
   </div>
   <div id="tools">
     <button id="help">FAQs Page (Help)</button>

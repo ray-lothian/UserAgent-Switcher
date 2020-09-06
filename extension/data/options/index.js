@@ -24,6 +24,7 @@ function save() {
   catch (e) {
     window.setTimeout(() => {
       notify('Custom JSON error: ' + e.message, 5000);
+      alert('Custom JSON error: ' + e.message);
       document.getElementById('custom').value = c;
     }, 1000);
   }
@@ -36,6 +37,7 @@ function save() {
   catch (e) {
     window.setTimeout(() => {
       notify('Parser JSON error: ' + e.message, 5000);
+      alert('Parser JSON error: ' + e.message);
       document.getElementById('parser').value = p;
     }, 1000);
   }
@@ -52,11 +54,10 @@ function save() {
   catch (e) {
     window.setTimeout(() => {
       notify('Sibling JSON error: ' + e.message, 5000);
-      document.getElementById('siblings').value = c;
+      alert('Sibling JSON error: ' + e.message);
+      document.getElementById('siblings').value = s;
     }, 1000);
   }
-  console.log(siblings);
-
 
   chrome.storage.local.set({
     exactMatch: document.getElementById('exactMatch').checked,
@@ -90,10 +91,7 @@ function restore() {
     blacklist: [],
     custom: {},
     parser: {},
-    siblings: {
-      'www.google.com': 0,
-      'www.youtube.com': 0
-    },
+    siblings: {},
     protected: ['google.com/recaptcha', 'gstatic.com/recaptcha']
   }, prefs => {
     document.getElementById('exactMatch').checked = prefs.exactMatch;
@@ -178,9 +176,23 @@ document.getElementById('help').addEventListener('click', () => {
 });
 
 // export
-document.getElementById('export').addEventListener('click', () => {
+document.getElementById('export').addEventListener('click', e => {
+  const guid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+    const r = Math.random() * 16 | 0;
+    const v = c == 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
+
   chrome.storage.local.get(null, prefs => {
-    const text = JSON.stringify(prefs, null, '  ');
+    for (const key of Object.keys(prefs)) {
+      if (key && key.startsWith('cache.')) {
+        delete prefs[key];
+      }
+    }
+    const text = JSON.stringify(Object.assign({}, prefs, {
+      'json-guid': guid,
+      'json-forced': false
+    }), null, e.shiftKey ? '' : '  ');
     const blob = new Blob([text], {type: 'application/json'});
     const objectURL = URL.createObjectURL(blob);
     Object.assign(document.createElement('a'), {
