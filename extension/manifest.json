@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "User-Agent Switcher and Manager",
   "short_name": "useragent-switcher",
-  "version": "0.4.1",
+  "version": "0.4.2",
 
   "description": "Spoof websites trying to gather information about your web navigation to deliver distinct content you may not want",
 

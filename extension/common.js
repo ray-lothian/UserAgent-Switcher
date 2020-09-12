@@ -312,7 +312,7 @@ const ua = {
         ua.string(str, windowId, cookieStoreId);
       }
       chrome.webRequest.onBeforeSendHeaders.addListener(onBeforeSendHeaders, {
-        'urls': ['*://*/*']
+        'urls': ['*://*/*', 'ws://*/*', 'wss://*/*']
       }, ['blocking', 'requestHeaders']);
       chrome.webNavigation.onCommitted.addListener(onCommitted);
       ua.tooltip('[Default] ' + navigator.userAgent);
