@@ -193,8 +193,30 @@ const ua = {
         userAgent: s
       }, prefs.parser[s]);
     }
-    // build ua string from browser defaults;
-    s = s.replace(/\${([^}]+)}/g, (a, b) => navigator[b]);
+    // build ua string from the navigator object or from a custom UAParser;
+    // examples: ${platform}, ${browser.version|ua-parser}
+    s = s.replace(/\${([^}]+)}/g, (a, b) => {
+      const key = (parent, keys) => {
+        for (const key of keys) {
+          parent = parent[key] || {};
+        }
+
+        return parent;
+      };
+
+      let [childs, object] = b.split('|');
+      object = object || 'navigator';
+
+      let v;
+      if (object.startsWith('ua-parser')) {
+        const [a, b] = object.split('@');
+        object = a;
+
+        v = key((new UAParser(b || navigator.userAgent)).getResult(), childs.split('.'));
+      }
+      v = v || key(navigator, childs.split('.'));
+      return typeof v === 'string' ? v : 'cannot parse your ${...} replacements.';
+    });
     const o = {};
     o.userAgent = s;
     o.appVersion = s
