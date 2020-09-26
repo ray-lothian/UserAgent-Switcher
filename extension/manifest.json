@@ -1,10 +1,11 @@
 {
   "manifest_version": 2,
-  "name": "User-Agent Switcher and Manager",
+  "name": "__MSG_extensionName__",
   "short_name": "useragent-switcher",
   "version": "0.4.3",
+  "default_locale": "en",
 
-  "description": "Spoof websites trying to gather information about your web navigation to deliver distinct content you may not want",
+  "description": "__MSG_extensionDescription__",
 
   "permissions": [
     "tabs",

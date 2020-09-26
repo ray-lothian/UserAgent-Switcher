@@ -1,0 +1,98 @@
+{
+  "extensionName": {
+    "message": "User-Agent Switcher and Manager",
+    "description": "Name of the extension."
+  },
+  "extensionDescription": {
+    "message": "Подменяет User-Agent на веб-сайтах, пытающихся собрать информацию о ваших путешествиях по сети и выдать не нужное вам содержимое",
+    "description": "Description of the extension."
+  },
+  "testUA": {
+    "message": "Тест UA",
+    "description": ""
+  },
+  "userAgentSwitcherandManagerOptions": {
+    "message": "User-Agent Switcher and Manager :: Настройки",
+    "description": ""
+  },
+  "blackListMode": {
+    "message": "Режим черного списка",
+    "description": ""
+  },
+  "description": {
+    "message": "Описание",
+    "description": ""
+  },
+  "blackListModeDescription": {
+    "message": "Применить заданную строку User-Agent ко всем вкладкам за исключением содержащих следующие домены верхнего уровня (список доменов разделяется запятыми). Важно: даже если применяемая к окну строка User-Agent задана из всплывающего окна, для этого списка будет использоваться строка User-Agent вашего браузера по умолчанию.",
+    "description": ""
+  },
+  "whiteListMode": {
+    "message": "Режим белого списка",
+    "description": ""
+  },
+  "whiteListModeDescription": {
+    "message": "Применять заданную строку User-Agent только к вкладкам, содержащим следующие домены верхнего уровня. Важно: даже если применяемая к окну строка User-Agent задана из всплывающего окна, данный User-Agent заменит собой глобальный.",
+    "description": ""
+  },
+  "customMode": {
+    "message": "Режим настройки",
+    "description": ""
+  },
+  "cache": {
+    "message": "Использовать кэширование для улучшения производительности (рекомендуемое значение true). Отключите эту опцию только при использовании режима настройки, когда нужно изменять строку User-Agent с помощью списка при каждом запросе.",
+    "description": ""
+  },
+  "exactMatch": {
+    "message": "Использовать точное совпадение (если включено, вам нужно добавлять все поддомены в черный и белый списки как задумано. Если выключено, все поддомены проходят проверку на совпадение (например, www.google.com проходит проверку, если google.com находится в списке))",
+    "description": ""
+  },
+  "faqs": {
+    "message": "Открывать страницу FAQ при обновлении",
+    "description": ""
+  },
+  "log": {
+    "message": "Отображать отладочную информацию в консоли браузера",
+    "description": ""
+  },
+  "disableSpoofing": {
+    "message": "Отключить подмену User-Agent",
+    "description": ""
+  },
+  "disableSpoofingDescription": {
+    "message": "Разделяемый запятыми список ключевых слов, на которых расширение не должно подменять заголовок User-Agent. Используйте этот список для защиты URL, содержащих эти ключевые слова. Каждое ключевое слово должно быть длиной не менее 5 символов.",
+    "description": ""
+  },
+  "customUserAgentParsing": {
+    "message": "Парсинг заданного User-Agent",
+    "description": ""
+  },
+  "siblingHostnames": {
+    "message": "Родственные домены",
+    "description": ""
+  },
+  "importSettings": {
+    "message": "Импортировать настройки",
+    "description": ""
+  },
+  "exportSettings": {
+    "message": "Экспортировать настройки",
+    "description": ""
+  },
+  "help": {
+    "message": "Страница FAQ (Помощь)",
+    "description": ""
+  },
+  "donate": {
+    "message": "Поддержать разработку",
+    "description": ""
+  },
+  "reset": {
+    "message": "Сбросить",
+    "description": ""
+  },
+  "save": {
+    "message": "Сохранить",
+    "description": ""
+  }
+}

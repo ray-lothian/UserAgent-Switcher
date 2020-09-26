@@ -1,0 +1,98 @@
+{
+  "extensionName": {
+    "message": "User-Agent Switcher and Manager",
+    "description": "Name of the extension."
+  },
+  "extensionDescription": {
+    "message": "Spoof websites trying to gather information about your web navigation to deliver distinct content you may not want",
+    "description": "Description of the extension."
+  },
+  "testUA": {
+    "message": "Test UA",
+    "description": ""
+  },
+  "userAgentSwitcherandManagerOptions": {
+    "message": "User-Agent Switcher and Manager :: Options",
+    "description": ""
+  },
+  "blackListMode": {
+    "message": "Black-List Mode",
+    "description": ""
+  },
+  "description": {
+    "message": "Description",
+    "description": ""
+  },
+  "blackListModeDescription": {
+    "message": "Apply the custom user-agent string to all tabs except the tabs with the following top-level hostnames (comma-separated list of hostnames). Note that even if a window-based user-agent string is set from the toolbar popup, your browser's default user-agent string is used.",
+    "description": ""
+  },
+  "whiteListMode": {
+    "message": "White-List Mode",
+    "description": ""
+  },
+  "whiteListModeDescription": {
+    "message": "Only apply the custom user-agent string to the tabs with following top-level hostnames. Note that if a window-based user-agent string is set from the toolbar popup, this user-agent will overwrite the global one.",
+    "description": ""
+  },
+  "customMode": {
+    "message": "Custom Mode",
+    "description": ""
+  },
+  "cache": {
+    "message": "Use caching to improve performance (recommended value is true). Uncheck this option only if you are using the custom mode and also you need the user-agent string to be altered from the provided list on every single request.",
+    "description": ""
+  },
+  "exactMatch": {
+    "message": "Use exact matching (if checked, you will need to insert all sub-domains in the white-list and black-list modes to be considered. If unchecked, all the sub-domains are passing the matching condition (e.g: www.google.com passes the matching if google.com is in the list))",
+    "description": ""
+  },
+  "faqs": {
+    "message": "Open FAQs page on updates",
+    "description": ""
+  },
+  "log": {
+    "message": "Display debugging info in the browser console",
+    "description": ""
+  },
+  "disableSpoofing": {
+    "message": "Disable Spoofing",
+    "description": ""
+  },
+  "disableSpoofingDescription": {
+    "message": "A comma-separated list of keywords that the extension should not spoof the user-agent header. Use this list to protect URLs that contain these protected keywords. Each keyword need to be at least 5 char long.",
+    "description": ""
+  },
+  "customUserAgentParsing": {
+    "message": "Custom User-Agent Parsing",
+    "description": ""
+  },
+  "siblingHostnames": {
+    "message": "Sibling Hostnames",
+    "description": ""
+  },
+  "importSettings": {
+    "message": "Import Settings",
+    "description": ""
+  },
+  "exportSettings": {
+    "message": "Export Settings",
+    "description": ""
+  },
+  "help": {
+    "message": "FAQs Page (Help)",
+    "description": ""
+  },
+  "donate": {
+    "message": "Support Development",
+    "description": ""
+  },
+  "reset": {
+    "message": "Reset",
+    "description": ""
+  },
+  "save": {
+    "message": "Save",
+    "description": ""
+  }
+}
