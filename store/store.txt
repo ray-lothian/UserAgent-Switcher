@@ -1,0 +1,30 @@
+Usage example: You can alter your user-agent string to indicate you’re on a mobile device if you prefer seeing mobile versions of sites so they load quicker.
+
+--
+
+This extension allows you to spoof your browser "user-agent" string to a custom designation, making it impossible for websites to know specific details about your browsing arrangement.
+
+Overview:
+https://www.youtube.com/watch?v=4M6_Zc4o1MQ
+
+Notes:
+1. You can easily set custom "user-agent" strings from the toolbar popup
+2. The extension uses a two-factor technique to mimic your default "user-agent" string, which is the most reliable method
+3. The extension does not use any resources when it is not spoofing the user-agent
+4. The extension enables user-agent spoofing on specific domains only; it is conversely possible to exclude certain domains from spoofing. Check the Options page for more info.
+5. You can set per-site user-agent strings
+6. There is an option to randomize user-agent strings.
+7. It is possible to set the user-agent string for a single-window; you can have a separate user-agent string for each browser window
+8. This extension supports managed storage so that preferences can be altered automatically or can be pre-configured by a domain administrator
+
+Supported operating systems:
+Windows, Mac OS, Linux, Chromium OS, Ubuntu, Debian, Android, iOS, AmigaOS, OpenBSD, BeOS, Haiku, Solaris, NetBSD, FreeBSD, Slackware, SUSE, gentoo, Fedora, Gentoo, Mageia, CentOS, Mint, DragonFly, Kubuntu, Mandriva, Zenwalk, Unix, GNU, OS/2, AIX, QNX, BEOS, RISC OS, Symbian, Nintendo, OpenSolaris, Kubuntu
+
+Supported browsers:
+Internet Explorer, Safari, Chrome, Firefox, Opera, Edge, WebKit, Avant, Maxthon, Arora, Mozilla, Epiphany, Camino, Chimera, Chromium, Dragon, conkeror, Conkeror, Dillo, Links, Firebird, Swiftfox, Netscape, Flock, iCab, Iceape, icecat, IceCat, IceWeasel, Iron, Meleon, Konqueror, Lunascape, Lynx, MAXTHON, midori, Midori, KHTML, Mosaic, NetSurf, OmniWeb, Tablet, Mini, Phoenix, RockMelt, Safari, Browser, SeaMonkey, Slim, Webkit, w3m
+
+For more info and general bug reports please use:
+https://add0n.com/useragent-switcher.html
+
+For technical bug reports please use:
+https://github.com/ray-lothian/UserAgent-Switcher/

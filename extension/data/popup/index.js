@@ -1,5 +1,22 @@
 'use strict';
 
+// localization
+document.querySelectorAll('[data-localized-value]').forEach(e => {
+  const ref = e.dataset.localizedValue;
+  const translated = chrome.i18n.getMessage(ref);
+  if (translated) {
+    e.value = translated;
+  }
+});
+
+document.querySelectorAll('[data-localized-title]').forEach(e => {
+  const ref = e.dataset.localizedTitle;
+  const translated = chrome.i18n.getMessage(ref);
+  if (translated) {
+    e.title = translated;
+  }
+});
+
 const DCSI = 'firefox-default';
 
 document.body.dataset.android = navigator.userAgent.indexOf('Android') !== -1;
@@ -14,16 +31,16 @@ chrome.tabs.query({
     tab = tbs[0];
     if ('cookieStoreId' in tab) {
       const apply = document.querySelector('[data-cmd="apply"]');
-      apply.value = 'Apply (container)';
-      apply.title = 'Set this user-agent string as the current container\'s User-Agent string';
+      apply.value = chrome.i18n.getMessage('applyContainer');
+      apply.title = chrome.i18n.getMessage('applyContainerTitle');
 
       const w = document.querySelector('[data-cmd="window"]');
-      w.value = 'Apply (container on window)';
-      w.title = 'Set this user-agent string for all tabs inside the current window\'s container';
+      w.value = chrome.i18n.getMessage('applyContainerWindow');
+      w.title = chrome.i18n.getMessage('applyContainerWindowTitle');
 
       const reset = document.querySelector('[data-cmd="reset"]');
-      reset.value = 'Reset (container)';
-      reset.title = 'Reset the container\'s user-agent string to the default one. This will not reset window-based UA strings. To reset them, use the \'Restart\' button';
+      reset.value = chrome.i18n.getMessage('resetContainer');
+      reset.title = chrome.i18n.getMessage('resetContainerTitle');
     }
   }
 });
@@ -251,10 +268,10 @@ document.addEventListener('click', ({target}) => {
     if (cmd === 'apply') {
       const value = document.getElementById('ua').value;
       if (value === navigator.userAgent) {
-        msg('Default UA, press the reset button instead');
+        msg(chrome.i18n.getMessage('msgDefaultUA'));
       }
       else {
-        msg('User-Agent is Set');
+        msg(chrome.i18n.getMessage('msgUASet'));
       }
       if (value !== navigator.userAgent) {
         // prevent a container ua string from overwriting the default one
@@ -296,13 +313,13 @@ document.addEventListener('click', ({target}) => {
           chrome.storage.local.set(prefs);
         });
 
-        msg('Disabled on this container. Uses the default user-agent string');
+        msg(chrome.i18n.getMessage('msgDisabledOnContainer'));
       }
       else {
         chrome.storage.local.set({
           ua: ''
         });
-        msg('Disabled. Uses the default user-agent string');
+        msg(chrome.i18n.getMessage('msgDisabled'));
       }
     }
     else if (cmd === 'refresh') {
@@ -357,7 +374,7 @@ document.getElementById('ua').addEventListener('keyup', e => {
 });
 
 /* container support */
-document.querySelector('[data-cmd="container"]').addEventListener('click', e => {
+document.querySelector('[data-cmd="container"]').addEventListener('click', () => {
   chrome.permissions.request({
     permissions: ['cookies']
   }, granted => {
