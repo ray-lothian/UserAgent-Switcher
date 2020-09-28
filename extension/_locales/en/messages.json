@@ -7,9 +7,6 @@
     "message": "Spoof websites trying to gather information about your web navigation to deliver distinct content you may not want",
     "description": "Description of the extension."
   },
-  "testUA": {
-    "message": "Test UA"
-  },
   "userAgentSwitcherandManagerOptions": {
     "message": "User-Agent Switcher and Manager :: Options"
   },
@@ -98,7 +95,7 @@
     "message": "Restart"
   },
   "restartTitle": {
-    "message": "Click to reload the extension. This will cause all the window-based user-agent strings to be cleared"
+    "message": "Click to reload the extension. This will cause all the window-based user-agent strings to be cleared."
   },
   "refreshTab": {
     "message": "Refresh Tab"
@@ -110,7 +107,7 @@
     "message": "Reset"
   },
   "resetTitle": {
-    "message": "Reset browser's user-agent string to the default one. This will not reset window-based UA strings. To reset them, use the 'Restart' button"
+    "message": "Reset browser's user-agent string to the default one. This will not reset window-based UA strings. To reset them, use the 'Restart' button."
   },
   "testUA": {
     "message": "Test UA"
@@ -152,7 +149,7 @@
     "message": "Reset (container)"
   },
   "resetContainerTitle": {
-    "message": "Reset the container's user-agent string to the default one. This will not reset window-based UA strings. To reset them, use the 'Restart' button"
+    "message": "Reset the container's user-agent string to the default one. This will not reset window-based UA strings. To reset them, use the 'Restart' button."
   },
   "oscpuTitle": {
     "message": "This is a readonly field. Use options page for custom parsing."
@@ -182,9 +179,9 @@
     "message": "User-Agent is Set"
   },
   "msgDisabledOnContainer": {
-    "message": "Disabled on this container. Uses the default user-agent string"
+    "message": "Disabled on this container. Uses the default user-agent string."
   },
   "msgDisabled": {
-    "message": "Disabled. Uses the default user-agent string"
+    "message": "Disabled. Uses the default user-agent string."
   }
 }
