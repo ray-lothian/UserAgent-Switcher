@@ -8,6 +8,13 @@ document.querySelectorAll('[data-localize]').forEach(e => {
     e.textContent = translated;
   }
 });
+document.querySelectorAll('[data-localized-title]').forEach(e => {
+  const ref = e.dataset.localizedTitle;
+  const translated = chrome.i18n.getMessage(ref);
+  if (translated) {
+    e.title = translated;
+  }
+});
 
 function notify(msg, period = 750) {
   // Update status to let user know options were saved.

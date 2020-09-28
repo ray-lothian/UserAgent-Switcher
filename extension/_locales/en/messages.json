@@ -70,6 +70,9 @@
   "exportSettings": {
     "message": "Export Settings"
   },
+  "exportSettingsTitle": {
+    "message": "To generate minified version, press Shift key while pressing this button"
+  },
   "help": {
     "message": "FAQs Page (Help)"
   },
@@ -171,6 +174,15 @@
   },
   "uaPlaceholder": {
     "message": "Your preferred user-agent string"
+  },
+  "ztoa": {
+    "message": "Z to A"
+  },
+  "atoz": {
+    "message": "A to Z"
+  },
+  "filterAmong": {
+    "message": "Filter among $1"
   },
   "msgDefaultUA": {
     "message": "Default UA, press the reset button instead"

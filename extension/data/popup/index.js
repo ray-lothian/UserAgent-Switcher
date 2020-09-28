@@ -8,12 +8,18 @@ document.querySelectorAll('[data-localized-value]').forEach(e => {
     e.value = translated;
   }
 });
-
 document.querySelectorAll('[data-localized-title]').forEach(e => {
   const ref = e.dataset.localizedTitle;
   const translated = chrome.i18n.getMessage(ref);
   if (translated) {
     e.title = translated;
+  }
+});
+document.querySelectorAll('[data-localize]').forEach(e => {
+  const ref = e.dataset.localize;
+  const translated = chrome.i18n.getMessage(ref);
+  if (translated) {
+    e.textContent = translated;
   }
 });
 
@@ -155,7 +161,7 @@ function update(ua) {
             inline: 'nearest'
           });
         }
-        document.getElementById('custom').placeholder = `Filter among ${list.length}`;
+        document.getElementById('custom').placeholder = chrome.i18n.getMessage('filterAmong', [list.length]);
         [...document.getElementById('os').querySelectorAll('option')].forEach(option => {
           option.disabled = (map.matching[browser.toLowerCase()] || []).indexOf(option.value.toLowerCase()) === -1;
         });
