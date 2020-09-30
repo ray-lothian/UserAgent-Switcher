@@ -172,6 +172,9 @@
   "uaPlaceholder": {
     "message": "Ваша предпочитаемая строка User-Agent"
   },
+  "noMatch": {
+    "message": "Для данного запроса нет строк User-Agent"
+  },
   "ztoa": {
     "message": "От Z до A"
   },
@@ -180,6 +183,9 @@
   },
   "filterAmong": {
     "message": "Выбрать из $1"
+  },
+  "filterAgents": {
+    "message": "Выбрать UA"
   },
   "msgDefaultUA": {
     "message": "User-Agent по умолчанию, вместо этого нажмите кнопку 'Сбросить'"
@@ -192,5 +198,11 @@
   },
   "msgDisabled": {
     "message": "Отключено. Используется строка User-Agent по умолчанию."
+  },
+  "optionsSaved": {
+    "message": "Настройки сохранены."
+  },
+  "dbReset": {
+    "message": "Щелкните 2 раза левой кнопкой мыши для сброса!"
   }
 }
