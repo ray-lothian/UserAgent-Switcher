@@ -130,7 +130,7 @@ select {
   background-color: #f5f5f5;
 }
 #list[data-loading=false] tbody:empty::before {
-  content: 'No matching user-agent string for this query';
+  content: attr(data-content);
   position: absolute;
   left: 0;
   top: 0;

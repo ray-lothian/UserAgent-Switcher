@@ -15,6 +15,20 @@ document.querySelectorAll('[data-localized-title]').forEach(e => {
     e.title = translated;
   }
 });
+document.querySelectorAll('[data-localized-placeholder]').forEach(e => {
+  const ref = e.dataset.localizedPlaceholder;
+  const translated = chrome.i18n.getMessage(ref);
+  if (translated) {
+    e.placeholder = translated;
+  }
+});
+document.querySelectorAll('[data-localized-content]').forEach(e => {
+  const ref = e.dataset.localizedContent;
+  const translated = chrome.i18n.getMessage(ref);
+  if (translated) {
+    e.dataset.content = translated;
+  }
+});
 document.querySelectorAll('[data-localize]').forEach(e => {
   const ref = e.dataset.localize;
   const translated = chrome.i18n.getMessage(ref);

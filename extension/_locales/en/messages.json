@@ -172,6 +172,9 @@
   "uaPlaceholder": {
     "message": "Your preferred user-agent string"
   },
+  "noMatch": {
+    "message": "No matching user-agent string for this query"
+  },
   "ztoa": {
     "message": "Z to A"
   },
@@ -180,6 +183,9 @@
   },
   "filterAmong": {
     "message": "Filter among $1"
+  },
+  "filterAgents": {
+    "message": "Filter Agents"
   },
   "msgDefaultUA": {
     "message": "Default UA, press the reset button instead"
@@ -192,5 +198,11 @@
   },
   "msgDisabled": {
     "message": "Disabled. Uses the default user-agent string."
+  },
+  "optionsSaved": {
+    "message": "Options saved."
+  },
+  "dbReset": {
+    "message": "Double-click to reset!"
   }
 }

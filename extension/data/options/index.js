@@ -89,7 +89,8 @@ function save() {
     protected: document.getElementById('protected').value.split(/\s*,\s*/).filter(s => s.length > 4)
   }, () => {
     restore();
-    notify('Options saved.');
+    notify(chrome.i18n.getMessage('optionsSaved'));
+
     chrome.contextMenus.update(document.querySelector('[name="mode"]:checked').value, {
       checked: true
     });
@@ -174,7 +175,7 @@ document.getElementById('donate').addEventListener('click', () => {
 
 document.getElementById('reset').addEventListener('click', e => {
   if (e.detail === 1) {
-    notify('Double-click to reset!');
+    notify(chrome.i18n.getMessage('dbReset'));
   }
   else {
     localStorage.clear();
