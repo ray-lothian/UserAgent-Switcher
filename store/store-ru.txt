@@ -1,0 +1,30 @@
+Пример использования: если вы хотите загрузить более быструю мобильную версию сайта, вы можете подменить строку User-Agent вашего браузера и показать, что смотрите сайт с мобильного устройства.
+
+--
+
+Данное расширение позволит вам подменить строку User-Agent вашего браузера на установленную вами и не дать веб-сайтам узнать конкретные подробности о вашем браузере и операционной системе.
+
+Обзор:
+https://www.youtube.com/watch?v=4M6_Zc4o1MQ
+
+Примечания:
+1. Вы легко можете установить собственную строку User-Agent из всплывающего окна
+2. Расширение оиспользует двухфакторный метод сокрытия вашей строки User-Agent по умолчанию, считающийся самым надежным.
+3. Расширение не обращается ни к каким веб-сайтам в то время, когда оно не подменяет строку User-Agent.
+4. Расширение включает подмену строки User-Agent только на определенных доменах; наоборот, также можно отключить подмену на определенных доменах. Откройте раздел "Настройки" для получения более подробной информации.
+5. Вы можете установить различные строки User-Agent на отдельные сайты.
+6. Также есть настройка случайного изменения строк User-Agent.
+7. Возможно установить строку User-Agent для одного окна; вы можете установить отдельную строку User-Agent для каждого окна браузера.
+8. Данное расширение поддерживает Managed Storage, и эти настройки могут быть изменены автоматически или установлены изначально администратором домена.
+
+Поддерживаемые операционные системы:
+Windows, Mac OS, Linux, Chromium OS, Ubuntu, Debian, Android, iOS, AmigaOS, OpenBSD, BeOS, Haiku, Solaris, NetBSD, FreeBSD, Slackware, SUSE, gentoo, Fedora, Gentoo, Mageia, CentOS, Mint, DragonFly, Kubuntu, Mandriva, Zenwalk, Unix, GNU, OS/2, AIX, QNX, BEOS, RISC OS, Symbian, Nintendo, OpenSolaris, Kubuntu
+
+Поддерживаемые браузеры:
+Internet Explorer, Safari, Chrome, Firefox, Opera, Edge, WebKit, Avant, Maxthon, Arora, Mozilla, Epiphany, Camino, Chimera, Chromium, Dragon, conkeror, Conkeror, Dillo, Links, Firebird, Swiftfox, Netscape, Flock, iCab, Iceape, icecat, IceCat, IceWeasel, Iron, Meleon, Konqueror, Lunascape, Lynx, MAXTHON, midori, Midori, KHTML, Mosaic, NetSurf, OmniWeb, Tablet, Mini, Phoenix, RockMelt, Safari, Browser, SeaMonkey, Slim, Webkit, w3m
+
+Для получения более подробной информации и решения общих проблем перейдите по адресу:
+https://add0n.com/useragent-switcher.html
+
+Для решения технических проблем перейдите по адресу:
+https://github.com/ray-lothian/UserAgent-Switcher/
