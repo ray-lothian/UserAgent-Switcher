@@ -1,5 +1,31 @@
+:root {
+  --color: #444;
+  --bg-color: #fff;
+  --color-admin: #444;
+  --color-desc: #2f2f2f;
+  --bg-desc: #e8e8e8;
+  --color-note: #2f2f2f;
+  --bg-note: #e8e8e8;
+  --bg-admin: #ffffed;
+  --border-admin: #e8ec3a;
+  --color-light: #636363;
+  --bg-color-light: #f5f5f5;
+  --bg-focus: #eff6f9;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color: #d1d2cc;
+    --bg-color: #272d37;
+    --color-light: #f5f5f5;
+    --bg-color-light: #343946;
+    --bg-focus: #454b5d;
+  }
+}
+
 body {
   min-width: 600px;
+  color: var(--color);
+  background-color: var(--bg-color);
 }
 @media (pointer: none), (pointer: coarse) {
   body {
@@ -16,13 +42,12 @@ body {
   }
   textarea {
     padding: 5px;
-    border: solid 1px #ccc;
   }
   button,
   input[type=submit],
   input[type=button] {
     height: 24px;
-    color: rgb(68, 68, 68);
+    color: #444;
     background-image: linear-gradient(rgb(237, 237, 237), rgb(237, 237, 237) 38%, rgb(222, 222, 222));
     box-shadow: rgba(0, 0, 0, 0.08) 0 1px 0, rgba(255, 255, 255, 0.75) 0 1px 2px inset;
     text-shadow: rgb(240, 240, 240) 0 1px 0;
@@ -32,12 +57,24 @@ body {
     opacity: 0.5;
   }
 }
+button,
+input[type=submit],
+input[type=button] {
+  cursor: pointer;
+}
+textarea {
+  color: var(--color-light);
+  background-color: var(--bg-color-light);
+  border: none;
+  width: 100%;
+  outline: none;
+}
+textarea:focus {
+  background-color: var(--bg-focus);
+}
 h1 {
   font-size: 15px;
   font-weight: normal;
-}
-textarea {
-  width: 100%;
 }
 .mode-2,
 .mode {
@@ -59,13 +96,13 @@ textarea {
 #toggle-whitelist-desc,
 #toggle-blacklist-desc {
   cursor: pointer;
-  color: #2f2f2f;
-  background-color: #e8e8e8;
+  color: var(--color-desc);
+  background-color: var(--bg-desc);
   padding: 1px 4px;
 }
 .note {
-  background: #e8e8e8;
-  color: #2f2f2f;
+  background-color: var(--bg-note);
+  color: var(--color-note);
   padding: 5px;
   margin: 0 0 10px 0;
 }
@@ -102,21 +139,9 @@ textarea {
   }
 }
 .admin {
-  background-color: #ffffed;
-  border: solid 1px #e8ec3a;
+  color: var(--color-admin);
+  background-color: var(--bg-admin);
+  border: solid 1px var(--border-admin);
   padding: 10px;
   margin: 15px 0;
-}
-
-@media (prefers-color-scheme: dark) {
-  body,
-  textarea,
-  .note {
-    background-color: #313131;
-    color: #bfbfbf;
-  }
-  .admin {
-    background-color: #545709;
-    color: #bfbfbf;
-  }
 }

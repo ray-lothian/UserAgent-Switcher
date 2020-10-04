@@ -1,3 +1,18 @@
+:root {
+  --color: #000;
+  --bg-color: #fff;
+  --color-light: #636363;
+  --bg-color-light: #f5f5f5;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color: #d1d2cc;
+    --bg-color: #272d37;
+    --color-light: #f5f5f5;
+    --bg-color-light: #343946;
+  }
+}
+
 [hbox] {
   display: flex;
   flex-direction: row;
@@ -23,8 +38,8 @@
 }
 
 body {
-  color: #000;
-  background-color: #fff;
+  color: var(--color);
+  background-color: var(--bg-color);
   font-family: "Helvetica Neue", Helvetica, arial, sans-serif;
   font-size: 13px;
   width: 600px;
@@ -50,13 +65,13 @@ input[type=text] {
   width: 100%;
 }
 input[type=text]:read-only {
-  color: #636363;
+  color: var(--color-light);
   background-color: transparent;
 }
 input {
   outline: none;
-  background-color: #fff;
-  color: #000;
+  background-color: var(--bg-color);
+  color: var(--color);
   border: none;
   box-sizing: border-box;
   height: 28px;
@@ -82,18 +97,23 @@ select {
   -moz-appearance: none;
   user-select: none;
   outline: none;
-  color: #000;
-  background: #fff url(list.svg) no-repeat center right 4px;
+  color: var(--color);
+  background: var(--bg-color) url(list-black.svg) no-repeat center right 4px;
   background-size: 8px;
   font-size: 13px;
   border-radius: 0;
   padding: 6px 16px 6px 4px;
   border: none;
 }
+@media (prefers-color-scheme: dark) {
+  select {
+    background-image: url(list-white.svg);
+  }
+}
 #list {
   overflow: auto;
   height: 240px;
-  color: #000;
+  color: var(--color);
   background-position: top 120px center;
   background-repeat: no-repeat;
   font-size: 11px;
@@ -107,8 +127,8 @@ select {
 }
 #list th {
   height: 32px;
-  color: #000;
-  background-color: #f5f5f5;
+  color: var(--color);
+  background-color: var(--bg-color-light);
   white-space: nowrap;
   padding-left: 10px;
 }
@@ -122,12 +142,12 @@ select {
   position: relative;
 }
 #list tbody tr:nth-child(odd) {
-  color: #000;
-  background-color: #fff;
+  color: var(--color);
+  background-color: var(--bg-color);
 }
 #list tbody tr:nth-child(even) {
-  color: #000;
-  background-color: #f5f5f5;
+  color: var(--color);
+  background-color: var(--bg-color-light);
 }
 #list[data-loading=false] tbody:empty::before {
   content: attr(data-content);
@@ -158,7 +178,7 @@ select {
 }
 
 #filter {
-  background-color: #f5f5f5;
+  background-color: var(--bg-color-light);
 }
 #filter th {
   height: 32px;
@@ -188,30 +208,37 @@ select {
 
 [data-cmd="test"] {
   background-color: #4d72b7;
-  color: #fff;
+  color: var(--bg-color);
 }
 [data-cmd="container"] {
   background-color: #92773c;
-  color: #fff;
+  color: var(--bg-color);
 }
 [data-cmd="window"],
 [data-cmd="apply"] {
   background-color: #3c923c;
-  color: #fff;
+  color: var(--bg-color);
 }
 
 [data-cmd="reset"] {
-  color: #fff;
+  color: var(--bg-color);
   background-color: #e6850b;
 }
 
 [data-cmd="reload"],
 [data-cmd="options"],
 [data-cmd="refresh"] {
-  color: #000;
-  background-color: #f5f5f5;
+  color: var(--color);
+  background-color: var(--bg-color-light);
 }
 
+#explore {
+  color: var(--color) !important;
+  background-color: var(--bg-color) !important;
+}
+#explore .title {
+  color: var(--color) !important;
+}
 #explore:not([data-loaded="true"]) {
   height: 18px;
 }
@@ -221,7 +248,7 @@ body[data-android="true"] [data-cmd="window"] {
   display: none;
 }
 #view {
-  background-color: #f5f5f5;
+  background-color: var(--bg-color-light);
   padding: 5px 0;
 }
 #view td {
@@ -238,7 +265,7 @@ body[data-android="true"] [data-cmd="window"] {
   bottom: 95px;
   right: 10px;
   background-color: #e68509;
-  color: #fff;
+  color: var(--bg-color);
   padding: 2px 5px;
   box-shadow: 0 0 2px #ca7403;
 }
@@ -248,16 +275,4 @@ body[data-android="true"] [data-cmd="window"] {
 
 .hide {
   visibility: hidden;
-}
-
-@media (prefers-color-scheme: dark) {
-  body,
-  th,
-  select,
-  input,
-  #view,
-  table {
-    background-color: #313131;
-    color: #bfbfbf;
-  }
 }
