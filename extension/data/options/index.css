@@ -107,3 +107,16 @@ textarea {
   padding: 10px;
   margin: 15px 0;
 }
+
+@media (prefers-color-scheme: dark) {
+  body,
+  textarea,
+  .note {
+    background-color: #313131;
+    color: #bfbfbf;
+  }
+  .admin {
+    background-color: #545709;
+    color: #bfbfbf;
+  }
+}
