@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "__MSG_extensionName__",
   "short_name": "useragent-switcher",
-  "version": "0.4.3",
+  "version": "0.4.4",
   "default_locale": "en",
 
   "description": "__MSG_extensionDescription__",
