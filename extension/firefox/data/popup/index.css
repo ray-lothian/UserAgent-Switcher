@@ -53,6 +53,7 @@ body {
 table {
   width: 100%;
   border-collapse: collapse;
+  white-space: nowrap;
 }
 input[type=search],
 input[type=text] {
