@@ -1,2 +1,2 @@
 ua-parser.min.js:
-  https://github.com/faisalman/ua-parser-js/releases/tag/0.7.21
+  https://github.com/faisalman/ua-parser-js/releases/tag/0.7.23

@@ -41,7 +41,6 @@ fs.readdir('./browsers/', async (err, files) => {
   }
   //
   const list = [
-    ...require('./assets/bots.json'),
     ...require('./assets/list-01.json'),
     ...require('./assets/list-02.json'),
     ...require('./assets/list-03.json'),
@@ -51,9 +50,24 @@ fs.readdir('./browsers/', async (err, files) => {
     ...require('./assets/list-07.json'),
     ...require('./assets/list-08.json'),
     ...require('./assets/list-09.json'),
-    ...require('./assets/list-10.json')
+    ...require('./assets/list-10.json'),
+    ...require('./assets/list-11.json')
   ].filter((s, i, l) => l.indexOf(s) === i && ['fb_iab', 'fbsv', 'w3m', 'elinks'].some(k => s.toLowerCase().indexOf(k) !== -1) === false);
   for (const ua of list) {
+    if (ua.startsWith('Mozilla/5.0 ') === false) {
+      continue;
+    }
+    if (ua.length < 10) {
+      console.log('[short agent]\t', ua);
+    }
+    if (ua.length > 200) {
+      console.log('[long agent]\t', ua);
+    }
+    if (ua.indexOf('http') !== -1) {
+      if (ua.indexOf('QtWeb') === -1 && ua.toLowerCase().indexOf('crawler') === -1 && ua.toLowerCase().indexOf('bot') === -1 && ua.toLowerCase().indexOf('spider') === -1) {
+        console.log('[contains HTTP]\t', ua);
+      }
+    }
     parser.setUA(ua);
     const o = parser.getResult();
     if (o.browser.name && o.os.name) {
