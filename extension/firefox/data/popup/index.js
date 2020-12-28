@@ -239,9 +239,9 @@ document.addEventListener('DOMContentLoaded', () => fetch('./map.json').then(r =
     document.getElementById('os').value = prefs['popup-os'];
     document.getElementById('sort').value = prefs['popup-sort'];
 
-    chrome.runtime.getBackgroundPage(bg => {
-      // Firefox in private mode -> there is no bg!
-      const ua = (bg ? bg.prefs.ua : '') || navigator.userAgent;
+    chrome.runtime.sendMessage({
+      method: 'get-ua'
+    }, ua => {
       update(ua);
       document.getElementById('ua').value = ua;
       document.getElementById('ua').dispatchEvent(new Event('input'));
@@ -296,7 +296,11 @@ document.addEventListener('click', ({target}) => {
       if (value !== navigator.userAgent) {
         // prevent a container ua string from overwriting the default one
         if ('cookieStoreId' in tab && tab.cookieStoreId !== DCSI) {
-          chrome.runtime.getBackgroundPage(bg => bg.ua.update(value, undefined, tab.cookieStoreId));
+          chrome.runtime.sendMessage({
+            method: 'request-update',
+            value,
+            cookieStoreId: tab.cookieStoreId
+          });
           chrome.storage.local.get({
             'container-uas': {}
           }, prefs => {
@@ -313,7 +317,11 @@ document.addEventListener('click', ({target}) => {
     }
     else if (cmd === 'window') {
       const value = document.getElementById('ua').value;
-      chrome.runtime.getBackgroundPage(bg => bg.ua.update(value, tab.windowId, tab.cookieStoreId));
+      chrome.runtime.sendMessage({
+        method: 'request-update',
+        value,
+        cookieStoreId: tab.cookieStoreId
+      });
     }
     else if (cmd === 'reset') {
       const input = document.querySelector('#list :checked');
@@ -322,9 +330,11 @@ document.addEventListener('click', ({target}) => {
       }
       // prevent a container ua string from overwriting the default one
       if ('cookieStoreId' in tab && tab.cookieStoreId !== DCSI) {
-        chrome.runtime.getBackgroundPage(bg => {
-          delete bg.ua._obj[tab.cookieStoreId];
-          bg.ua.update('', undefined, tab.cookieStoreId);
+        chrome.runtime.sendMessage({
+          method: 'request-update',
+          value: '',
+          cookieStoreId: tab.cookieStoreId,
+          delete: true
         });
         chrome.storage.local.get({
           'container-uas': {}
@@ -377,8 +387,10 @@ document.getElementById('ua').addEventListener('input', e => {
   document.querySelector('[data-cmd=window]').disabled = value === '';
 
   if (value) {
-    chrome.runtime.getBackgroundPage(bg => {
-      const o = bg.ua.parse(value);
+    chrome.runtime.sendMessage({
+      method: 'parse-ua',
+      value
+    }, o => {
       document.getElementById('appVersion').value = o.appVersion;
       document.getElementById('platform').value = o.platform;
       document.getElementById('vendor').value = o.vendor;

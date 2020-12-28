@@ -1,0 +1,35 @@
+{
+  "country-flags": {
+    "name": "Country Flags & IP WHOIS"
+  },
+  "save-images": {
+    "name": "Download All Images"
+  },
+  "media-player": {
+    "name": "YouTube Media Player"
+  },
+  "tab-discard": {
+    "name": "Auto Tab Discard"
+  },
+  "block-site": {
+    "name": "Block Site"
+  },
+  "chrome-reader-view": {
+    "name": "Reader View"
+  },
+  "dark-theme": {
+    "name": "Dark Theme"
+  },
+  "mute-tab": {
+    "name": "Mute Tab"
+  },
+  "proxy-switcher": {
+    "name": "Proxy Switcher"
+  },
+  "font-finder": {
+    "name": "Font Finder"
+  },
+  "bookmarks-commander": {
+    "name": "Bookmarks Commander"
+  }
+}

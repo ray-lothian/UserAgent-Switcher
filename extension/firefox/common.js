@@ -495,6 +495,7 @@ const onBeforeSendHeaders = d => {
     return {};
   }
   const o = (cache[tabId] || ua.object(tabId, undefined, cookieStoreId));
+
   const str = o ? o.userAgent : '';
   if (str && requestHeaders.length) {
     for (let i = 0, name = requestHeaders[0].name; i < requestHeaders.length; i += 1, name = (requestHeaders[i] || {}).name) {
@@ -574,6 +575,22 @@ chrome.storage.local.get({
 }, prefs => {
   for (const cookieStoreId of Object.keys(prefs['container-uas'])) {
     ua.string(prefs['container-uas'][cookieStoreId], 'global', cookieStoreId);
+  }
+});
+
+/* message passing */
+chrome.runtime.onMessage.addListener((request, sender, response) => {
+  if (request.method === 'parse-ua') {
+    response(ua.parse(request.value));
+  }
+  else if (request.method === 'get-ua') {
+    response(prefs.ua || '' || navigator.userAgent);
+  }
+  else if (request.method === 'request-update') {
+    if (request.delete) {
+      delete ua._obj[request.cookieStoreId];
+    }
+    ua.update(request.value, undefined, request.cookieStoreId);
   }
 });
 

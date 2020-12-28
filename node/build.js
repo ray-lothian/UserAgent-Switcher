@@ -13,7 +13,7 @@ const map = {
 
 const parser = new UAParser();
 
-const write = ({name, content}, callback) => fs.writeFile('./browsers/' + name, content, 'utf8', e => {
+const write = ({name, content}, callback) => fs.writeFile('../extension/firefox/data/popup/browsers/' + name, content, 'utf8', e => {
   if (e) {
     console.log(e);
   }
@@ -32,10 +32,10 @@ const reduce = (arr, length = 400) => {
   return arr;
 };
 
-fs.readdir('./browsers/', async (err, files) => {
+fs.readdir('../extension/firefox/data/popup/browsers/', async (err, files) => {
   if (err) throw err;
   for (const file of files) {
-    fs.unlinkSync(path.join('./browsers/', file), err => {
+    fs.unlinkSync(path.join('../extension/firefox/data/popup/browsers/', file), err => {
       if (err) throw err;
     });
   }
@@ -150,7 +150,7 @@ fs.readdir('./browsers/', async (err, files) => {
         }
       }
 
-      fs.writeFile('./map.json', JSON.stringify({
+      fs.writeFile('../extension/firefox/data/popup/map.json', JSON.stringify({
         browser: Object.values(map.browser).map(k => k[0]),
         os: Object.values(map.os).map(k => k[0]),
         matching: map.matching

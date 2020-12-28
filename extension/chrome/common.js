@@ -1,0 +1,1 @@
+../firefox/common.js

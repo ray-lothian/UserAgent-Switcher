@@ -1,12 +1,9 @@
 {
   "manifest_version": 2,
   "name": "__MSG_extensionName__",
-  "short_name": "useragent-switcher",
   "version": "0.4.4",
   "default_locale": "en",
-
   "description": "__MSG_extensionDescription__",
-
   "permissions": [
     "tabs",
     "storage",
@@ -16,7 +13,9 @@
     "webRequestBlocking",
     "contextMenus"
   ],
-
+  "optional_permissions": [
+    "cookies"
+  ],
   "icons": {
     "16": "data/icons/active/16.png",
     "18": "data/icons/active/18.png",
