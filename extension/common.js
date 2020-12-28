@@ -523,7 +523,7 @@ const onCommitted = d => {
         frameId,
         code: `{
           const script = document.createElement('script');
-          script.textContent = \`{
+          script.src = 'data:text/javascript;charset=utf-8;base64,' + btoa(\`{
             const o = JSON.parse('${JSON.stringify(o)}');
             for (const key of Object.keys(o)) {
               navigator.__defineGetter__(key, () => {
@@ -536,7 +536,7 @@ const onCommitted = d => {
                 return o[key];
               });
             }
-          }\`;
+          }\`);
           document.documentElement.appendChild(script);
           script.remove();
         }`
