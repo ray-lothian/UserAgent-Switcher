@@ -232,6 +232,9 @@ const ua = {
     }
     const p = (new UAParser(s)).getResult();
     o.platform = p.os.name || '';
+    if (o.platform === 'Mac OS') {
+      o.platform = 'MacIntel';
+    }
     o.vendor = p.device.vendor || '';
     if (isSF) {
       o.vendor = 'Apple Computer, Inc.';
@@ -524,7 +527,8 @@ const onCommitted = d => {
         frameId,
         code: `{
           const script = document.createElement('script');
-          script.src = 'data:text/javascript;charset=utf-8;base64,' + btoa(\`{
+          script.textContent = \`{
+            document.currentScript.dataset.injected = true;
             const o = JSON.parse('${JSON.stringify(o)}');
             for (const key of Object.keys(o)) {
               navigator.__defineGetter__(key, () => {
@@ -537,8 +541,14 @@ const onCommitted = d => {
                 return o[key];
               });
             }
-          }\`);
+          }\`;
           document.documentElement.appendChild(script);
+          if (script.dataset.injected !== 'true') {
+            const s = document.createElement('script');
+            s.src = 'data:text/javascript;charset=utf-8;base64,' + btoa(script.textContent);
+            document.documentElement.appendChild(s);
+            s.remove();
+          }
           script.remove();
         }`
       }, () => {
@@ -611,7 +621,7 @@ chrome.runtime.onMessage.addListener((request, sender, response) => {
             tabs.query({active: true, currentWindow: true}, tbs => tabs.create({
               url: page + '?version=' + version + (previousVersion ? '&p=' + previousVersion : '') + '&type=' + reason,
               active: reason === 'install',
-              index: tbs ? tbs[0].index + 1 : undefined
+              ...(tbs && tbs.length && {index: tbs[0].index + 1})
             }));
             storage.local.set({'last-update': Date.now()});
           }
