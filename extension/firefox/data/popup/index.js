@@ -415,7 +415,7 @@ document.querySelector('[data-cmd="container"]').addEventListener('click', () =>
     }
   });
 });
-if (/Firefox/.test(navigator.userAgent)) {
+if (/Firefox/.test(navigator.userAgent) && chrome.permissions) {
   chrome.permissions.contains({
     permissions: ['cookies']
   }, granted => {
