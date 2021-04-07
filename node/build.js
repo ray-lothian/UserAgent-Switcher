@@ -52,7 +52,8 @@ fs.readdir('../extension/firefox/data/popup/browsers/', async (err, files) => {
     ...require('./assets/list-09.json'),
     ...require('./assets/list-10.json'),
     ...require('./assets/list-11.json'),
-    ...require('./assets/list-12.json')
+    ...require('./assets/list-12.json'),
+    ...require('./assets/list-13.json')
   ].filter((s, i, l) => l.indexOf(s) === i && ['fb_iab', 'fbsv', 'w3m', 'elinks'].some(k => s.toLowerCase().indexOf(k) !== -1) === false);
   for (const ua of list) {
     if (ua.startsWith('Mozilla/5.0 ') === false) {
