@@ -269,7 +269,7 @@ const ua = {
             {brand: 'Chromium', version: p.browser.major},
             {brand: 'Google Chrome', version: p.browser.major}
           ],
-          mobile: false
+          mobile: /Android|webOS|iPhone|iPad|Mac|Macintosh|iPod|BlackBerry|IEMobile|Opera Mini/i.test(s)
         };
       }
     }
@@ -632,7 +632,7 @@ chrome.runtime.onMessage.addListener((request, sender, response) => {
     if (request.delete) {
       delete ua._obj[request.cookieStoreId];
     }
-    ua.update(request.value, undefined, request.cookieStoreId);
+    ua.update(request.value, request.windowId, request.cookieStoreId);
   }
 });
 

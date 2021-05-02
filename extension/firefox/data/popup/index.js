@@ -323,7 +323,8 @@ document.addEventListener('click', ({target}) => {
       chrome.runtime.sendMessage({
         method: 'request-update',
         value,
-        cookieStoreId: tab.cookieStoreId
+        cookieStoreId: tab.cookieStoreId,
+        windowId: tab.windowId
       });
     }
     else if (cmd === 'reset') {
