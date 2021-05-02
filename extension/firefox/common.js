@@ -27,7 +27,13 @@ const prefs = {
   'color': '#777',
   'cache': true,
   'exactMatch': false,
-  'protected': ['google.com/recaptcha', 'gstatic.com/recaptcha'],
+  'protected': [
+    'google.com/recaptcha',
+    'gstatic.com/recaptcha',
+    'accounts.google.com',
+    'accounts.youtube.com',
+    'gitlab.com/users/sign_in'
+  ],
   'parser': {}, // maps ua string to a ua object,
   'log': false,
   'json-guid': 'na'
@@ -248,9 +254,24 @@ const ua = {
     }
     if (isFF) {
       o.oscpu = ((p.os.name || '') + ' ' + (p.os.version || '')).trim();
+      o.userAgentData = '[delete]';
+      o.productSub = '20100101';
+      o.buildID = '20181001000000';
     }
     else {
       o.oscpu = '[delete]';
+      o.buildID = '[delete]';
+      o.productSub = '20030107';
+      if (p.browser && p.browser.major) {
+        o.userAgentData = {
+          brands: [
+            {brand: ' Not A;Brand', version: '99'},
+            {brand: 'Chromium', version: p.browser.major},
+            {brand: 'Google Chrome', version: p.browser.major}
+          ],
+          mobile: false
+        };
+      }
     }
 
     if (o.userAgent === 'empty') {
@@ -406,6 +427,10 @@ function match({url, tabId, cookieStoreId = DCSI}) {
   log('match', url, tabId, cookieStoreId);
   const h = hostname(url);
 
+  if (prefs.protected.some(s => url.indexOf(s) !== -1)) {
+    return true;
+  }
+
   if (prefs.mode === 'blacklist') {
     if (prefs.blacklist.length) {
       return prefs.blacklist.some(s => {
@@ -501,7 +526,11 @@ const onBeforeSendHeaders = d => {
 
   const str = o ? o.userAgent : '';
   if (str && requestHeaders.length) {
-    for (let i = 0, name = requestHeaders[0].name; i < requestHeaders.length; i += 1, name = (requestHeaders[i] || {}).name) {
+    for (
+      let i = 0, name = requestHeaders[0].name;
+      i < requestHeaders.length;
+      i += 1, name = (requestHeaders[i] || {}).name
+    ) {
       if (name === 'User-Agent' || name === 'user-agent') {
         requestHeaders[i].value = str === 'empty' ? '' : str;
         return {
@@ -530,16 +559,19 @@ const onCommitted = d => {
           script.textContent = \`{
             document.currentScript.dataset.injected = true;
             const o = JSON.parse('${JSON.stringify(o)}');
+
             for (const key of Object.keys(o)) {
-              navigator.__defineGetter__(key, () => {
-                if (o[key] === '[delete]') {
-                 return undefined;
-                }
-                else if (o[key] === 'empty') {
-                  return '';
-                }
-                return o[key];
-              });
+              if (o[key] === '[delete]') {
+                delete Object.getPrototypeOf(window.navigator)[key];
+              }
+              else {
+                navigator.__defineGetter__(key, () => {
+                  if (o[key] === 'empty') {
+                    return '';
+                  }
+                  return o[key];
+                });
+              }
             }
           }\`;
           document.documentElement.appendChild(script);
