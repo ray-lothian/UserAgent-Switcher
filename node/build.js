@@ -10,6 +10,8 @@ const map = {
   os: {},
   matching: {}
 };
+const invalids = [];
+
 
 const parser = new UAParser();
 
@@ -39,35 +41,23 @@ fs.readdir('../extension/firefox/data/popup/browsers/', async (err, files) => {
       if (err) throw err;
     });
   }
-  //
-  const list = [
-    ...require('./assets/list-01.json'),
-    ...require('./assets/list-02.json'),
-    ...require('./assets/list-03.json'),
-    ...require('./assets/list-04.json'),
-    ...require('./assets/list-05.json'),
-    ...require('./assets/list-06.json'),
-    ...require('./assets/list-07.json'),
-    ...require('./assets/list-08.json'),
-    ...require('./assets/list-09.json'),
-    ...require('./assets/list-10.json'),
-    ...require('./assets/list-11.json'),
-    ...require('./assets/list-12.json'),
-    ...require('./assets/list-13.json')
-  ].filter((s, i, l) => l.indexOf(s) === i && ['fb_iab', 'fbsv', 'w3m', 'elinks'].some(k => s.toLowerCase().indexOf(k) !== -1) === false);
-  for (const ua of list) {
-    if (ua.startsWith('Mozilla/5.0 ') === false) {
-      continue;
-    }
+
+
+  const next = (ua, source) => {
+    ua = ua.trim();
+
     if (ua.length < 10) {
-      console.log('[short agent]\t', ua);
+      invalids.push(['SHT', source, ua]);
+      return console.log('[short agent  ]', source, ua);
     }
-    if (ua.length > 200) {
-      console.log('[long agent]\t', ua);
+    if (ua.length > 400) {
+      invalids.push(['LNG', source, ua]);
+      return console.log('[long agent   ]', source, ua);
     }
     if (ua.indexOf('http') !== -1) {
       if (ua.indexOf('QtWeb') === -1 && ua.toLowerCase().indexOf('crawler') === -1 && ua.toLowerCase().indexOf('bot') === -1 && ua.toLowerCase().indexOf('spider') === -1) {
-        console.log('[contains HTTP]\t', ua);
+        invalids.push(['HTP', source, ua]);
+        return console.log('[contains HTTP]', source, ua);
       }
     }
     parser.setUA(ua);
@@ -95,9 +85,43 @@ fs.readdir('../extension/firefox/data/popup/browsers/', async (err, files) => {
       map.os.misc = map.os.misc || ['Misc'];
     }
     else {
-      // console.log('skipped', ua);
+      invalids.push(['PRS', source, ua]);
+      console.log('[cannot parse ]', source, ua);
     }
-  }
+  };
+
+  console.log('BOTS');
+  require('./assets/bots.json').forEach(ua => next(ua, 'BT'));
+  console.log('List 01');
+  require('./assets/list-01.json').forEach(ua => next(ua, '01'));
+  console.log('List 02');
+  require('./assets/list-02.json').forEach(ua => next(ua, '02'));
+  console.log('List 03');
+  require('./assets/list-03.json').forEach(ua => next(ua, '03'));
+  console.log('List 04');
+  require('./assets/list-04.json').forEach(ua => next(ua, '04'));
+  console.log('List 05');
+  require('./assets/list-05.json').forEach(ua => next(ua, '05'));
+  console.log('List 06');
+  require('./assets/list-06.json').forEach(ua => next(ua, '06'));
+  console.log('List 07');
+  require('./assets/list-07.json').forEach(ua => next(ua, '07'));
+  console.log('List 08');
+  require('./assets/list-08.json').forEach(ua => next(ua, '08'));
+  console.log('List 09');
+  require('./assets/list-09.json').forEach(ua => next(ua, '09'));
+  console.log('List 10');
+  require('./assets/list-10.json').forEach(ua => next(ua, '10'));
+  console.log('List 11');
+  require('./assets/list-11.json').forEach(ua => next(ua, '11'));
+  console.log('List 12');
+  require('./assets/list-12.json').forEach(ua => next(ua, '12'));
+  console.log('List 13');
+  require('./assets/list-13.json').forEach(ua => next(ua, '13'));
+  console.log('List 14');
+  require('./assets/list-14.json').forEach(ua => next(ua, '14'));
+  console.log('List 15');
+  require('./assets/list-15.json').forEach(ua => next(ua, '15'));
 
   const contents = [];
   for (const browser of Object.keys(cache)) {
@@ -128,10 +152,12 @@ fs.readdir('../extension/firefox/data/popup/browsers/', async (err, files) => {
           'gentoo',
           'ubuntu',
           'WIndows',
-          'kubuntu'
+          'kubuntu',
+          'PLAYSTATION'
         ].some(k => k === s) === false);
         if (map.os[os].length > 1) {
-          throw Error('Duplicated OS; add the ones that need to be removed to the list: ', map.os[os].join(', '));
+          console.log(map.os[os]);
+          throw Error(`Duplicated OS; add the ones that need to be removed to the list: "${os}"`);
         }
       }
       for (const browser of Object.keys(map.browser)) {
@@ -145,13 +171,17 @@ fs.readdir('../extension/firefox/data/popup/browsers/', async (err, files) => {
           'midori',
           'Palemoon',
           'Seamonkey',
-          'chrome'
+          'chrome',
+          'links',
+          'brave'
         ].some(k => k === s) === false);
         if (map.browser[browser].length > 1) {
-          throw Error('Duplicated browser; add the ones that need to be removed to the list');
+          console.log(map.browser[browser]);
+          throw Error(`Duplicated browser; add the ones that need to be removed to the list: ${browser}`);
         }
       }
 
+      fs.writeFile('invalids.txt', invalids.map(a => a.join(' ')).join('\n'), () => {});
       fs.writeFile('../extension/firefox/data/popup/map.json', JSON.stringify({
         browser: Object.values(map.browser).map(k => k[0]),
         os: Object.values(map.os).map(k => k[0]),
