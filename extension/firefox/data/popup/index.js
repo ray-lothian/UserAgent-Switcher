@@ -144,29 +144,32 @@ function update(ua) {
       if (list) {
         const fragment = document.createDocumentFragment();
         let radio;
-        for (const o of sort(list)) {
+        list = sort(list);
+        list.forEach((o, n) => {
           const clone = document.importNode(t.content, true);
-          const second = clone.querySelector('td:nth-child(2)');
+          const num = clone.querySelector('td:nth-child(1)');
+          num.textContent = n + 1;
+          const second = clone.querySelector('td:nth-child(3)');
           if (o.browser.name && o.browser.version) {
             second.title = second.textContent = o.browser.name + ' ' + (o.browser.version || ' ');
           }
           else {
             second.title = second.textContent = '-';
           }
-          const third = clone.querySelector('td:nth-child(3)');
+          const third = clone.querySelector('td:nth-child(4)');
           if (o.os.name && o.os.version) {
             third.title = third.textContent = o.os.name + ' ' + (o.os.version || ' ');
           }
           else {
             third.title = third.textContent = '-';
           }
-          const forth = clone.querySelector('td:nth-child(4)');
+          const forth = clone.querySelector('td:nth-child(5)');
           forth.title = forth.textContent = o.ua;
           if (o.ua === ua) {
             radio = clone.querySelector('input[type=radio]');
           }
           fragment.appendChild(clone);
-        }
+        });
         tbody.appendChild(fragment);
         if (radio) {
           radio.checked = true;
@@ -206,7 +209,7 @@ document.addEventListener('change', ({target}) => {
     }, prefs => update(prefs.ua || navigator.userAgent));
   }
   if (target.type === 'radio') {
-    document.getElementById('ua').value = target.closest('tr').querySelector('td:nth-child(4)').textContent;
+    document.getElementById('ua').value = target.closest('tr').querySelector('td:nth-child(5)').textContent;
     document.getElementById('ua').dispatchEvent(new Event('input'));
   }
 });
