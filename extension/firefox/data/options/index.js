@@ -109,7 +109,13 @@ function restore() {
     custom: {},
     parser: {},
     siblings: {},
-    protected: ['google.com/recaptcha', 'gstatic.com/recaptcha']
+    protected: [
+      'google.com/recaptcha',
+      'gstatic.com/recaptcha',
+      'accounts.google.com',
+      'accounts.youtube.com',
+      'gitlab.com/users/sign_in'
+    ]
   }, prefs => {
     document.getElementById('exactMatch').checked = prefs.exactMatch;
     document.getElementById('faqs').checked = prefs.faqs;
