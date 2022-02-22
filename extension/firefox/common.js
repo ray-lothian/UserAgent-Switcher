@@ -333,7 +333,7 @@ const ua = {
         const o = ua.object(null, windowId, tab.cookieStoreId);
         chrome.browserAction.setBadgeText({
           tabId,
-          text: o && o.platform ? o.platform.substr(0, 3) : ''
+          text: o && o.platform ? o.platform.slice(0, 3) : ''
         });
       }));
     }
@@ -341,7 +341,7 @@ const ua = {
       const o = ua.object(tabId, undefined, cookieStoreId);
       chrome.browserAction.setBadgeText({
         tabId,
-        text: o.platform ? o.platform.substr(0, 3) : 'BOT'
+        text: o.platform ? o.platform.slice(0, 3) : 'BOT'
       });
     }
   },
