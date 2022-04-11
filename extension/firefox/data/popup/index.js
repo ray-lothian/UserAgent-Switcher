@@ -110,7 +110,7 @@ function get(path) {
       return cf;
     }
   }).open('agents').catch(() => cf).then(cache => {
-    const link = 'https://cdn.jsdelivr.net/gh/ray-lothian/UserAgent-Switcher/node/' + path;
+    const link = 'https://cdn.jsdelivr.net/gh/ray-lothian/UserAgent-Switcher/extension/firefox/data/popup/' + path;
     // updating agents once per 7 days
     chrome.storage.local.get({
       ['cache.' + path]: 0
