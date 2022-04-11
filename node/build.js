@@ -128,6 +128,8 @@ fs.readdir('../extension/firefox/data/popup/browsers/', async (err, files) => {
   require('./assets/list-17.json').forEach(ua => next(ua, '17'));
   console.log('List 18');
   require('./assets/list-18.json').forEach(ua => next(ua, '18'));
+  console.log('List 19');
+  require('./assets/list-19.json').forEach(ua => next(ua, '19'));
 
   const contents = [];
   for (const browser of Object.keys(cache)) {
