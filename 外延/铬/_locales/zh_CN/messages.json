@@ -1,0 +1,208 @@
+{
+   "appVersionTitle": {
+      "message": "这是一个只读字段。 使用选项页面进行自定义解析."
+   },
+   "applyActiveWindow": {
+      "message": "应用(活动窗口)"
+   },
+   "applyActiveWindowTitle": {
+      "message": "为当前窗口内的所有选项卡设置此用户代理字符串"
+   },
+   "applyAllWindows": {
+      "message": "应用（所有窗口）"
+   },
+   "applyAllWindowsTitle": {
+      "message": "将此用户代理字符串设置为浏览器的用户代理字符串"
+   },
+   "applyContainer": {
+      "message": "应用（容器）"
+   },
+   "applyContainerTitle": {
+      "message": "将此用户代理字符串设置为当前容器的用户代理字符串"
+   },
+   "applyContainerWindow": {
+      "message": "应用（窗口上的容器）"
+   },
+   "applyContainerWindowTitle": {
+      "message": "为当前窗口容器内的所有选项卡设置此用户代理字符串"
+   },
+   "atoz": {
+      "message": "A to Z"
+   },
+   "blackListMode": {
+      "message": "黑名单模式"
+   },
+   "blackListModeDescription": {
+      "message": "将自定义用户代理字符串应用于所有选项卡，但具有以下顶级主机名（逗号分隔的主机名列表）的选项卡除外。 请注意，即使从工具栏弹出窗口设置了基于窗口的用户代理字符串，也会使用浏览器的默认用户代理字符串。"
+   },
+   "cache": {
+      "message": "使用缓存来提高性能（推荐值为 true）。 仅当您使用自定义模式并且您需要在每个请求的提供的列表中更改用户代理字符串时才取消选中此选项。"
+   },
+   "considerContainers": {
+      "message": "考虑容器"
+   },
+   "considerContainersTitle": {
+      "message": "允许扩展程序访问浏览器的容器。 如果授予此权限，则隔离容器内的选项卡不会遵循默认容器的用户代理字符串。 您需要为每个新容器设置此字符串。"
+   },
+   "customMode": {
+      "message": "自定义模式"
+   },
+   "customModeDescription": {
+      "message": "尝试从 JSON 对象解析用户代理字符串； 否则，要么使用默认的用户代理字符串，要么使用从弹出界面设置用户的字符串。 使用 \"*\" 作为主机名以匹配所有域。 您可以通过提供数组而不是固定字符串从多个用户代理字符串中随机选择。 如果您的 JSON 对象中有一个 \"_\" 键，它引用了一个主机名数组，那么扩展程序只会为该列表中的每个主机名随机选择一次用户代理字符串。 如果您不希望在此浏览器会话结束之前更改随机用户代理，这将很有用。"
+   },
+   "customUserAgentParsing": {
+      "message": "自定义用户代理解析"
+   },
+   "customUserAgentParsingDescription": {
+      "message": "绕过内部用户代理字符串解析方法的 JSON 对象。 键是实际的用户代理字符串，每个键的值是需要为“导航器”对象设置的键的对象。 如果要删除 \"navigator\" 对象中的键，可以使用 \"[delete]\" 关键字。"
+   },
+   "dbReset": {
+      "message": "双击重置！"
+   },
+   "description": {
+      "message": "描述"
+   },
+   "disableSpoofing": {
+      "message": "禁用欺骗"
+   },
+   "disableSpoofingDescription": {
+      "message": "逗号分隔的关键字列表，扩展不应欺骗用户代理标头。 使用此列表来保护包含这些受保护关键字的 URL。 每个关键字至少需要 5 个字符长."
+   },
+   "donate": {
+      "message": "支持发展"
+   },
+   "exactMatch": {
+      "message": "使用精确匹配（如果选中，您将需要在白名单和黑名单模式中插入所有子域以考虑。如果未选中，则所有子域都通过匹配条件（例如：www.google. 如果 google.com 在列表中，则 com 通过匹配））"
+   },
+   "exportSettings": {
+      "message": "导出设置"
+   },
+   "exportSettingsTitle": {
+      "message": "要生成缩小版本，请在按住此按钮的同时按 Shift 键"
+   },
+   "extensionDescription": {
+      "description": "扩展的描述。",
+      "message": "欺骗网站试图收集有关您的网络导航的信息以提供您可能不想要的不同内容"
+   },
+   "extensionName": {
+      "description": "扩展名",
+      "message": "User-Agent Switcher and Manager"
+   },
+   "faqs": {
+      "message": "打开有关更新的常见问题解答页面"
+   },
+   "filterAgents": {
+      "message": "过滤代理"
+   },
+   "filterAmong": {
+      "message": "筛选 $1"
+   },
+   "help": {
+      "message": "常见问题页面（帮助）"
+   },
+   "importSettings": {
+      "message": "导入设置"
+   },
+   "insertSample": {
+      "message": "插入样本"
+   },
+   "log": {
+      "message": "在浏览器控制台中显示调试信息"
+   },
+   "managedStorage": {
+      "message": "此扩展支持托管存储，因此可以自动更改首选项，也可以由域管理员预先配置。 阅读常见问题页面了解更多信息。"
+   },
+   "msgDefaultUA": {
+      "message": "默认UA，改为按reset键"
+   },
+   "msgDisabled": {
+      "message": "已禁用。 使用默认的用户代理字符串."
+   },
+   "msgDisabledOnContainer": {
+      "message": "在此容器上禁用。 使用默认的用户代理字符串."
+   },
+   "msgUASet": {
+      "message": "用户代理已设置"
+   },
+   "noMatch": {
+      "message": "此查询没有匹配的用户代理字符串"
+   },
+   "options": {
+      "message": "选项"
+   },
+   "optionsSaved": {
+      "message": "选项已保存"
+   },
+   "optionsTitle": {
+      "message": "打开选项页面"
+   },
+   "oscpuTitle": {
+      "message": "这是一个只读字段。 使用选项页面进行自定义解析"
+   },
+   "platformTitle": {
+      "message": "这是一个只读字段。 使用选项页面进行自定义解析"
+   },
+   "productTitle": {
+      "message": "这是一个只读字段。 使用选项页面进行自定义解析"
+   },
+   "refreshTab": {
+      "message": "刷新选项卡"
+   },
+   "refreshTabTitle": {
+      "message": "刷新当前页面"
+   },
+   "reset": {
+      "message": "重置"
+   },
+   "resetContainer": {
+      "message": "重置（容器）"
+   },
+   "resetContainerTitle": {
+      "message": "将容器的用户代理字符串重置为默认值。 这不会重置基于窗口的 UA 字符串。 要重置它们，请使用“重新启动”按钮。"
+   },
+   "resetTitle": {
+      "message": "将浏览器的用户代理字符串重置为默认值。 这不会重置基于窗口的 UA 字符串。 要重置它们，请使用“重新启动”按钮。"
+   },
+   "restart": {
+      "message": "重新开始"
+   },
+   "restartTitle": {
+      "message": "单击以重新加载扩展程序。 这将导致所有基于窗口的用户代理字符串被清除。"
+   },
+   "save": {
+      "message": "保存"
+   },
+   "siblingHostnames": {
+      "message": "同级主机名"
+   },
+   "siblingHostnamesDescription": {
+      "message": "一个 JSON 数组，包含一组或多组主机名，每个组有一个用户代理字符串。 对于一个组中的所有主机名，用户代理字符串计算只发生一次，所有其他成员使用相同的计算字符串。 这对于确保一组连接的网站仅访问相同的用户代理字符串很有用。"
+   },
+   "testUA": {
+      "message": "测试 UA"
+   },
+   "testUATitle": {
+      "message": "测试您的用户代理字符串"
+   },
+   "uaPlaceholder": {
+      "message": "您首选的用户代理字符串"
+   },
+   "uaTitle": {
+      "message": "要设置空白用户代理字符串，请使用“空”关键字。 要基于当前浏览器的导航器对象构造自定义用户代理字符串，请使用 ${} 表示法。 此符号中的任何内容都是从“导航器”对象中读取的。 例如，要将字符串附加到默认用户代理，请使用 '${userAgent} THIS IS THE APPENDED STRING'"
+   },
+   "userAgentSwitcherandManagerOptions": {
+      "message": "用户代理切换器和管理器 :: 选项"
+   },
+   "vendorTitle": {
+      "message": "这是一个只读字段。 使用选项页面进行自定义解析。"
+   },
+   "whiteListMode": {
+      "message": "白名单模式"
+   },
+   "whiteListModeDescription": {
+      "message": "仅将自定义用户代理字符串应用于具有以下顶级主机名的选项卡。 请注意，如果从工具栏弹出窗口中设置了基于窗口的用户代理字符串，则此用户代理将覆盖全局用户代理。"
+   },
+   "ztoa": {
+      "message": "Z to A"
+   }
+}
