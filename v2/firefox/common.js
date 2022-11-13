@@ -262,6 +262,7 @@ const ua = {
       o.oscpu = '[delete]';
       o.buildID = '[delete]';
       o.productSub = '20030107';
+
       if (p.browser && p.browser.major) {
         o.userAgentData = {
           brands: [
@@ -269,7 +270,8 @@ const ua = {
             {brand: 'Chromium', version: p.browser.major},
             {brand: 'Google Chrome', version: p.browser.major}
           ],
-          mobile: /Android|webOS|iPhone|iPad|Mac|Macintosh|iPod|BlackBerry|IEMobile|Opera Mini/i.test(s)
+          mobile: /Android|webOS|iPhone|iPad|Mac|Macintosh|iPod|BlackBerry|IEMobile|Opera Mini/i.test(s),
+          platform: o.platform
         };
       }
     }
