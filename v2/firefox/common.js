@@ -264,14 +264,34 @@ const ua = {
       o.productSub = '20030107';
 
       if (p.browser && p.browser.major) {
+        // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Sec-CH-UA-Platform
+        let platform = 'Unknown';
+        if (p.os && p.os.name) {
+          const name = p.os.name.toLowerCase();
+          if (name.includes('mac')) {
+            platform = 'macOS';
+          }
+          else if (name.includes('debian')) {
+            platform = 'Linux';
+          }
+          else {
+            platform = p.os.name;
+          }
+        }
+
         o.userAgentData = {
-          brands: [
-            {brand: ' Not A;Brand', version: '99'},
-            {brand: 'Chromium', version: p.browser.major},
-            {brand: 'Google Chrome', version: p.browser.major}
-          ],
+          brands: [{
+            brand: 'Not=A?Brand',
+            version: '99'
+          }, {
+            brand: p.browser.name === 'Chrome' ? 'Google Chrome' : p.browser.name,
+            version: p.browser.major
+          }, {
+            brand: 'Chromium',
+            version: p.browser.major
+          }],
           mobile: /Android|webOS|iPhone|iPad|Mac|Macintosh|iPod|BlackBerry|IEMobile|Opera Mini/i.test(s),
-          platform: o.platform
+          platform
         };
       }
     }
@@ -553,6 +573,8 @@ const onCommitted = d => {
     }
     const o = cache[tabId] || ua.object(tabId, undefined, cookieStoreId);
     if (o && o.userAgent) {
+      const s = btoa(unescape(encodeURIComponent(JSON.stringify(o))));
+
       chrome.tabs.executeScript(tabId, {
         runAt: 'document_start',
         frameId,
@@ -560,7 +582,7 @@ const onCommitted = d => {
           const script = document.createElement('script');
           script.textContent = \`{
             document.currentScript.dataset.injected = true;
-            const o = JSON.parse('${JSON.stringify(o)}');
+            const o = JSON.parse(decodeURIComponent(escape(atob('${s}'))));
 
             for (const key of Object.keys(o)) {
               if (o[key] === '[delete]') {
