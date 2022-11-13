@@ -553,14 +553,19 @@ const onBeforeSendHeaders = d => {
       i < requestHeaders.length;
       i += 1, name = (requestHeaders[i] || {}).name
     ) {
-      if (name === 'User-Agent' || name === 'user-agent') {
+      name = name.toLowerCase();
+      if (name === 'user-agent') {
         requestHeaders[i].value = str === 'empty' ? '' : str;
-        return {
-          requestHeaders
-        };
+      }
+      // https://github.com/ray-lothian/UserAgent-Switcher/issues/160
+      else if (name.startsWith('sec-ch-')) {
+        requestHeaders[i] = null;
       }
     }
   }
+  return {
+    requestHeaders: requestHeaders.filter(a => a)
+  };
 };
 
 const onCommitted = d => {
