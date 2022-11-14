@@ -266,7 +266,7 @@ const ua = {
       o.productSub = '20030107';
 
       if (prefs.userAgentData && p.browser && p.browser.major) {
-        if (['Opera', 'Chrome', 'Edge', 'Vivaldi'].includes(p.browser.name)) {
+        if (['Opera', 'Chrome', 'Edge'].includes(p.browser.name)) {
           o.userAgentDataBuilder = {p, ua: s};
           delete o.userAgentData;
         }
@@ -536,7 +536,38 @@ const onBeforeSendHeaders = d => {
       }
       // https://github.com/ray-lothian/UserAgent-Switcher/issues/160
       else if (name.startsWith('sec-ch-')) {
-        requestHeaders[i] = null;
+        if (o.userAgentDataBuilder) {
+          if (name === 'sec-ch-ua-platform') {
+            let platform = o.userAgentDataBuilder.p?.os?.name || 'Windows';
+
+            if (platform.toLowerCase().includes('mac')) {
+              platform = 'macOS';
+            }
+            else if (name.includes('debian')) {
+              platform = 'Linux';
+            }
+
+            requestHeaders[i].value = '"' + platform + '"';
+          }
+          else if (name === 'sec-ch-ua') {
+            const version = o.userAgentDataBuilder.p?.browser?.major || 107;
+            let name = o.userAgentDataBuilder.p?.browser?.name || 'Google Chrome';
+            if (name === 'Chrome') {
+              name = 'Google Chrome';
+            }
+            requestHeaders[i].value = `"${name}";v="${version}", "Chromium";v="${version}", "Not=A?Brand";v="24"`;
+          }
+          else if (name === 'sec-ch-ua-mobile') {
+            requestHeaders[i].value =
+              /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(o.userAgent) ? '?1' : '?0';
+          }
+          else {
+            requestHeaders[i] = null;
+          }
+        }
+        else {
+          requestHeaders[i] = null;
+        }
       }
     }
   }
@@ -567,7 +598,7 @@ const onCommitted = d => {
             const o = JSON.parse(decodeURIComponent(escape(atob('${s}'))));
 
             if (o.userAgentDataBuilder) {
-              navigator.userAgentData = new class NavigatorUAData {
+              const v = new class NavigatorUAData {
                 #p;
 
                 constructor({p, ua}) {
@@ -587,7 +618,7 @@ const onCommitted = d => {
                     version: '24'
                   }];
 
-                  this.mobile = /Android|webOS|iPhone|iPad|Mac|Macintosh|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua);
+                  this.mobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua);
 
                   // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Sec-CH-UA-Platform
                   this.platform = 'Unknown';
@@ -639,6 +670,10 @@ const onCommitted = d => {
                   return Promise.resolve(r);
                 }
               }(o.userAgentDataBuilder);
+
+              navigator.__defineGetter__('userAgentData', () => {
+                return v;
+              });
             }
             delete o.userAgentDataBuilder;
 
