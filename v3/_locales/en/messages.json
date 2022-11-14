@@ -1,0 +1,211 @@
+{
+  "extensionName": {
+    "message": "User-Agent Switcher and Manager",
+    "description": "Name of the extension."
+  },
+  "extensionDescription": {
+    "message": "Spoof websites trying to gather information about your web navigation to deliver distinct content you may not want",
+    "description": "Description of the extension."
+  },
+  "userAgentSwitcherandManagerOptions": {
+    "message": "User-Agent Switcher and Manager :: Options"
+  },
+  "blackListMode": {
+    "message": "Black-List Mode"
+  },
+  "description": {
+    "message": "Description"
+  },
+  "blackListModeDescription": {
+    "message": "Apply the custom user-agent string to all tabs except the tabs with the following top-level hostnames (comma-separated list of hostnames). Note that even if a window-based user-agent string is set from the toolbar popup, your browser's default user-agent string is used."
+  },
+  "whiteListMode": {
+    "message": "White-List Mode"
+  },
+  "whiteListModeDescription": {
+    "message": "Only apply the custom user-agent string to the tabs with following top-level hostnames. Note that if a window-based user-agent string is set from the toolbar popup, this user-agent will overwrite the global one."
+  },
+  "customMode": {
+    "message": "Custom Mode"
+  },
+  "customModeDescription": {
+    "message": "Try to resolve the user-agent string from a JSON object; otherwise either use the default user-agent string or use the one that the user is set from the popup interface. Use \"*\" as the hostname to match all domains. You can randomly select from multiple user-agent strings by providing an array instead of a fixed string. If there is a \"_\" key in your JSON object which refers to an array of hostnames, then the extension only randomly selects the user-agent string once for each hostname inside this list. This is useful if you don't want the random user-agent to change until this browser session is over."
+  },
+  "insertSample": {
+    "message": "Insert a sample"
+  },
+  "cache": {
+    "message": "Use caching to improve performance (recommended value is true). Uncheck this option only if you are using the custom mode and also you need the user-agent string to be altered from the provided list on every single request."
+  },
+  "exactMatch": {
+    "message": "Use exact matching (if checked, you will need to insert all sub-domains in the white-list and black-list modes to be considered. If unchecked, all the sub-domains are passing the matching condition (e.g: www.google.com passes the matching if google.com is in the list))"
+  },
+  "faqs": {
+    "message": "Open FAQs page on updates"
+  },
+  "userAgentData": {
+    "message": "Expose \"navigator.userAgentData\" object on Chromium browsers"
+  },
+  "log": {
+    "message": "Display debugging info in the browser console"
+  },
+  "disableSpoofing": {
+    "message": "Disable Spoofing"
+  },
+  "disableSpoofingDescription": {
+    "message": "A comma-separated list of keywords that the extension should not spoof the user-agent header. Use this list to protect URLs that contain these protected keywords. Each keyword need to be at least 5 char long."
+  },
+  "customUserAgentParsing": {
+    "message": "Custom User-Agent Parsing"
+  },
+  "customUserAgentParsingDescription": {
+    "message": "A JSON object to bypass the internal user-agent string parsing method. The keys are the actual user-agent strings and the value of each key is an object of the keys that need to be set for the \"navigator\" object. You can use the \"[delete]\" keyword if you want a key in the \"navigator\" object to get deleted."
+  },
+  "siblingHostnames": {
+    "message": "Sibling Hostnames"
+  },
+  "siblingHostnamesDescription": {
+    "message": "A JSON array that contains one or more groups of hostnames to have a single user-agent string per group. For all hostnames in one group, the user-agent string calculation only occurs once, and all the other members use the same calculated string. This is useful to make sure a group of connected websites only access to the same user-agent string."
+  },
+  "importSettings": {
+    "message": "Import Settings"
+  },
+  "exportSettings": {
+    "message": "Export Settings"
+  },
+  "exportSettingsTitle": {
+    "message": "To generate minified version, press Shift key while pressing this button"
+  },
+  "help": {
+    "message": "FAQs Page (Help)"
+  },
+  "donate": {
+    "message": "Support Development"
+  },
+  "save": {
+    "message": "Save"
+  },
+  "managedStorage": {
+    "message": "This extension supports managed storage so that preferences can be altered automatically or can be pre-configured by a domain administrator. Read the FAQs page for more info."
+  },
+  "options": {
+    "message": "Options"
+  },
+  "optionsTitle": {
+    "message": "Open options page"
+  },
+  "restart": {
+    "message": "Restart"
+  },
+  "restartTitle": {
+    "message": "Click to reload the extension. This will cause all the window-based user-agent strings to be cleared."
+  },
+  "refreshTab": {
+    "message": "Refresh Tab"
+  },
+  "refreshTabTitle": {
+    "message": "Refresh the current page"
+  },
+  "reset": {
+    "message": "Reset"
+  },
+  "resetTitle": {
+    "message": "Reset browser's user-agent string to the default one. This will not reset window-based UA strings. To reset them, use the 'Restart' button."
+  },
+  "testUA": {
+    "message": "Test UA"
+  },
+  "testUATitle": {
+    "message": "Test your user-agent string"
+  },
+  "considerContainers": {
+    "message": "Consider Containers"
+  },
+  "considerContainersTitle": {
+    "message": "Allow the extension to access your browser's containers. If this permission is granted, tabs inside isolated containers do not follow the default container's user-agent string. You need to set this string for each new container."
+  },
+  "applyActiveWindow": {
+    "message": "Apply (active window)"
+  },
+  "applyActiveWindowTitle": {
+    "message": "Set this user-agent string for all tabs inside the current window"
+  },
+  "applyAllWindows": {
+    "message": "Apply (all windows)"
+  },
+  "applyAllWindowsTitle": {
+    "message": "Set this user-agent string as the browser's User-Agent string"
+  },
+  "applyContainer": {
+    "message": "Apply (container)"
+  },
+  "applyContainerTitle": {
+    "message": "Set this user-agent string as the current container's User-Agent string"
+  },
+  "applyContainerWindow": {
+    "message": "Apply (container on window)"
+  },
+  "applyContainerWindowTitle": {
+    "message": "Set this user-agent string for all tabs inside the current window's container"
+  },
+  "resetContainer": {
+    "message": "Reset (container)"
+  },
+  "resetContainerTitle": {
+    "message": "Reset the container's user-agent string to the default one. This will not reset window-based UA strings. To reset them, use the 'Restart' button."
+  },
+  "oscpuTitle": {
+    "message": "This is a readonly field. Use options page for custom parsing."
+  },
+  "appVersionTitle": {
+    "message": "This is a readonly field. Use options page for custom parsing."
+  },
+  "platformTitle": {
+    "message": "This is a readonly field. Use options page for custom parsing."
+  },
+  "vendorTitle": {
+    "message": "This is a readonly field. Use options page for custom parsing."
+  },
+  "productTitle": {
+    "message": "This is a readonly field. Use options page for custom parsing."
+  },
+  "uaTitle": {
+    "message": "To set a blank user-agent string, use the 'empty' keyword. To construct a custom user-agent string based on the current browser's navigator object, use ${} notation. Whatever is inside this notation is read from the 'navigator' object. For instance, to append a string to the default user-agent, use '${userAgent} THIS IS THE APPENDED STRING'"
+  },
+  "uaPlaceholder": {
+    "message": "Your preferred user-agent string"
+  },
+  "noMatch": {
+    "message": "No matching user-agent string for this query"
+  },
+  "ztoa": {
+    "message": "Z to A"
+  },
+  "atoz": {
+    "message": "A to Z"
+  },
+  "filterAmong": {
+    "message": "Filter among $1"
+  },
+  "filterAgents": {
+    "message": "Filter Agents"
+  },
+  "msgDefaultUA": {
+    "message": "Default UA, press the reset button instead"
+  },
+  "msgUASet": {
+    "message": "User-Agent is Set"
+  },
+  "msgDisabledOnContainer": {
+    "message": "Disabled on this container. Uses the default user-agent string."
+  },
+  "msgDisabled": {
+    "message": "Disabled. Uses the default user-agent string."
+  },
+  "optionsSaved": {
+    "message": "Options saved."
+  },
+  "dbReset": {
+    "message": "Double-click to reset!"
+  }
+}
