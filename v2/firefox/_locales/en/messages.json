@@ -43,6 +43,9 @@
   "faqs": {
     "message": "Open FAQs page on updates"
   },
+  "userAgentData": {
+    "message": "Expose \"navigator.userAgentData\" object on Chromium browsers"
+  },
   "log": {
     "message": "Display debugging info in the browser console"
   },

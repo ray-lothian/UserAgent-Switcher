@@ -27,6 +27,7 @@ const prefs = {
   'color': '#777',
   'cache': true,
   'exactMatch': false,
+  'userAgentData': true,
   'protected': [
     'google.com/recaptcha',
     'gstatic.com/recaptcha',
@@ -161,7 +162,7 @@ chrome.storage.local.get(prefs, ps => {
 chrome.storage.onChanged.addListener(ps => {
   Object.keys(ps).forEach(key => prefs[key] = ps[key].newValue);
 
-  if (ps.ua || ps.mode) {
+  if (ps.ua || ps.mode || ps.userAgentData) {
     currentCookieStoreId().then(cookieStoreId => {
       if (ps.ua) {
         if (ps.ua.newValue === '') {
@@ -233,6 +234,7 @@ const ua = {
     const isCH = /Chrome/.test(s);
     const isSF = /Safari/.test(s) && isCH === false;
 
+
     if (isFF) {
       o.appVersion = '5.0 ' + o.appVersion.replace('5.0 ', '').split(/[\s;]/)[0] + ')';
     }
@@ -252,9 +254,9 @@ const ua = {
     if (s.indexOf('Gecko') !== -1) {
       o.product = 'Gecko';
     }
+    o.userAgentData = '[delete]';
     if (isFF) {
       o.oscpu = ((p.os.name || '') + ' ' + (p.os.version || '')).trim();
-      o.userAgentData = '[delete]';
       o.productSub = '20100101';
       o.buildID = '20181001000000';
     }
@@ -263,36 +265,11 @@ const ua = {
       o.buildID = '[delete]';
       o.productSub = '20030107';
 
-      if (p.browser && p.browser.major) {
-        // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Sec-CH-UA-Platform
-        let platform = 'Unknown';
-        if (p.os && p.os.name) {
-          const name = p.os.name.toLowerCase();
-          if (name.includes('mac')) {
-            platform = 'macOS';
-          }
-          else if (name.includes('debian')) {
-            platform = 'Linux';
-          }
-          else {
-            platform = p.os.name;
-          }
+      if (prefs.userAgentData && p.browser && p.browser.major) {
+        if (['Opera', 'Chrome', 'Edge', 'Vivaldi'].includes(p.browser.name)) {
+          o.userAgentDataBuilder = {p, ua: s};
+          delete o.userAgentData;
         }
-
-        o.userAgentData = {
-          brands: [{
-            brand: 'Not=A?Brand',
-            version: '99'
-          }, {
-            brand: p.browser.name === 'Chrome' ? 'Google Chrome' : p.browser.name,
-            version: p.browser.major
-          }, {
-            brand: 'Chromium',
-            version: p.browser.major
-          }],
-          mobile: /Android|webOS|iPhone|iPad|Mac|Macintosh|iPod|BlackBerry|IEMobile|Opera Mini/i.test(s),
-          platform
-        };
       }
     }
 
@@ -588,6 +565,82 @@ const onCommitted = d => {
           script.textContent = \`{
             document.currentScript.dataset.injected = true;
             const o = JSON.parse(decodeURIComponent(escape(atob('${s}'))));
+
+            if (o.userAgentDataBuilder) {
+              navigator.userAgentData = new class NavigatorUAData {
+                #p;
+
+                constructor({p, ua}) {
+                  this.#p = p;
+
+                  const version = p.browser.major;
+                  const name = p.browser.name === 'Chrome' ? 'Google Chrome' : p.browser.name;
+
+                  this.brands = [{
+                    brand: name,
+                    version
+                  }, {
+                    brand: 'Chromium',
+                    version
+                  }, {
+                    brand: 'Not=A?Brand',
+                    version: '24'
+                  }];
+
+                  this.mobile = /Android|webOS|iPhone|iPad|Mac|Macintosh|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua);
+
+                  // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Sec-CH-UA-Platform
+                  this.platform = 'Unknown';
+                  if (p.os && p.os.name) {
+                    const name = p.os.name.toLowerCase();
+                    if (name.includes('mac')) {
+                      this.platform = 'macOS';
+                    }
+                    else if (name.includes('debian')) {
+                      this.platform = 'Linux';
+                    }
+                    else {
+                      this.platform = p.os.name;
+                    }
+                  }
+                }
+                toJSON() {
+                  return {
+                    brands: this.brands,
+                    mobile: this.mobile,
+                    platform: this.platform
+                  };
+                }
+                getHighEntropyValues(hints) {
+                  if (!hints || Array.isArray(hints) === false) {
+                    return Promise.reject(Error("Failed to execute 'getHighEntropyValues' on 'NavigatorUAData'"));
+                  }
+
+                  const r = this.toJSON();
+
+                  if (hints.includes('architecture')) {
+                    r.architecture = this.#p?.cpu?.architecture || 'x86';
+                  }
+                  if (hints.includes('bitness')) {
+                    r.bitness = '64';
+                  }
+                  if (hints.includes('model')) {
+                    r.model = '';
+                  }
+                  if (hints.includes('platformVersion')) {
+                    r.platformVersion = this.#p?.os?.version || '10.0.0';
+                  }
+                  if (hints.includes('uaFullVersion')) {
+                    r.uaFullVersion = this.brands[0].version;
+                  }
+                  if (hints.includes('fullVersionList')) {
+                    r.fullVersionList = this.brands;
+                  }
+                  return Promise.resolve(r);
+                }
+              }(o.userAgentDataBuilder);
+            }
+            delete o.userAgentDataBuilder;
 
             for (const key of Object.keys(o)) {
               if (o[key] === '[delete]') {

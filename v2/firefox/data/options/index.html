@@ -36,6 +36,8 @@
     <label for="cache" data-localize="cache">Use caching to improve performance (recommended value is true). Uncheck this option only if you are using the custom mode and also you need the user-agent string to be altered from the provided list on every single request.</label>
     <input type="checkbox" id="exactMatch">
     <label for="exactMatch" data-localize="exactMatch">Use exact matching (if checked, you will need to insert all sub-domains in the white-list and black-list modes to be considered. If unchecked, all the sub-domains are passing the matching condition (e.g: www.google.com passes the matching if google.com is in the list))</label>
+    <input type="checkbox" id="userAgentData">
+    <label for="userAgentData" data-localize="userAgentData">Expose "navigator.userAgentData" object on Chromium browsers</label>
     <input type="checkbox" id="faqs">
     <label for="faqs" data-localize="faqs">Open FAQs page on updates</label>
     <input type="checkbox" id="log">
