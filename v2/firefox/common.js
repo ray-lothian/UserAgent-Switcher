@@ -536,43 +536,38 @@ const onBeforeSendHeaders = d => {
       }
       // https://github.com/ray-lothian/UserAgent-Switcher/issues/160
       else if (name.startsWith('sec-ch-')) {
-        if (o.userAgentDataBuilder) {
-          if (name === 'sec-ch-ua-platform') {
-            let platform = o.userAgentDataBuilder.p?.os?.name || 'Windows';
-
-            if (platform.toLowerCase().includes('mac')) {
-              platform = 'macOS';
-            }
-            else if (name.includes('debian')) {
-              platform = 'Linux';
-            }
-
-            requestHeaders[i].value = '"' + platform + '"';
-          }
-          else if (name === 'sec-ch-ua') {
-            const version = o.userAgentDataBuilder.p?.browser?.major || 107;
-            let name = o.userAgentDataBuilder.p?.browser?.name || 'Google Chrome';
-            if (name === 'Chrome') {
-              name = 'Google Chrome';
-            }
-            requestHeaders[i].value = `"${name}";v="${version}", "Chromium";v="${version}", "Not=A?Brand";v="24"`;
-          }
-          else if (name === 'sec-ch-ua-mobile') {
-            requestHeaders[i].value =
-              /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(o.userAgent) ? '?1' : '?0';
-          }
-          else {
-            requestHeaders[i] = null;
-          }
-        }
-        else {
-          requestHeaders[i] = null;
-        }
+        requestHeaders[i] = null;
       }
+    }
+    if (o.userAgentDataBuilder) {
+      let platform = o.userAgentDataBuilder.p?.os?.name || 'Windows';
+      if (platform.toLowerCase().includes('mac')) {
+        platform = 'macOS';
+      }
+
+      const version = o.userAgentDataBuilder.p?.browser?.major || 107;
+      let name = o.userAgentDataBuilder.p?.browser?.name || 'Google Chrome';
+      if (name === 'Chrome') {
+        name = 'Google Chrome';
+      }
+      else if (name.includes('debian')) {
+        platform = 'Linux';
+      }
+
+      requestHeaders.push({
+        name: 'sec-ch-ua-platform',
+        value: '"' + platform + '"'
+      }, {
+        name: 'sec-ch-ua',
+        value: `"${name}";v="${version}", "Chromium";v="${version}", "Not=A?Brand";v="24"`
+      }, {
+        name: 'sec-ch-ua-mobile',
+        value: /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(o.userAgent) ? '?1' : '?0'
+      });
     }
   }
   return {
-    requestHeaders: requestHeaders.filter(a => a)
+    requestHeaders: requestHeaders.filter(o => o)
   };
 };
 
