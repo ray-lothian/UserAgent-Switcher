@@ -10,6 +10,7 @@
     "webNavigation",
     "webRequest",
     "declarativeNetRequest",
+    "declarativeNetRequestFeedback",
     "contextMenus"
   ],
   "host_permissions": [

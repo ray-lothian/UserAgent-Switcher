@@ -1,6 +1,5 @@
 const port = document.getElementById('ua-port-fgTd9n');
 port.remove();
-console.log(12, port);
 
 // overwrite navigator.userAgent
 {
@@ -8,8 +7,8 @@ console.log(12, port);
 
   Object.defineProperty(Navigator.prototype, 'userAgent', {
     get: new Proxy(get, {
-      apply() {
-        return port.dataset.ua;
+      apply(target, self, args) {
+        return port.dataset.enabled === 'true' ? port.dataset.ua : Reflect.apply(target, self, args);
       }
     })
   });
@@ -31,8 +30,8 @@ if (port.dataset.uad) {
 
   Object.defineProperty(self.NavigatorUAData.prototype, 'brands', {
     get: new Proxy(Object.getOwnPropertyDescriptor(self.NavigatorUAData.prototype, 'brands').get, {
-      apply() {
-        return [{
+      apply(target, self, args) {
+        return port.dataset.enabled === 'true' ? [{
           brand: port.dataset.name,
           version: port.dataset.major
         }, {
@@ -41,62 +40,65 @@ if (port.dataset.uad) {
         }, {
           brand: 'Not=A?Brand',
           version: '24'
-        }];
+        }] : Reflect.apply(target, self, args);
       }
     })
   });
   Object.defineProperty(self.NavigatorUAData.prototype, 'mobile', {
     get: new Proxy(Object.getOwnPropertyDescriptor(self.NavigatorUAData.prototype, 'mobile').get, {
-      apply() {
-        return port.dataset.mobile === 'true';
+      apply(target, self, args) {
+        return port.dataset.enabled === 'true' ? port.dataset.mobile === 'true' : Reflect.apply(target, self, args);
       }
     })
   });
   Object.defineProperty(self.NavigatorUAData.prototype, 'platform', {
     get: new Proxy(Object.getOwnPropertyDescriptor(self.NavigatorUAData.prototype, 'platform').get, {
-      apply() {
-        return port.dataset.platform;
+      apply(target, self, args) {
+        return port.dataset.enabled === 'true' ? port.dataset.platform : Reflect.apply(target, self, args);
       }
     })
   });
   self.NavigatorUAData.prototype.toJSON = new Proxy(self.NavigatorUAData.prototype.toJSON, {
-    apply(target, self) {
-      return {
+    apply(target, self, args) {
+      return port.dataset.enabled === 'true' ? {
         brands: self.brands,
         mobile: self.mobile,
         platform: self.platform
-      };
+      } : Reflect.apply(target, self, args);
     }
   });
   self.NavigatorUAData.prototype.getHighEntropyValues = new Proxy(self.NavigatorUAData.prototype.getHighEntropyValues, {
     apply(target, self, args) {
-      const hints = args[0];
+      if (port.dataset.enabled === 'true') {
+        const hints = args[0];
 
-      if (!hints || Array.isArray(hints) === false) {
-        return Promise.reject(Error(`Failed to execute 'getHighEntropyValues' on 'NavigatorUAData'`));
-      }
+        if (!hints || Array.isArray(hints) === false) {
+          return Promise.reject(Error(`Failed to execute 'getHighEntropyValues' on 'NavigatorUAData'`));
+        }
 
-      const r = self.toJSON();
+        const r = self.toJSON();
 
-      if (hints.includes('architecture')) {
-        r.architecture = port.dataset.architecture;
+        if (hints.includes('architecture')) {
+          r.architecture = port.dataset.architecture;
+        }
+        if (hints.includes('bitness')) {
+          r.bitness = port.dataset.bitness;
+        }
+        if (hints.includes('model')) {
+          r.model = '';
+        }
+        if (hints.includes('platformVersion')) {
+          r.platformVersion = port.dataset.platformVersion;
+        }
+        if (hints.includes('uaFullVersion')) {
+          r.uaFullVersion = self.brands[0].version;
+        }
+        if (hints.includes('fullVersionList')) {
+          r.fullVersionList = this.brands;
+        }
+        return Promise.resolve(r);
       }
-      if (hints.includes('bitness')) {
-        r.bitness = port.dataset.bitness;
-      }
-      if (hints.includes('model')) {
-        r.model = '';
-      }
-      if (hints.includes('platformVersion')) {
-        r.platformVersion = port.dataset.platformVersion;
-      }
-      if (hints.includes('uaFullVersion')) {
-        r.uaFullVersion = self.brands[0].version;
-      }
-      if (hints.includes('fullVersionList')) {
-        r.fullVersionList = this.brands;
-      }
-      return Promise.resolve(r);
+      return Reflect.apply(target, self, args);
     }
   });
 }

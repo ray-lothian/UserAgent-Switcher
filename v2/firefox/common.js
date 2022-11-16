@@ -1,4 +1,4 @@
-/* globals UAParser */
+/* global UAParser */
 
 'use strict';
 
@@ -544,14 +544,14 @@ const onBeforeSendHeaders = d => {
       if (platform.toLowerCase().includes('mac')) {
         platform = 'macOS';
       }
+      else if (platform.toLowerCase().includes('debian')) {
+        platform = 'Linux';
+      }
 
       const version = o.userAgentDataBuilder.p?.browser?.major || 107;
       let name = o.userAgentDataBuilder.p?.browser?.name || 'Google Chrome';
       if (name === 'Chrome') {
         name = 'Google Chrome';
-      }
-      else if (name.includes('debian')) {
-        platform = 'Linux';
       }
 
       requestHeaders.push({

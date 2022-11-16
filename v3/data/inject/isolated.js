@@ -15,3 +15,5 @@ self.prefs = self.prefs || {
   platformVersion: '10.0.0'
 };
 Object.assign(port.dataset, self.prefs);
+
+port.dataset.enabled = self.ingored ? false : true;

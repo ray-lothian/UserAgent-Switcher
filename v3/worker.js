@@ -1,72 +1,22 @@
-const enable = () => chrome.storage.local.get({
-  enabled: true
-}, async prefs => {
-  await chrome.scripting.unregisterContentScripts();
+/* global policy, scripting, request */
 
-  if (prefs.enabled) {
-    const common = {
-      'matches': ['*://*/*'],
-      'allFrames': true,
-      'matchOriginAsFallback': true,
-      'runAt': 'document_start'
-    };
+self.importScripts('./policy.js');
+self.importScripts('./scripting.js');
+self.importScripts('./request.js');
 
-    await chrome.scripting.registerContentScripts([{
-      ...common,
-      'id': 'protected',
-      'js': ['/data/inject/isolated.js'],
-      'world': 'ISOLATED'
-    }, {
-      ...common,
-      'id': 'unprotected',
-      'js': ['/data/inject/main.js'],
-      'world': 'MAIN'
-    }]);
-  }
-});
-chrome.runtime.onStartup.addListener(enable);
-chrome.runtime.onInstalled.addListener(enable);
+// run on each wake up
+policy.configure(scripting.commit, request.network);
 
-const policy = () => ({
-  ua: 'Mozilla/5.0 (Windows NT 6.3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36',
-  uad: true,
-  major: 100,
-  name: 'Google Chrome',
-  mobile: false,
-  platform: 'Windows',
-  architecture: 'x86',
-  bitness: '64',
-  platformVersion: '10.0.0'
-});
+// run once
+{
+  const once = () => policy.configure(scripting.page);
 
-// web navigation
-const onCommitted = d => {
-  const p = policy(d);
+  chrome.runtime.onStartup.addListener(once);
+  chrome.runtime.onInstalled.addListener(once);
+}
 
-  if (p) {
-    chrome.scripting.executeScript({
-      target: {
-        tabId: d.tabId,
-        frameIds: [d.frameId]
-      },
-      injectImmediately: true,
-      func: p => {
-        /* global port */
-        if (typeof port === 'undefined') {
-          self.prefs = p;
-        }
-        else {
-          Object.assign(port.dataset, p);
-        }
-      },
-      args: [p]
-    });
-  }
-};
-chrome.storage.local.get({
-  enabled: true
-}, prefs => {
-  if (prefs.enabled) {
-    chrome.webNavigation.onCommitted.addListener(onCommitted);
+chrome.storage.onChanged.addListener(ps => {
+  if (ps.enabled || ps.mode || ps['blacklist-exception-hosts'] || ps['whitelist-hosts']) {
+    policy.configure(scripting.commit, scripting.page, request.network);
   }
 });
