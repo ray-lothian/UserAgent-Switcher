@@ -95,6 +95,7 @@ PRS 01 NokiaC5-00/GoBrowser
 PRS 01 Nokia6120c/GoBrowser
 PRS 01 Nokia5800XpressMusic/GoBrowser
 PRS 01 Nokia5730XpressMusic/GoBrowser
+PRS 01 Mozilla/5.0 (Android 2.2; zh-cn; HTC Desire)/GoBrowser
 PRS 01 MOT-L7/NA.ACR_RB MIB/2.2.1 Profile/MIDP-2.0 Configuration/CLDC-1.1
 PRS 01 MOT-L7/08.D5.09R MIB/2.2.1 Profile/MIDP-2.0 Configuration/CLDC-1.1
 PRS 01 MOT-L7/08.B7.ACR MIB/2.2.1 Profile/MIDP-2.0 Configuration/CLDC-1.1
@@ -384,7 +385,6 @@ PRS 01 ELinks/0.10.3 (textmode; Linux; 80x24-2)
 PRS 01 ELinks/0.10.3 (textmode; Linux; 123x38-2)
 PRS 01 Elinks (textmode)
 PRS 01 Enigma Browser
-PRS 01 Mozilla/5.0  (Windows; U;  Windows NT 5.1; de; rv:1.9.0.4) Firefox/3.0.8)
 PRS 01 Mozilla/5.0 (X11; U; Mac OSX; it; rv:1.9.0.7) Gecko/2009030422  Firefox/3.0.7
 PRS 01 Mozilla/5.0 (ZX-81; U; CP/M86; en-US; rv:1.8.0.1) Gecko/20060111 Firefox/1.5.0.1
 PRS 01 Mozilla/5.0 (X11; U; Gentoo Linux x86_64; pl-PL) Gecko Firefox
@@ -426,27 +426,7 @@ PRS 01 Mozilla/5.0 (Linux) Gecko Iceweasel (Debian) Mnenhy
 PRS 01 Mozilla/5.0 (Future Star Technologies Corp.; Star-Blade OS; x86_64; U; en-US) iNet Browser 4.7
 PRS 01 Mozilla/6.0 (Future Star Technologies Corp. Star-Blade OS; U; en-US) iNet Browser 2.5
 PRS 01 Mozilla/4.0 (X11; MSIE 6.0; i686; .NET CLR 1.1.4322; .NET CLR 2.0.50727; FDM)
-PRS 01 Mozilla/4.0 (compatible; MSIE 5.5b1; Mac_PowerPC)
 PRS 01 Mozilla/4.0 (compatible; MSIE 5.5;)
-PRS 01 Mozilla/4.0 (compatible; MSIE 5.23; Mac_PowerPC)
-PRS 01 Mozilla/4.0 (compatible; MSIE 5.22; Mac_PowerPC)
-PRS 01 Mozilla/4.0 (compatible; MSIE 5.21; Mac_PowerPC)
-PRS 01 Mozilla/4.0 (compatible; MSIE 5.2; Mac_PowerPC)
-PRS 01 Mozilla/4.0 (compatible; MSIE 5.2; Mac_PowerPC)
-PRS 01 Mozilla/4.0 (compatible; MSIE 5.17; Mac_PowerPC)
-PRS 01 Mozilla/4.0 (compatible; MSIE 5.17; Mac_PowerPC Mac OS; en)
-PRS 01 Mozilla/4.0 (compatible; MSIE 5.16; Mac_PowerPC)
-PRS 01 Mozilla/4.0 (compatible; MSIE 5.16; Mac_PowerPC)
-PRS 01 Mozilla/4.0 (compatible; MSIE 5.15; Mac_PowerPC)
-PRS 01 Mozilla/4.0 (compatible; MSIE 5.15; Mac_PowerPC)
-PRS 01 Mozilla/4.0 (compatible; MSIE 5.14; Mac_PowerPC)
-PRS 01 Mozilla/4.0 (compatible; MSIE 5.13; Mac_PowerPC)
-PRS 01 Mozilla/4.0 (compatible; MSIE 5.12; Mac_PowerPC)
-PRS 01 Mozilla/4.0 (compatible; MSIE 5.12; Mac_PowerPC)
-PRS 01 Mozilla/4.0 (compatible; MSIE 5.0b1; Mac_PowerPC)
-PRS 01 Mozilla/4.0 (compatible; MSIE 4.5; Mac_PowerPC)
-PRS 01 Mozilla/4.0 (compatible; MSIE 4.5; Mac_PowerPC)
-PRS 01 Mozilla/4.0 (compatible; MSIE 4.01; Mac_PowerPC)
 PRS 01 Mozilla/4.0 WebTV/2.6 (compatible; MSIE 4.0)
 PRS 01 Mozilla/4.0 (Compatible; MSIE 4.0)
 PRS 01 Mozilla/5.0 (Windows; U;) AppleWebKit/532.0 (KHTML, like Gecko) Iron/3.0.197.0 Safari/532.0
@@ -562,14 +542,10 @@ PRS 01 Mozilla/5.0 (X11; U; FreeBSD; i386; it-IT; rv:1.7) Gecko
 PRS 01 Mozilla/5.0 (X11; U; FreeBSD; i386; en-US; rv:1.7) Gecko
 PRS 01 Mozilla/5.0 (X11; U; IRIX64 IP35; en-US; rv:1.4.3) Gecko/20040909
 PRS 01 Mozilla/5.0 (X11; U; Linux i686; hu-HU; rv:1.3.1) Gecko
-PRS 01 Mozilla/5.0 (X11; U; HP-UX 9000/785; en-US; rv:1.3) Gecko/20030321
-PRS 01 Mozilla/5.0 (X11; U; HP-UX 9000/785; en-US; rv:1.2) Gecko/20021203
-PRS 01 Mozilla/5.0 (X11; U; HP-UX 9000/785; en-US; rv:1.0.0) Gecko/20020605
 PRS 01 Mozilla/5.001 (Macintosh; N; PPC; ja) Gecko/25250101
 PRS 01 Mozilla/3.0 (compatible; NetPositive/2.2.2; BeOS)
 PRS 01 Mozilla/3.0 (compatible; NetPositive/2.2)
 PRS 01 Mozilla/3.0 (compatible; NetPositive/2.1.1; BeOS)
-PRS 01 Mozilla/5.0 (X11; U; HP-UX 9000/785; es-ES; rv:1.0.1) Gecko/20020827 Netscape/7.0
 PRS 01 Mozilla/5.0 (X11; U; OSF1 alpha; en-US; rv:0.9.4.1) Gecko/20020517 Netscape6/6.2.3
 PRS 01 Mozilla/4.8C-SGI [en] (X11; U; IRIX64 6.5 IP27)
 PRS 01 Mozilla/4.8 [pl] (Windows NT 5.1; U)
@@ -881,25 +857,12 @@ PRS 01 Mozilla/3.0 (Macintosh; I; PPC)
 PRS 01 Mozilla/3.0 (Macintosh; I; 68K)
 PRS 01 Mozilla/2.02Gold (Win95; I)
 PRS 01 Mozilla/2.02 [fr] (WinNT; I)
-PRS 01 Mozilla/4.5 (compatible; OmniWeb/4.2.1-v435.9; Mac_PowerPC)
-PRS 01 Mozilla/4.5 (compatible; OmniWeb/4.2-v435.5; Mac_PowerPC)
-PRS 01 Mozilla/4.5 (compatible; OmniWeb/4.1.1-v424.6; Mac_PowerPC)
-PRS 01 Mozilla/4.5 (compatible; OmniWeb/4.1.1-v424.6; Mac_PowerPC)
-PRS 01 Mozilla/4.5 (compatible; OmniWeb/4.1-v422; Mac_PowerPC)
 PRS 01 Opera/9.99 (X11; U; sk)
 HTP 01 Opera/9.61 (Windows NT 6.0; U; http://lucideer.com; en-GB) Presto/2.1.1
 PRS 01 Opera/9.26 (Windows; U; pl)
-PRS 01 Mozilla/4.0 (compatible; MSIE 6.0; Mac_PowerPC; en) Opera 9.24
 PRS 01 Opera/9.02 (Windows; U; nl)
 PRS 01 Opera/9.00 (Windows; U)
-PRS 01 Opera/8.51 (FreeBSD 5.1; U; en)
-PRS 01 Mozilla/4.0 (compatible; MSIE 5.23; Mac_PowerPC) Opera 7.54  [en]
-PRS 01 Opera/6.11 (FreeBSD 4.7-RELEASE i386; U)  [en]
 PRS 01 Opera/6.01 (X11; U; nn)
-PRS 01 Mozilla/4.0 (compatible; MSIE 5.0; Mac_PowerPC) Opera 6.0  [en]
-PRS 01 Mozilla/4.0 (compatible; MSIE 5.0; Mac_PowerPC) Opera 6.0  [de]
-PRS 01 Mozilla/4.0 (compatible; MSIE 5.0; Mac_PowerPC) Opera 5.12  [en]
-PRS 01 Mozilla/4.0 (compatible; MSIE 5.0; Mac_PowerPC) Opera 5.0  [en]
 PRS 01 Mozilla/1.10 [en] (Compatible; RISC OS 3.70; Oregano 1.10)
 PRS 01 Mozilla/1.10 [en]  (Compatible;  RISC OS 3.70;  Oregano 1.10)
 PRS 01 retawq/0.2.6c [en] (text)
@@ -973,9 +936,7 @@ PRS 06 Mozilla/4.0 (X11; MSIE 6.0; i686; .NET CLR 1.1.4322; .NET CLR 2.0.50727; 
 PRS 06 Mozilla/4.75C-ja [ja] (X11; U; OSF1 V5.1 alpha)
 PRS 06 Mozilla/5.0 (compatible; Konqueror/2.0.1; X11); Supports MD5-Digest; Supports gzip encoding
 PRS 06 Mozilla/3.0 (X11; I; OSF1 V4.0 alpha)
-PRS 06 Mozilla/5.0 (X11; U; HP-UX 9000/785; en-US; rv:1.4) Gecko/20030730
 PRS 06 Mozilla/4.78 [en] (X11; U; OSF1 V4.0 alpha)
-PRS 06 Mozilla/5.0 (X11; U; HP-UX 9000/785; en-US; rv:1.6) Gecko/20040816
 PRS 06 Mozilla/5.0 (compatible; X11; Dillo/3.0.3)
 PRS 06 Mozilla/5.0 (BREW; U; BREW 3.1.5; en) AppleWebKit/525.26 (KHTML like Gecko) Polaris/7.0 Safari/525.26 480X800 LGE VX11000
 PRS 06 Mozilla/5.0 (X11; Litl OS i686) AppleWebKit/534.23 (KHTML, like Gecko) Chrome/11.0.689.0 Safari/534.23
@@ -992,7 +953,6 @@ PRS 06 Mozilla/5.0 (compatible; limb0x11-qnda-0.7.4)
 PRS 06 Mozilla/5.0 (X11; Mobile) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.124 Mobile Safari/537.36
 PRS 06 MOT-EX115 Obigo/WAP2.0 MIDP-2.0/CLDC-1.1
 PRS 06 MOT-EX119 MIDP-2.0/CLDC-1.1 Release/31.12.2010 Browser/Opera Sync/SyncClient1.1 Profile/MIDP-2.0 Configuration/CLDC-1.1 Opera/9.80 (MTK; U) Presto/2.5.28 Version/10.10
-PRS 06 Mozilla/5.0 (X11; U; HP-UX 9000/785; en-US; rv:1.7.12) Gecko/20051019
 PRS 06 Opera/9.70 (X11; U; ja)
 PRS 06 Mozilla/5.0 (X11; Droid) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.124 Safari/537.36
 PRS 06 Mozilla/5.0 (X11; Lnux x86_64) AppleWebKit/538.1 (KHTML, like Gecko) Safari/538.1 dwb/commit 2014-01-24 7e81e7a
@@ -1073,7 +1033,6 @@ PRS 06 MacOutlook/14.6.3.160329 (Intel Mac OS X 10.9.5)
 PRS 06 MacOutlook/15.33.0.170409 (Intelx64 Mac OS X Version 10.12.4 (Build 16E195))
 PRS 06 AppleCoreMedia/1.0.0.16M153 (Apple TV; U; CPU OS 12_3 like Mac OS X; en_us)
 PRS 06 MacOutlook/14.6.3.160329 (Intel Mac OS X 10.9.4)
-PRS 06 Mozilla/5.0 (Windows NT 5.1; rv:11.0) Gecko Firefox/11.0 (via ggpht.com GoogleImageProxy)
 PRS 06 Microsoft Office/14.0 (Windows NT 6.1; Microsoft Outlook 14.0.7143; Pro)
 PRS 06 Microsoft Office/14.0 (Windows NT 6.1; Microsoft Outlook 14.0.7166; Pro)
 PRS 06 Mozilla/4.5 (compatible; HTTrack 3.0x; Windows 98)
@@ -1117,25 +1076,9 @@ PRS 14 Mozilla/4.0 (PSP (PlayStation Portable); 6.39)
 PRS 14 Mozilla/4.0 (PSP (PlayStation Portable); 6.60)
 PRS 14 Mozilla/4.0 (compatible; MSIE 4.01; AOL 4.0; Mac_68K)
 PRS 14 Mozilla/4.0 (compatible; MSIE 4.01; AOL 5.0; Mac_PPC)
-PRS 14 Mozilla/4.0 (compatible; MSIE 4.01; Mac_PowerPC)
-PRS 14 Mozilla/4.0 (compatible; MSIE 4.5; Mac_PowerPC)
-PRS 14 Mozilla/4.0 (compatible; MSIE 5.0; Mac_PowerPC)
-PRS 14 Mozilla/4.0 (compatible; MSIE 5.0b1; Mac_PowerPC)
-PRS 14 Mozilla/4.0 (compatible; MSIE 5.2; Mac_PowerPC)
 PRS 14 Mozilla/4.0 (compatible; MSIE 5.5)
 PRS 14 Mozilla/4.0 (compatible; MSIE 5.5; )
 PRS 14 Mozilla/4.0 (compatible; MSIE 5.5;)
-PRS 14 Mozilla/4.0 (compatible; MSIE 5.5b1; Mac_PowerPC)
-PRS 14 Mozilla/4.0 (compatible; MSIE 5.12; Mac_PowerPC)
-PRS 14 Mozilla/4.0 (compatible; MSIE 5.13; Mac_PowerPC)
-PRS 14 Mozilla/4.0 (compatible; MSIE 5.14; Mac_PowerPC)
-PRS 14 Mozilla/4.0 (compatible; MSIE 5.15; Mac_PowerPC)
-PRS 14 Mozilla/4.0 (compatible; MSIE 5.16; Mac_PowerPC)
-PRS 14 Mozilla/4.0 (compatible; MSIE 5.17; Mac_PowerPC Mac OS; en)
-PRS 14 Mozilla/4.0 (compatible; MSIE 5.17; Mac_PowerPC)
-PRS 14 Mozilla/4.0 (compatible; MSIE 5.21; Mac_PowerPC)
-PRS 14 Mozilla/4.0 (compatible; MSIE 5.22; Mac_PowerPC)
-PRS 14 Mozilla/4.0 (compatible; MSIE 5.23; Mac_PowerPC)
 PRS 14 Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.1; Trident/3.1; Xbox)
 PRS 14 Mozilla/4.0 WebTV/2.6 (compatible; MSIE 4.0)
 PRS 14 Mozilla/5.0 (Linux; U; Android 7.0; en-US; Tesla_SP6.3 Build/NRD90M)

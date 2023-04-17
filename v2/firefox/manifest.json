@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "__MSG_extensionName__",
-  "version": "0.4.9",
+  "version": "0.5.0",
   "default_locale": "en",
   "description": "__MSG_extensionDescription__",
   "permissions": [
@@ -30,7 +30,7 @@
   "storage": {
     "managed_schema": "schema.json"
   },
-  "background":{
+  "background": {
     "scripts":[
       "ua-parser.min.js",
       "common.js"

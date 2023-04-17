@@ -15,7 +15,7 @@ const invalids = [];
 
 const parser = new UAParser();
 
-const write = ({name, content}, callback) => fs.writeFile('../extension/firefox/data/popup/browsers/' + name, content, 'utf8', e => {
+const write = ({name, content}, callback) => fs.writeFile('../v2/firefox/data/popup/browsers/' + name, content, 'utf8', e => {
   if (e) {
     console.log(e);
   }
@@ -34,10 +34,10 @@ const reduce = (arr, length = 400) => {
   return arr;
 };
 
-fs.readdir('../extension/firefox/data/popup/browsers/', async (err, files) => {
+fs.readdir('../v2/firefox/data/popup/browsers/', async (err, files) => {
   if (err) throw err;
   for (const file of files) {
-    fs.unlinkSync(path.join('../extension/firefox/data/popup/browsers/', file), err => {
+    fs.unlinkSync(path.join('../v2/firefox/data/popup/browsers/', file), err => {
       if (err) throw err;
     });
   }
@@ -86,54 +86,17 @@ fs.readdir('../extension/firefox/data/popup/browsers/', async (err, files) => {
     }
     else {
       invalids.push(['PRS', source, ua]);
-      console.log('[cannot parse ]', source, ua);
+      console.log('[cannot parse]', source, ua);
     }
   };
 
   console.log('BOTS');
   require('./assets/bots.json').forEach(ua => next(ua, 'BT'));
-  console.log('List 01');
-  require('./assets/list-01.json').forEach(ua => next(ua, '01'));
-  console.log('List 02');
-  require('./assets/list-02.json').forEach(ua => next(ua, '02'));
-  console.log('List 03');
-  require('./assets/list-03.json').forEach(ua => next(ua, '03'));
-  console.log('List 04');
-  require('./assets/list-04.json').forEach(ua => next(ua, '04'));
-  console.log('List 05');
-  require('./assets/list-05.json').forEach(ua => next(ua, '05'));
-  console.log('List 06');
-  require('./assets/list-06.json').forEach(ua => next(ua, '06'));
-  console.log('List 07');
-  require('./assets/list-07.json').forEach(ua => next(ua, '07'));
-  console.log('List 08');
-  require('./assets/list-08.json').forEach(ua => next(ua, '08'));
-  console.log('List 09');
-  require('./assets/list-09.json').forEach(ua => next(ua, '09'));
-  console.log('List 10');
-  require('./assets/list-10.json').forEach(ua => next(ua, '10'));
-  console.log('List 11');
-  require('./assets/list-11.json').forEach(ua => next(ua, '11'));
-  console.log('List 12');
-  require('./assets/list-12.json').forEach(ua => next(ua, '12'));
-  console.log('List 13');
-  require('./assets/list-13.json').forEach(ua => next(ua, '13'));
-  console.log('List 14');
-  require('./assets/list-14.json').forEach(ua => next(ua, '14'));
-  console.log('List 15');
-  require('./assets/list-15.json').forEach(ua => next(ua, '15'));
-  console.log('List 16');
-  require('./assets/list-16.json').forEach(ua => next(ua, '16'));
-  console.log('List 17');
-  require('./assets/list-17.json').forEach(ua => next(ua, '17'));
-  console.log('List 18');
-  require('./assets/list-18.json').forEach(ua => next(ua, '18'));
-  console.log('List 19');
-  require('./assets/list-19.json').forEach(ua => next(ua, '19'));
-  console.log('List 20');
-  require('./assets/list-20.json').forEach(ua => next(ua, '20'));
-  console.log('List 21');
-  require('./assets/list-21.json').forEach(ua => next(ua, '21'));
+  for (const n of [...Array(22).keys()]) {
+    const s = (n + 1).toString().padStart(2, 0);
+    console.log('List', s);
+    require(`./assets/list-${s}.json`).forEach(ua => next(ua, s));
+  }
 
   const contents = [];
   for (const browser of Object.keys(cache)) {
@@ -194,7 +157,7 @@ fs.readdir('../extension/firefox/data/popup/browsers/', async (err, files) => {
       }
 
       fs.writeFile('invalids.txt', invalids.map(a => a.join(' ')).join('\n'), () => {});
-      fs.writeFile('../extension/firefox/data/popup/map.json', JSON.stringify({
+      fs.writeFile('../v2/firefox/data/popup/map.json', JSON.stringify({
         browser: Object.values(map.browser).map(k => k[0]),
         os: Object.values(map.os).map(k => k[0]),
         matching: map.matching
