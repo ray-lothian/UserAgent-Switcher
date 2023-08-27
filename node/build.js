@@ -34,14 +34,13 @@ const reduce = (arr, length = 400) => {
   return arr;
 };
 
-fs.readdir('../v2/firefox/data/popup/browsers/', async (err, files) => {
+fs.readdir('../v2/firefox/data/popup/browsers/', (err, files) => {
   if (err) throw err;
   for (const file of files) {
     fs.unlinkSync(path.join('../v2/firefox/data/popup/browsers/', file), err => {
       if (err) throw err;
     });
   }
-
 
   const next = (ua, source) => {
     ua = ua.trim();
@@ -92,7 +91,7 @@ fs.readdir('../v2/firefox/data/popup/browsers/', async (err, files) => {
 
   console.log('BOTS');
   require('./assets/bots.json').forEach(ua => next(ua, 'BT'));
-  for (const n of [...Array(22).keys()]) {
+  for (const n of [...Array(23).keys()]) {
     const s = (n + 1).toString().padStart(2, 0);
     console.log('List', s);
     require(`./assets/list-${s}.json`).forEach(ua => next(ua, s));
