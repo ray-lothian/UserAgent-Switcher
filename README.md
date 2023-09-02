@@ -1,8 +1,8 @@
 # UserAgent-Switcher
-A User-Agent spoofer browser extension that is highly configurable!
+A User-Agent spoofer web browser extension that is highly configurable!
 
 ------------
-This extension spoofs both the user-agent's request header and the navigator related properties (e.g.: `navigator.userAgent`, and `navigator.appVersion`). You can spoof per hostname, per window, per container (Firefox only), or randomly from an array.
+This extension spoofs both the user-agent's request header and the navigator related properties (i.e. `navigator.userAgent` and `navigator.appVersion`). You can spoof per hostname, per window, per container (Firefox only), or randomly from an array.
 
 YouTube Review:
 
