@@ -61,6 +61,15 @@ fs.readdir('../v2/firefox/data/popup/browsers/', (err, files) => {
     }
     parser.setUA(ua);
     const o = parser.getResult();
+
+    // validate version number of well-known browsers
+    if (o.browser.version && ['Chrome', 'Opera', 'Firefox', 'Yandex', 'Chromium', 'Brave', 'Edge'].includes(o.browser.name)) {
+      const v = parseFloat(o.browser.version);
+      if (v > 200) {
+        return console.log('[Invalid Browser Version]', o.browser.version, source, ua);
+      }
+    }
+
     if (o.browser.name && o.os.name) {
       const bb = o.browser.name.toLowerCase();
       const ss = o.os.name.toLowerCase();
@@ -91,7 +100,7 @@ fs.readdir('../v2/firefox/data/popup/browsers/', (err, files) => {
 
   console.log('BOTS');
   require('./assets/bots.json').forEach(ua => next(ua, 'BT'));
-  for (const n of [...Array(23).keys()]) {
+  for (const n of [...Array(24).keys()]) {
     const s = (n + 1).toString().padStart(2, 0);
     console.log('List', s);
     require(`./assets/list-${s}.json`).forEach(ua => next(ua, s));

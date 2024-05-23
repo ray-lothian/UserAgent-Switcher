@@ -236,19 +236,16 @@ document.addEventListener('DOMContentLoaded', () => fetch('./map.json').then(r =
   chrome.storage.local.get({
     'popup-browser': 'Chrome',
     'popup-os': 'Windows',
-    'popup-sort': 'descending'
+    'popup-sort': 'descending',
+    'ua': ''
   }, prefs => {
     document.getElementById('browser').value = prefs['popup-browser'];
     document.getElementById('os').value = prefs['popup-os'];
     document.getElementById('sort').value = prefs['popup-sort'];
 
-    chrome.runtime.sendMessage({
-      method: 'get-ua'
-    }, ua => {
-      update(ua);
-      document.getElementById('ua').value = ua;
-      document.getElementById('ua').dispatchEvent(new Event('input'));
-    });
+    update(prefs.ua);
+    document.getElementById('ua').value = prefs.ua;
+    document.getElementById('ua').dispatchEvent(new Event('input'));
   });
 }));
 

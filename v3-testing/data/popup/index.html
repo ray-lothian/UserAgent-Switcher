@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <link rel="stylesheet" href="index.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+  <div id="toast"></div>
+  <table>
+    <thead id="filter">
+      <tr>
+        <th>
+          <select id="browser">
+            <optgroup label="Populars">
+              <option value="IE">Internet Explorer</option>
+              <option value="Safari">Safari</option>
+              <option value="Chrome">Chrome</option>
+              <option value="Firefox">Firefox</option>
+              <option value="Opera">Opera</option>
+              <option value="Edge">Edge</option>
+              <option value="Vivaldi">Vivaldi</option>
+            </optgroup>
+            <optgroup label="Others"></optgroup>
+          </select>&nbsp;
+          <select id="os">
+            <optgroup label="Populars">
+              <option value="Windows">Windows</option>
+              <option value="Mac OS">Mac OS</option>
+              <option value="Linux">Linux</option>
+              <option value="Chromium OS">Chromium OS</option>
+              <option value="Ubuntu">Ubuntu</option>
+              <option value="Debian">Debian</option>
+              <option value="Android">Android</option>
+              <option value="iOS">iOS</option>
+            </optgroup>
+            <optgroup label="Others"></optgroup>
+          </select>
+        </th>
+        <th>
+          <input type="search" id="custom" data-localized-placeholder="filterAgents" placeholder="Filter Agents">&nbsp;
+          <select id="sort">
+            <option value="descending" data-localize="ztoa">Z to A</option>
+            <option value="ascending" data-localize="atoz">A to Z</option>
+          </select>
+        </th>
+      </tr>
+    </thead>
+  </table>
+  <div id="list" data-loading=true>
+    <table>
+      <colgroup>
+        <col width="50">
+        <col width="40">
+        <col width="150">
+        <col width="100">
+        <col>
+      </colgroup>
+      <template>
+        <tr>
+          <td></td>
+          <td><input type="radio" name="select"></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+      </template>
+      <tbody data-localized-content="noMatch" data-content="No matching user-agent string for this query"></tbody>
+    </table>
+  </div>
+  <div id="view">
+    <table>
+      <colgroup>
+        <col width="10">
+        <col>
+        <col width="10">
+        <col>
+      </colgroup>
+      <tr>
+        <td>userAgent</td>
+        <td colspan="3">
+          <div hbox>
+            <input id="ua" type="text" autofocus data-localized-placeholder="uaPlaceholder" placeholder="Your preferred user-agent string" data-localized-title="uaTitle" title="To set a blank user-agent string, use the 'empty' keyword. To construct a custom user-agent string based on the current browser's navigator object, use ${} notation. Whatever is inside this notation is read from the 'navigator' object. For instance, to append a string to the default user-agent, use '${userAgent} THIS IS THE APPENDED STRING'">
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td>appVersion</td>
+        <td colspan="3">
+          <div hbox>
+            <input readonly value="-" id="appVersion" type="text" data-localized-title="appVersionTitle" title="This is a readonly field. Use options page for custom parsing.">
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td>platform</td>
+        <td>
+          <div hbox>
+            <input readonly value="-" id="platform" type="text" data-localized-title="platformTitle" title="This is a readonly field. Use options page for custom parsing.">
+          </div>
+        </td>
+        <td>vendor</td>
+        <td>
+          <div hbox>
+            <input readonly value="-" id="vendor" type="text" data-localized-title="vendorTitle" title="This is a readonly field. Use options page for custom parsing.">
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td>product</td>
+        <td>
+          <div hbox>
+            <input readonly value="-" id="product" type="text" data-localized-title="productTitle" title="This is a readonly field. Use options page for custom parsing.">
+          </div>
+        </td>
+        <td>oscpu</td>
+        <td>
+          <div hbox>
+            <input readonly value="-" id="oscpu" type="text" data-localized-title="oscpuTitle" title="This is a readonly field. Use options page for custom parsing.">
+          </div>
+        </td>
+      </tr>
+    </table>
+  </div>
+  <div id="agent" align="center">
+    <input type="button" data-localized-value="options" value="Options" data-localized-title="optionsTitle" title="Open options page" style="margin-left: 2px;" data-cmd="options">
+    <input type="button" data-localized-value="restart" value="Restart" data-localized-title="restartTitle" title="Click to reload the extension. This will cause all the window-based user-agent strings to be cleared" data-cmd="reload">
+    <input type="button" data-localized-value="refreshTab" value="Refresh Tab" data-localized-title="refreshTabTitle" title="Refresh the current page" data-cmd="refresh">
+    <input type="button" data-localized-value="reset" value="Reset" data-localized-title="resetTitle" title="Reset browser's user-agent string to the default one. This will not reset window-based UA strings. To reset them, use the 'Restart' button" data-cmd="reset">
+    <input type="button" data-localized-value="testUA" value="Test UA" data-localized-title="testUATitle" title="Test your user-agent string" data-cmd="test">
+    <input type="button" data-localized-value="considerContainers" value="Consider Containers" data-localized-title="considerContainersTitle" title="Allow the extension to access your browser's containers. If this permission is granted, tabs inside isolated containers do not follow the default container's user-agent string. You need to set this string for each new container." data-cmd="container" class="hide">
+    <input type="button" data-localized-value="applyActiveWindow" value="Apply (active window)" data-localized-title="applyActiveWindowTitle" title="Set this user-agent string for all tabs inside the current window" data-cmd="window">
+    <input type="button" data-localized-value="applyAllWindows" value="Apply (all windows)" data-localized-title="applyAllWindowsTitle" title="Set this user-agent string as the browser's User-Agent string" data-cmd="apply">
+  </div>
+  <script src="/ua-parser.min.js"></script>
+  <script src="/agent.js"></script>
+  <script src="index.js"></script>
+</body>
+</html>

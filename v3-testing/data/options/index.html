@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title data-localize="userAgentSwitcherandManagerOptions">User-Agent Switcher and Manager :: Options</title>
+  <link rel="stylesheet" type="text/css" href="index.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+
+<body>
+  <div class="mode">
+    <input type="radio" name="mode" value="blacklist" id="mode-blacklist">
+    <label for="mode-blacklist"><h1 data-localize="blackListMode">Black-List Mode</h1></label>
+    <span id="toggle-blacklist-desc" data-localize="description">Description</span>
+  </div>
+  <p for="toggle-blacklist-desc" class="note hidden" data-localize="blackListModeDescription">Apply the custom user-agent string to all tabs except the tabs with the following top-level hostnames (comma-separated list of hostnames). Note that even if a window-based user-agent string is set from the toolbar popup, your browser's default user-agent string is used.</p>
+  <textarea id="blacklist" rows="3" placeholder="e.g.: www.google.com, www.bing.com"></textarea>
+
+  <div class="mode">
+    <input type="radio" name="mode" value="whitelist" id="mode-whitelist">
+    <label for="mode-whitelist"><h1 data-localize="whiteListMode">White-List Mode</h1></label>
+    <span id="toggle-whitelist-desc" data-localize="description">Description</span>
+  </div>
+  <p for="toggle-whitelist-desc" class="note hidden" data-localize="whiteListModeDescription">Only apply the custom user-agent string to the tabs with following top-level hostnames. Note that if a window-based user-agent string is set from the toolbar popup, this user-agent will overwrite the global one.</p>
+  <textarea id="whitelist" rows="3" placeholder="e.g.: www.google.com, www.bing.com"></textarea>
+
+  <div class="mode">
+    <input type="radio" name="mode" value="custom" id="mode-custom">
+    <label for="mode-custom"><h1 data-localize="customMode">Custom Mode</h1></label>
+    <span id="toggle-custom-desc" data-localize="description">Description</span>
+  </div>
+  <p for="toggle-custom-desc" class="note hidden"><span data-localize="customModeDescription">Try to resolve the user-agent string from a JSON object; otherwise either use the default user-agent string or use the one that the user is set from the popup interface. Use "*" as the hostname to match all domains. You can randomly select from multiple user-agent strings by providing an array instead of a fixed string. If there is a "_" key in your JSON object which refers to an array of hostnames, then the extension only randomly selects the user-agent string once for each hostname inside this list. This is useful if you don't want the random user-agent to change until this browser session is over.</span> <a href="#" id="sample" data-localize="insertSample">Insert a sample</a>.</p>
+  <textarea id="custom" rows="8" wrap="off"></textarea>
+
+  <div class="checked">
+    <input type="checkbox" id="cache">
+    <label for="cache" data-localize="cache">Use caching to improve performance (recommended value is true). Uncheck this option only if you are using the custom mode and also you need the user-agent string to be altered from the provided list on every single request.</label>
+    <input type="checkbox" id="exactMatch">
+    <label for="exactMatch" data-localize="exactMatch">Use exact matching (if checked, you will need to insert all sub-domains in the white-list and black-list modes to be considered. If unchecked, all the sub-domains are passing the matching condition (e.g: www.google.com passes the matching if google.com is in the list))</label>
+    <input type="checkbox" id="userAgentData">
+    <label for="userAgentData" data-localize="userAgentData">Expose "navigator.userAgentData" object on Chromium browsers</label>
+    <input type="checkbox" id="faqs">
+    <label for="faqs" data-localize="faqs">Open FAQs page on updates</label>
+    <input type="checkbox" id="log">
+    <label for="log" data-localize="log">Display debugging info in the browser console</label>
+  </div>
+
+  <div class="mode-2">
+    <h1 data-localize="disableSpoofing">Disable Spoofing</h1>
+    <span id="toggle-protected-desc" data-localize="description">Description</span>
+  </div>
+  <p for="toggle-protected-desc" class="note hidden" data-localize="disableSpoofingDescription">A comma-separated list of keywords that the extension should not spoof the user-agent header. Use this list to protect URLs that contain these protected keywords. Each keyword need to be at least 5 char long.</p>
+  <textarea id="protected" rows="3" wrap="off"></textarea>
+
+  <div class="mode-2">
+    <h1 data-localize="customUserAgentParsing">Custom User-Agent Parsing</h1>
+    <span id="toggle-parser-desc" data-localize="description">Description</span>
+  </div>
+  <p for="toggle-parser-desc" class="note hidden"><span data-localize="customUserAgentParsingDescription">A JSON object to bypass the internal user-agent string parsing method. The keys are the actual user-agent strings and the value of each key is an object of the keys that need to be set for the "navigator" object. You can use the "[delete]" keyword if you want a key in the "navigator" object to get deleted.</span> <a href="#" id="sample-2" data-localize="insertSample">Insert a sample</a>.</p>
+  <textarea id="parser" rows="5" wrap="off"></textarea>
+
+  <div class="mode-2">
+    <h1 data-localize="siblingHostnames">Sibling Hostnames</h1>
+    <span id="toggle-sibling-desc" data-localize="description">Description</span>
+  </div>
+  <p for="toggle-sibling-desc" class="note hidden"><span data-localize="siblingHostnamesDescription">A JSON array that contains one or more groups of hostnames to have a single user-agent string per group. For all hostnames in one group, the user-agent string calculation only occurs once, and all the other members use the same calculated string. This is useful to make sure a group of connected websites only access to the same user-agent string.</span> <a href="#" id="sample-3" data-localize="insertSample">Insert a sample</a>.</p>
+  <textarea id="siblings" rows="5" wrap="off"></textarea>
+
+  <div class="admin" data-localize="managedStorage">This extension supports managed storage. All the preferences can be pre-configured by the domain administrator</div>
+  <div id="backup">
+    <button id="import" data-localize="importSettings">Import Settings</button>
+    <button data-localized-title="exportSettingsTitle" title="To generate minified version, press Shift key while pressing this button" id="export" data-localize="exportSettings">Export Settings</button>
+  </div>
+  <div id="tools">
+    <button id="help" data-localize="help">FAQs Page (Help)</button>
+    <button id="donate" data-localize="donate">Support Development</button>
+    <button id="reset" data-localize="reset">Reset</button>
+    <button id="save" data-localize="save">Save</button>
+    <span id="status"></span>
+  </div>
+
+  <script src="index.js"></script>
+</body>
+</html>

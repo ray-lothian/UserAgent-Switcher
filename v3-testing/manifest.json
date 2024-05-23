@@ -1,0 +1,43 @@
+{
+  "manifest_version": 3,
+  "name": "__MSG_extensionName__",
+  "version": "0.6.0",
+  "default_locale": "en",
+  "description": "__MSG_extensionDescription__",
+  "permissions": [
+    "storage",
+    "webNavigation",
+    "contextMenus",
+    "scripting",
+    "declarativeNetRequestWithHostAccess"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "icons": {
+    "16": "/data/icons/active/16.png",
+    "18": "/data/icons/active/18.png",
+    "19": "/data/icons/active/19.png",
+    "32": "/data/icons/active/32.png",
+    "36": "/data/icons/active/36.png",
+    "38": "/data/icons/active/38.png",
+    "48": "/data/icons/active/48.png",
+    "64": "/data/icons/active/64.png",
+    "128": "/data/icons/active/128.png",
+    "256": "/data/icons/active/256.png"
+  },
+  "storage": {
+    "managed_schema": "schema.json"
+  },
+  "background": {
+    "service_worker": "worker.js"
+  },
+  "action": {
+    "default_popup": "/data/popup/index.html"
+  },
+  "homepage_url": "https://add0n.com/useragent-switcher.html",
+  "options_ui": {
+    "page": "/data/options/index.html",
+    "open_in_tab": true
+  }
+}
