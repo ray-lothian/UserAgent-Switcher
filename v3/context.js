@@ -7,7 +7,7 @@ const context = () => chrome.storage.local.get({
     title: 'Switch to "black-list" mode',
     contexts: ['action'],
     type: 'radio',
-    checked: prefs.mode === 'blacklist' || prefs.mode === 'custom'
+    checked: prefs.mode === 'blacklist'
   }, () => chrome.runtime.lastError);
   chrome.contextMenus.create({
     id: 'whitelist',
@@ -15,6 +15,13 @@ const context = () => chrome.storage.local.get({
     contexts: ['action'],
     type: 'radio',
     checked: prefs.mode === 'whitelist'
+  }, () => chrome.runtime.lastError);
+  chrome.contextMenus.create({
+    id: 'custom',
+    title: 'Switch to "custom" mode',
+    contexts: ['action'],
+    type: 'radio',
+    checked: prefs.mode === 'custom'
   }, () => chrome.runtime.lastError);
 });
 

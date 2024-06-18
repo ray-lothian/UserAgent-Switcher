@@ -23,40 +23,31 @@
 }
 
 body {
-  min-width: 600px;
   color: var(--color);
   background-color: var(--bg-color);
-}
-@media (pointer: none), (pointer: coarse) {
-  body {
-    min-width: unset;
-  }
+  font-size: 14px;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, sans-serif;
+  width: min(100% - 2rem, 70rem);
+  margin-inline: auto;
 }
 
-@supports (-moz-appearance:none) {
-  body {
-    font-size: 13px;
-    font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
-    margin: 10px;
-    min-width: unset;
-  }
-  textarea {
-    padding: 5px;
-  }
-  button,
-  input[type=submit],
-  input[type=button] {
-    height: 24px;
-    color: #444;
-    background-image: linear-gradient(rgb(237, 237, 237), rgb(237, 237, 237) 38%, rgb(222, 222, 222));
-    box-shadow: rgba(0, 0, 0, 0.08) 0 1px 0, rgba(255, 255, 255, 0.75) 0 1px 2px inset;
-    text-shadow: rgb(240, 240, 240) 0 1px 0;
-    border: solid 1px rgba(0, 0, 0, 0.25);
-  }
-  input[type=button]:disabled {
-    opacity: 0.5;
-  }
+textarea {
+  padding: 5px;
 }
+button,
+input[type=submit],
+input[type=button] {
+  height: 28px;
+  color: #444;
+  background-image: linear-gradient(rgb(237, 237, 237), rgb(237, 237, 237) 38%, rgb(222, 222, 222));
+  box-shadow: rgba(0, 0, 0, 0.08) 0 1px 0, rgba(255, 255, 255, 0.75) 0 1px 2px inset;
+  text-shadow: rgb(240, 240, 240) 0 1px 0;
+  border: solid 1px rgba(0, 0, 0, 0.25);
+}
+input[type=button]:disabled {
+  opacity: 0.5;
+}
+
 button,
 input[type=submit],
 input[type=button] {
@@ -67,6 +58,7 @@ textarea {
   background-color: var(--bg-color-light);
   border: none;
   width: 100%;
+  box-sizing: border-box;
   outline: none;
 }
 textarea:focus {
@@ -103,7 +95,7 @@ h1 {
 .note {
   background-color: var(--bg-note);
   color: var(--color-note);
-  padding: 5px;
+  padding: 10px;
   margin: 0 0 10px 0;
 }
 .hidden {
@@ -144,4 +136,7 @@ h1 {
   border: solid 1px var(--border-admin);
   padding: 10px;
   margin: 15px 0;
+}
+#protected {
+  white-space: normal;
 }

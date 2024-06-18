@@ -1,11 +1,9 @@
 {
   "extensionName": {
-    "message": "User-Agent Switcher and Manager",
-    "description": "Name of the extension."
+    "message": "User-Agent Switcher and Manager"
   },
   "extensionDescription": {
-    "message": "Spoof websites trying to gather information about your web navigation to deliver distinct content you may not want",
-    "description": "Description of the extension."
+    "message": "Spoof websites trying to gather information about your web navigation to deliver distinct content you may not want"
   },
   "userAgentSwitcherandManagerOptions": {
     "message": "User-Agent Switcher and Manager :: Options"
@@ -34,20 +32,8 @@
   "insertSample": {
     "message": "Insert a sample"
   },
-  "cache": {
-    "message": "Use caching to improve performance (recommended value is true). Uncheck this option only if you are using the custom mode and also you need the user-agent string to be altered from the provided list on every single request."
-  },
-  "exactMatch": {
-    "message": "Use exact matching (if checked, you will need to insert all sub-domains in the white-list and black-list modes to be considered. If unchecked, all the sub-domains are passing the matching condition (e.g: www.google.com passes the matching if google.com is in the list))"
-  },
-  "faqs": {
-    "message": "Open FAQs page on updates"
-  },
   "userAgentData": {
     "message": "Expose \"navigator.userAgentData\" object on Chromium browsers"
-  },
-  "log": {
-    "message": "Display debugging info in the browser console"
   },
   "disableSpoofing": {
     "message": "Disable Spoofing"
@@ -60,12 +46,6 @@
   },
   "customUserAgentParsingDescription": {
     "message": "A JSON object to bypass the internal user-agent string parsing method. The keys are the actual user-agent strings and the value of each key is an object of the keys that need to be set for the \"navigator\" object. You can use the \"[delete]\" keyword if you want a key in the \"navigator\" object to get deleted."
-  },
-  "siblingHostnames": {
-    "message": "Sibling Hostnames"
-  },
-  "siblingHostnamesDescription": {
-    "message": "A JSON array that contains one or more groups of hostnames to have a single user-agent string per group. For all hostnames in one group, the user-agent string calculation only occurs once, and all the other members use the same calculated string. This is useful to make sure a group of connected websites only access to the same user-agent string."
   },
   "importSettings": {
     "message": "Import Settings"

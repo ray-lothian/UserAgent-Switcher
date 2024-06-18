@@ -6,7 +6,6 @@
   "description": "__MSG_extensionDescription__",
   "permissions": [
     "storage",
-    "webNavigation",
     "contextMenus",
     "scripting",
     "declarativeNetRequestWithHostAccess"
@@ -16,11 +15,7 @@
   ],
   "icons": {
     "16": "/data/icons/active/16.png",
-    "18": "/data/icons/active/18.png",
-    "19": "/data/icons/active/19.png",
     "32": "/data/icons/active/32.png",
-    "36": "/data/icons/active/36.png",
-    "38": "/data/icons/active/38.png",
     "48": "/data/icons/active/48.png",
     "64": "/data/icons/active/64.png",
     "128": "/data/icons/active/128.png",

@@ -7,6 +7,7 @@ class Agent {
   }
   parse(s) {
     // log('ua.parse is called', s);
+
     if (this.#prefs.parser[s]) {
       // log('ua.parse is resolved using parser');
       return Object.assign({
