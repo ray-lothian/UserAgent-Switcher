@@ -2,6 +2,7 @@
 
 self.importScripts('context.js');
 self.importScripts('ua-parser.min.js', 'agent.js', 'network.js');
+self.importScripts('managed.js');
 
 const network = new Network();
 
