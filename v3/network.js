@@ -1,23 +1,15 @@
 /* global Agent */
-/*
-  1: main set header rule (blacklist and whitelist) (priority = 1)
-  2: main set header rule (blacklist mode only) (priority = 1)
-  3: main set JSON rule (priority = 1) or (priority = 2)
-  100-119: exception rule (priority = 2)
-  200-290: custom rules (priority = 2)
-  300-320: protected rules (priority = 1)
-  400-499: per-tab rules (session) (priority = 3)
-*/
 
 // eslint-disable-next-line no-unused-vars
 class Network {
-  #EXCEPTION_INDEX = 100;
-  #CUSTOM_INDEX = 200;
-  #MAX_CUSTOM_RULES = 90;
-  #PROTECTED_INDEX = 300;
-  #MAX_PROTECTED_RULES = 20;
-  #PERTAB_INDEX = 400;
-  #MAX_PERTAB_RULES = 98;
+  #CUSTOM_INDEX = 1000;
+  #MAX_CUSTOM_RULES = 200;
+  #PROTECTED_INDEX = 2000;
+  #MAX_PROTECTED_RULES = 50;
+  #PERTAB_INDEX = 3000;
+  #MAX_PERTAB_RULES = 200;
+
+  #RESOURCETYPE = Object.values(chrome.declarativeNetRequest.ResourceType);
 
   async configure() {
     let size = 0;
@@ -54,111 +46,120 @@ class Network {
     });
     await this.page(size);
   }
+  action(o, ...types) {
+    const r = {
+      'type': 'modifyHeaders'
+    };
+    if (types.includes('net')) {
+      r.requestHeaders = [{
+        'header': 'user-agent',
+        'operation': 'set',
+        'value': o.userAgent
+      }];
+      if (o.userAgentDataBuilder) {
+        let platform = o.userAgentDataBuilder.p?.os?.name || 'Windows';
+        if (platform.toLowerCase().includes('mac')) {
+          platform = 'macOS';
+        }
+        else if (platform.toLowerCase().includes('debian')) {
+          platform = 'Linux';
+        }
+
+        const version = o.userAgentDataBuilder.p?.browser?.major || 107;
+        let name = o.userAgentDataBuilder.p?.browser?.name || 'Google Chrome';
+        if (name === 'Chrome') {
+          name = 'Google Chrome';
+        }
+
+        r.requestHeaders.push({
+          'header': 'sec-ch-ua-platform',
+          'operation': 'set',
+          'value': '"' + platform + '"'
+        }, {
+          'header': 'sec-ch-ua',
+          'operation': 'set',
+          'value': `"${name}";v="${version}", "Chromium";v="${version}", "Not=A?Brand";v="24"`
+        }, {
+          'header': 'sec-ch-ua-mobile',
+          'operation': 'set',
+          'value': /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(o.userAgent) ? '?1' : '?0'
+        });
+      }
+      else {
+        const headers = [
+          'sec-ch-ua-platform', 'sec-ch-ua', 'sec-ch-ua-mobile', 'sec-fetch-dest', 'sec-fetch-mode', 'sec-fetch-site',
+          'sec-fetch-user', 'sec-ch-ua-arch', 'sec-ch-ua-bitness', 'sec-ch-ua-full-version',
+          'sec-ch-ua-full-version-list', 'sec-ch-ua-model', 'sec-ch-ua-platform-version'
+        ];
+
+        for (const header of headers) {
+          r.requestHeaders.push({
+            header,
+            'operation': 'remove'
+          });
+        }
+      }
+    }
+    if (types.includes('js')) {
+      r.responseHeaders = [{
+        'header': 'set-cookie',
+        'operation': 'append',
+        'value': `uasw-json-data=${encodeURIComponent(JSON.stringify(o))}`
+      }];
+    }
+    return r;
+  }
   async dnet(prefs) {
     const addRules = [];
-    const resourceTypes = Object.values(chrome.declarativeNetRequest.ResourceType);
 
     const o = this.agent.parse(prefs.ua);
     o.type = 'user';
-    const data = encodeURIComponent(JSON.stringify(o));
 
     if (prefs.ua && prefs.mode === 'blacklist') {
-      const one = {
+      addRules.push({
         'id': 1,
         'priority': 1,
-        'action': {
-          'type': 'modifyHeaders',
-          'requestHeaders': [{
-            'header': 'user-agent',
-            'operation': 'set',
-            'value': o.userAgent
-          }]
-        },
+        'action': this.action(o, 'net'),
         'condition': {
-          resourceTypes
+          'resourceTypes': this.#RESOURCETYPE,
+          'excludedRequestDomains': prefs.blacklist
         }
-      };
-      const three = {
-        'id': 3,
-        'priority': 1,
-        'action': {
-          'type': 'modifyHeaders',
-          'responseHeaders': [{
-            'header': 'set-cookie',
-            'operation': 'append',
-            'value': `uasw-json-data=${data}`
-          }]
-        },
+      }, {
+        'id': 2,
+        'priority': 3,
+        'action': this.action(o, 'js'),
         'condition': {
-          'resourceTypes': ['main_frame', 'sub_frame']
+          'resourceTypes': ['main_frame', 'sub_frame'],
+          'excludedRequestDomains': prefs.blacklist
         }
-      };
-      addRules.push(one, three);
-      if (prefs.blacklist.length) {
-        addRules.push({
-          'id': this.#EXCEPTION_INDEX,
-          'priority': 2,
-          'action': {
-            'type': 'allowAllRequests'
-          },
-          'condition': {
-            'resourceTypes': ['main_frame', 'sub_frame'],
-            'requestDomains': prefs.blacklist
-          }
-        });
-      }
+      });
     }
     else if (prefs.ua && prefs.mode === 'whitelist' && prefs.whitelist.length) {
-      const one = {
+      addRules.push({
         'id': 1,
         'priority': 1,
-        'action': {
-          'type': 'modifyHeaders',
-          'requestHeaders': [{
-            'header': 'user-agent',
-            'operation': 'set',
-            'value': o.userAgent
-          }]
-        },
+        'action': this.action(o, 'net'),
         'condition': {
           'initiatorDomains': prefs.whitelist,
-          'resourceTypes': resourceTypes.filter(s => s !== 'main_frame' && s !== 'sub_frame')
+          'excludedResourceTypes': ['main_frame', 'sub_frame']
         }
-      };
-      const two = {
+      }, {
         'id': 2,
         'priority': 1,
-        'action': {
-          'type': 'modifyHeaders',
-          'requestHeaders': [{
-            'header': 'user-agent',
-            'operation': 'set',
-            'value': o.userAgent
-          }]
-        },
+        'action': this.action(o, 'net'),
         'condition': {
           'requestDomains': prefs.whitelist,
           'resourceTypes': ['main_frame', 'sub_frame']
         }
-      };
-      const three = {
+      }, {
         'id': 3,
-        'priority': 1,
-        'action': {
-          'type': 'modifyHeaders',
-          'responseHeaders': [{
-            'header': 'set-cookie',
-            'operation': 'append',
-            'value': `uasw-json-data=${data}`
-          }]
-        },
+        'priority': 3,
+        'action': this.action(o, 'net', 'js'),
         'condition': {
           'requestDomains': prefs.whitelist,
           'resourceTypes': ['main_frame', 'sub_frame']
         }
-      };
-
-      addRules.push(one, two, three);
+      });
     }
     else if (prefs.mode === 'custom') {
       if (prefs.custom['*'] || prefs.ua) {
@@ -168,109 +169,54 @@ class Network {
 
         const o = this.agent.parse(ua);
         o.type = prefs.custom['*'] ? '*' : 'user';
-        const data = encodeURIComponent(JSON.stringify(o));
 
-        const one = {
+        addRules.push({
           'id': 1,
           'priority': 1,
-          'action': {
-            'type': 'modifyHeaders',
-            'requestHeaders': [{
-              'header': 'user-agent',
-              'operation': 'set',
-              'value': o.userAgent
-            }]
-          },
+          'action': this.action(o, 'net'),
           'condition': {
-            resourceTypes
+            'resourceTypes': this.#RESOURCETYPE
           }
-        };
-
-        const three = {
-          'id': 3,
-          'priority': 2, // for custom ones to be called after
-          'action': {
-            'type': 'modifyHeaders',
-            'responseHeaders': [{
-              'header': 'set-cookie',
-              'operation': 'append',
-              'value': `uasw-json-data=${data}`
-            }]
-          },
+        }, {
+          'id': 2,
+          'priority': 3, // for custom ones to be called after
+          'action': this.action(o, 'js'),
           'condition': {
             'resourceTypes': ['main_frame', 'sub_frame']
           }
-        };
-
-        addRules.push(one, three);
+        });
       }
       let n = this.#CUSTOM_INDEX;
       for (const [hosts, value] of Object.entries(prefs.custom)) {
-        if (hosts === '*') {
-          continue;
-        }
-        if (hosts === '_') {
-          console.info('"_" rule is deprecated. All random user-agent strings are persistent for browser session');
+        if (hosts === '*' || hosts === '_') {
           continue;
         }
 
         const ua = Array.isArray(value) ? value[Math.floor(Math.random() * value.length)] : value;
         const o = this.agent.parse(ua);
         o.type = 'custom';
-        const data = encodeURIComponent(JSON.stringify(o));
+
         const domains = hosts.split(/\s*,\s*/);
 
-        const one = {
+        addRules.push({
           'id': n,
           'priority': 2,
-          'action': {
-            'type': 'modifyHeaders',
-            'requestHeaders': [{
-              'header': 'user-agent',
-              'operation': 'set',
-              'value': o.userAgent
-            }]
-          },
+          'action': this.action(o, 'net'),
           'condition': {
             'initiatorDomains': domains,
-            'resourceTypes': resourceTypes.filter(s => s !== 'main_frame' && s !== 'sub_frame')
+            'excludedResourceTypes': ['main_frame', 'sub_frame']
           }
-        };
-        const two = {
+        }, {
           'id': n + 1,
           'priority': 2,
-          'action': {
-            'type': 'modifyHeaders',
-            'requestHeaders': [{
-              'header': 'user-agent',
-              'operation': 'set',
-              'value': o.userAgent
-            }]
-          },
+          'action': this.action(o, 'net', 'js'),
           'condition': {
             'requestDomains': domains,
             'resourceTypes': ['main_frame', 'sub_frame']
           }
-        };
-        const three = {
-          'id': n + 2,
-          'priority': 1, // to be called later
-          'action': {
-            'type': 'modifyHeaders',
-            'responseHeaders': [{
-              'header': 'set-cookie',
-              'operation': 'append',
-              'value': `uasw-json-data=${data}`
-            }]
-          },
-          'condition': {
-            'requestDomains': domains,
-            'resourceTypes': ['main_frame', 'sub_frame']
-          }
-        };
-        addRules.push(one, two, three);
+        });
 
-        n += 3;
+        n += 2;
 
         if (n > this.#CUSTOM_INDEX + this.#MAX_CUSTOM_RULES) {
           console.info('Some custom rules are ignored', 'max reached');
@@ -316,13 +262,13 @@ class Network {
           }
           addRules.push({
             id,
-            'priority': 2,
+            'priority': 4, // to override all even set cookie
             'action': {
-              'type': 'allow'
+              'type': 'allowAllRequests'
             },
             'condition': {
-              regexFilter,
-              resourceTypes
+              'resourceTypes': ['main_frame', 'sub_frame'],
+              regexFilter
             }
           });
         }
@@ -345,42 +291,25 @@ class Network {
     for (const [key, {ua}] of Object.entries(prefs)) {
       const o = this.agent.parse(ua);
       o.type = 'per-tab';
-      const data = encodeURIComponent(JSON.stringify(o));
 
-      const one = {
+      const tabIds = key.split(',').map(Number);
+      addRules.push({
         'id': m,
         'priority': 3,
-        'action': {
-          'type': 'modifyHeaders',
-          'requestHeaders': [{
-            'header': 'user-agent',
-            'operation': 'set',
-            'value': o.userAgent
-          }]
-        },
+        'action': this.action(o, 'net'),
         'condition': {
-          'tabIds': key.split(',').map(Number),
-          'resourceTypes': Object.values(chrome.declarativeNetRequest.ResourceType)
+          tabIds,
+          'resourceTypes': this.#RESOURCETYPE
         }
-      };
-      const two = {
+      }, {
         'id': m + 1,
         'priority': 1, // to override the global set-cookie with priority 2
-        'action': {
-          'type': 'modifyHeaders',
-          'responseHeaders': [{
-            'header': 'set-cookie',
-            'operation': 'append',
-            'value': `uasw-json-data=${data}`
-          }]
-        },
+        'action': this.action(o, 'js'),
         'condition': {
-          'tabIds': key.split(',').map(Number),
+          tabIds,
           'resourceTypes': ['main_frame', 'sub_frame']
         }
-      };
-
-      addRules.push(one, two);
+      });
 
       m += 2;
 
@@ -389,7 +318,6 @@ class Network {
         break;
       }
     }
-
 
     const removeRuleIds = await chrome.declarativeNetRequest.getSessionRules().then(arr => arr.map(o => o.id));
     await chrome.declarativeNetRequest.updateSessionRules({
@@ -401,27 +329,7 @@ class Network {
   }
   async page(size) {
     await chrome.scripting.unregisterContentScripts();
-    /*
 
-    "content_scripts": [{
-      "matches": ["<all_urls>"],
-      "js": ["/data/inject/main.js", "/data/inject/override.js"],
-      "run_at": "document_start",
-      "all_frames": true,
-      "match_about_blank": true,
-      "match_origin_as_fallback": true,
-      "world": "MAIN"
-    }, {
-      "matches": ["<all_urls>"],
-      "js": ["/data/inject/isolated.js"],
-      "run_at": "document_start",
-      "all_frames": true,
-      "match_about_blank": true,
-      "match_origin_as_fallback": true,
-      "world": "ISOLATED"
-    }]
-
-    */
     if (size) {
       const props = {
         'matches': ['*://*/*'],
