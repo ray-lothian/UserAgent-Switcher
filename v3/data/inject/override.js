@@ -85,6 +85,9 @@
       delete port.prefs.userAgentDataBuilder;
 
       for (const key of Object.keys(port.prefs)) {
+        if (key === 'type') {
+          continue;
+        }
         if (port.prefs[key] === '[delete]') {
           delete Object.getPrototypeOf(nav)[key];
         }
@@ -99,7 +102,7 @@
       }
     }
     catch (e) {
-      console.log('Cannot set UserAgent', e);
+      console.error('UA_SET_FAILED', e);
     }
   };
 

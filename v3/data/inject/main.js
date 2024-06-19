@@ -2,8 +2,9 @@
   const port = document.createElement('span');
   port.id = 'uas-port';
   port.prepare = () => {
-    port.dataset.ready = true;
     port.prefs = JSON.parse(decodeURIComponent(port.dataset.str));
+    port.dataset.ready = true;
+    port.dataset.type = port.prefs.type;
   };
   port.ogs = new Map();
   port.addEventListener('register', e => {

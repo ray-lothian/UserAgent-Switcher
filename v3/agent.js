@@ -5,7 +5,7 @@ class Agent {
   prefs(prefs) {
     this.#prefs = prefs;
   }
-  parse(s) {
+  parse(s = '') {
     // log('ua.parse is called', s);
 
     if (this.#prefs.parser[s]) {

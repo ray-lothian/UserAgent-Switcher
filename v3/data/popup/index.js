@@ -55,9 +55,9 @@ chrome.tabs.query({
       apply.value = chrome.i18n.getMessage('applyContainer');
       apply.title = chrome.i18n.getMessage('applyContainerTitle');
 
-      const w = document.querySelector('[data-cmd="window"]');
-      w.value = chrome.i18n.getMessage('applyContainerWindow');
-      w.title = chrome.i18n.getMessage('applyContainerWindowTitle');
+      const w = document.querySelector('[data-cmd="tab"]');
+      w.value = chrome.i18n.getMessage('applyContainerTab');
+      w.title = chrome.i18n.getMessage('applyContainerTabTitle');
 
       const reset = document.querySelector('[data-cmd="reset"]');
       reset.value = chrome.i18n.getMessage('resetContainer');
@@ -111,7 +111,7 @@ function get(path) {
       return cf;
     }
   }).open('agents').catch(() => cf).then(cache => {
-    const link = 'https://cdn.jsdelivr.net/gh/ray-lothian/UserAgent-Switcher/v2/firefox/data/popup/' + path;
+    const link = 'https://cdn.jsdelivr.net/gh/ray-lothian/UserAgent-Switcher/v3/data/popup/' + path;
     // updating agents once per 7 days
     chrome.storage.local.get({
       ['cache.' + path]: 0
@@ -139,7 +139,7 @@ function update(ua) {
   parent.dataset.loading = true;
   get('browsers/' + browser.toLowerCase() + '-' + os.toLowerCase().replace(/\//g, '-') + '.json')
     .then(r => r.json()).catch(e => {
-      console.error(e);
+      console.error('CACHE_ERROR', e);
       return [];
     }).then(list => {
       if (list) {
@@ -316,13 +316,13 @@ document.addEventListener('click', ({target}) => {
         }
       }
     }
-    else if (cmd === 'window') {
+    else if (cmd === 'tab') {
       const value = document.getElementById('ua').value;
-      chrome.runtime.sendMessage({
-        method: 'request-update',
-        value,
-        cookieStoreId: tab.cookieStoreId,
-        windowId: tab.windowId
+      chrome.storage.session.set({
+        [tab.id]: {
+          ua: value,
+          cookieStoreId: tab.cookieStoreId
+        }
       });
     }
     else if (cmd === 'reset') {
@@ -378,7 +378,7 @@ document.addEventListener('click', ({target}) => {
 
     if (cmd) {
       target.classList.add('active');
-      window.setTimeout(() => target.classList.remove('active'), 500);
+      setTimeout(() => target.classList.remove('active'), 500);
     }
   }
 });
@@ -386,7 +386,7 @@ document.addEventListener('click', ({target}) => {
 document.getElementById('ua').addEventListener('input', e => {
   const value = e.target.value;
   document.querySelector('[data-cmd=apply]').disabled = value === '';
-  document.querySelector('[data-cmd=window]').disabled = value === '';
+  document.querySelector('[data-cmd=tab]').disabled = value === '';
 
   if (value) {
     const agent = new Agent();

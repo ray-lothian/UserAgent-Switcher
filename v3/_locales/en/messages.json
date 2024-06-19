@@ -6,7 +6,7 @@
     "message": "Spoof websites trying to gather information about your web navigation to deliver distinct content you may not want"
   },
   "userAgentSwitcherandManagerOptions": {
-    "message": "User-Agent Switcher and Manager :: Options"
+    "message": "Options Page :: User-Agent Switcher and Manager"
   },
   "blackListMode": {
     "message": "Black-List Mode"
@@ -15,13 +15,13 @@
     "message": "Description"
   },
   "blackListModeDescription": {
-    "message": "Apply the custom user-agent string to all tabs except the tabs with the following top-level hostnames (comma-separated list of hostnames). Note that even if a window-based user-agent string is set from the toolbar popup, your browser's default user-agent string is used."
+    "message": "Apply the custom user-agent string to all tabs except the tabs with the following top-level hostnames (comma-separated list of hostnames). Note that if a tab-based user-agent string is set from the toolbar popup, this user-agent string is used for this session."
   },
   "whiteListMode": {
     "message": "White-List Mode"
   },
   "whiteListModeDescription": {
-    "message": "Only apply the custom user-agent string to the tabs with following top-level hostnames. Note that if a window-based user-agent string is set from the toolbar popup, this user-agent will overwrite the global one."
+    "message": "Only apply the custom user-agent string to the tabs with following top-level hostnames. Note that if a tab-based user-agent string is set from the toolbar popup, this user-agent will overwrite the global one."
   },
   "customMode": {
     "message": "Custom Mode"
@@ -63,7 +63,7 @@
     "message": "Support Development"
   },
   "save": {
-    "message": "Save"
+    "message": "Save Options"
   },
   "managedStorage": {
     "message": "This extension supports managed storage so that preferences can be altered automatically or can be pre-configured by a domain administrator. Read the FAQs page for more info."
@@ -78,7 +78,7 @@
     "message": "Restart"
   },
   "restartTitle": {
-    "message": "Click to reload the extension. This will cause all the window-based user-agent strings to be cleared."
+    "message": "Click to reload the extension. This will cause all the tab-based user-agent strings to be cleared."
   },
   "refreshTab": {
     "message": "Refresh Tab"
@@ -90,7 +90,7 @@
     "message": "Reset"
   },
   "resetTitle": {
-    "message": "Reset browser's user-agent string to the default one. This will not reset window-based UA strings. To reset them, use the 'Restart' button."
+    "message": "Reset browser's user-agent string to the default one. This will not reset tab-based UA strings. To reset them, use the 'Restart' button."
   },
   "testUA": {
     "message": "Test UA"
@@ -104,14 +104,14 @@
   "considerContainersTitle": {
     "message": "Allow the extension to access your browser's containers. If this permission is granted, tabs inside isolated containers do not follow the default container's user-agent string. You need to set this string for each new container."
   },
-  "applyActiveWindow": {
-    "message": "Apply (active window)"
+  "applyActiveTab": {
+    "message": "Apply (this tab)"
   },
-  "applyActiveWindowTitle": {
-    "message": "Set this user-agent string for all tabs inside the current window"
+  "applyActiveTabTitle": {
+    "message": "Set this user-agent string for the current tab"
   },
   "applyAllWindows": {
-    "message": "Apply (all windows)"
+    "message": "Apply (all tabs)"
   },
   "applyAllWindowsTitle": {
     "message": "Set this user-agent string as the browser's User-Agent string"
@@ -122,17 +122,17 @@
   "applyContainerTitle": {
     "message": "Set this user-agent string as the current container's User-Agent string"
   },
-  "applyContainerWindow": {
-    "message": "Apply (container on window)"
+  "applyContainerTab": {
+    "message": "Apply (container on tab)"
   },
-  "applyContainerWindowTitle": {
-    "message": "Set this user-agent string for all tabs inside the current window's container"
+  "applyContainerTabTitle": {
+    "message": "Set this user-agent string for the current tab in container"
   },
   "resetContainer": {
     "message": "Reset (container)"
   },
   "resetContainerTitle": {
-    "message": "Reset the container's user-agent string to the default one. This will not reset window-based UA strings. To reset them, use the 'Restart' button."
+    "message": "Reset the container's user-agent string to the default one. This will not reset tab-based UA strings. To reset them, use the 'Restart' button."
   },
   "oscpuTitle": {
     "message": "This is a readonly field. Use options page for custom parsing."

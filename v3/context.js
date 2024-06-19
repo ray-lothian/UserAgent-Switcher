@@ -26,7 +26,7 @@ const context = () => chrome.storage.local.get({
 });
 
 chrome.contextMenus.onClicked.addListener(info => {
-  if (info.menuItemId === 'blacklist' || info.menuItemId === 'whitelist') {
+  if (info.menuItemId === 'blacklist' || info.menuItemId === 'whitelist' || info.menuItemId === 'custom') {
     chrome.storage.local.set({
       mode: info.menuItemId
     });

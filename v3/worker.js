@@ -5,14 +5,11 @@ self.importScripts('ua-parser.min.js', 'agent.js', 'network.js');
 
 const network = new Network();
 
-chrome.runtime.onMessage.addListener(request => {
-  if (request.method === 'request-update') {
-    console.log(request);
-  }
-});
-
-chrome.storage.onChanged.addListener(ps => {
-  if (ps.mode || ps.ua || ps.blacklist || ps.whitelist || ps.custom || ps.sibilings) {
+chrome.storage.onChanged.addListener((ps, type) => {
+  if (
+    ps.mode || ps.ua || ps.blacklist || ps.whitelist || ps.custom || ps.sibilings || ps.protected ||
+    type === 'session'
+  ) {
     network.configure();
   }
 });
@@ -40,19 +37,27 @@ chrome.runtime.onMessage.addListener((request, sender, response) => {
     });
   }
   else if (request.method === 'tab-spoofing') {
+    let dir = 'active';
+    if (request.type === 'per-tab' || request.type === 'custom') {
+      dir = request.type;
+    }
+
     chrome.action.setIcon({
       tabId: sender.tab.id,
       path: {
-        '16': '/data/icons/active/16.png',
-        '32': '/data/icons/active/32.png',
-        '48': '/data/icons/active/48.png'
+        '16': '/data/icons/' + dir + '/16.png',
+        '32': '/data/icons/' + dir + '/32.png',
+        '48': '/data/icons/' + dir + '/48.png'
       }
     });
     const o = JSON.parse(decodeURIComponent(request.str));
     chrome.action.setTitle({
       tabId: sender.tab.id,
-      title: o.userAgent
+      title: '[' + request.type + '] ' + o.userAgent
     });
+  }
+  else {
+    console.error('UNKOWN_COMMAND', request);
   }
 });
 

@@ -123,14 +123,14 @@
     </table>
   </div>
   <div id="agent" align="center">
-    <input type="button" data-localized-value="options" value="Options" data-localized-title="optionsTitle" title="Open options page" style="margin-left: 2px;" data-cmd="options">
-    <input type="button" data-localized-value="restart" value="Restart" data-localized-title="restartTitle" title="Click to reload the extension. This will cause all the window-based user-agent strings to be cleared" data-cmd="reload">
+    <input type="button" data-localized-value="options" value="Options" data-localized-title="optionsTitle" title="Open options page" data-cmd="options">
+    <input type="button" data-localized-value="restart" value="Restart" data-localized-title="restartTitle" title="Click to reload the extension. This will cause all the tab-based user-agent strings to be cleared" data-cmd="reload">
     <input type="button" data-localized-value="refreshTab" value="Refresh Tab" data-localized-title="refreshTabTitle" title="Refresh the current page" data-cmd="refresh">
-    <input type="button" data-localized-value="reset" value="Reset" data-localized-title="resetTitle" title="Reset browser's user-agent string to the default one. This will not reset window-based UA strings. To reset them, use the 'Restart' button" data-cmd="reset">
+    <input type="button" data-localized-value="reset" value="Reset" data-localized-title="resetTitle" title="Reset browser's user-agent string to the default one. This will not reset tab-based UA strings. To reset them, use the 'Restart' button" data-cmd="reset">
     <input type="button" data-localized-value="testUA" value="Test UA" data-localized-title="testUATitle" title="Test your user-agent string" data-cmd="test">
     <input type="button" data-localized-value="considerContainers" value="Consider Containers" data-localized-title="considerContainersTitle" title="Allow the extension to access your browser's containers. If this permission is granted, tabs inside isolated containers do not follow the default container's user-agent string. You need to set this string for each new container." data-cmd="container" class="hide">
-    <input type="button" data-localized-value="applyActiveWindow" value="Apply (active window)" data-localized-title="applyActiveWindowTitle" title="Set this user-agent string for all tabs inside the current window" data-cmd="window">
-    <input type="button" data-localized-value="applyAllWindows" value="Apply (all windows)" data-localized-title="applyAllWindowsTitle" title="Set this user-agent string as the browser's User-Agent string" data-cmd="apply">
+    <input type="button" data-localized-value="applyActiveTab" value="Apply (this tab)" data-localized-title="applyActiveTabTitle" title="Set this user-agent string for the current tab" data-cmd="tab">
+    <input type="button" data-localized-value="applyAllWindows" value="Apply (all tabs)" data-localized-title="applyAllWindowsTitle" title="Set this user-agent string as the browser's User-Agent string" data-cmd="apply">
   </div>
   <script src="/ua-parser.min.js"></script>
   <script src="/agent.js"></script>
