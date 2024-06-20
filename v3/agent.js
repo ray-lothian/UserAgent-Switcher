@@ -79,8 +79,6 @@ class Agent {
       o.buildID = '[delete]';
       o.productSub = '20030107';
 
-      console.log(this.#prefs.userAgentData, p.browser, p.browser.major);
-
       if (this.#prefs.userAgentData && p.browser && p.browser.major) {
         if (['Opera', 'Chrome', 'Edge'].includes(p.browser.name)) {
           o.userAgentDataBuilder = {p, ua: s};

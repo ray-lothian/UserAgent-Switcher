@@ -15,7 +15,7 @@ const invalids = [];
 
 const parser = new UAParser();
 
-const write = ({name, content}, callback) => fs.writeFile('../v2/firefox/data/popup/browsers/' + name, content, 'utf8', e => {
+const write = ({name, content}, callback) => fs.writeFile('../v3/data/popup/browsers/' + name, content, 'utf8', e => {
   if (e) {
     console.log(e);
   }
@@ -34,10 +34,10 @@ const reduce = (arr, length = 400) => {
   return arr;
 };
 
-fs.readdir('../v2/firefox/data/popup/browsers/', (err, files) => {
+fs.readdir('../v3/data/popup/browsers/', (err, files) => {
   if (err) throw err;
   for (const file of files) {
-    fs.unlinkSync(path.join('../v2/firefox/data/popup/browsers/', file), err => {
+    fs.unlinkSync(path.join('../v3/data/popup/browsers/', file), err => {
       if (err) throw err;
     });
   }
@@ -100,7 +100,7 @@ fs.readdir('../v2/firefox/data/popup/browsers/', (err, files) => {
 
   console.log('BOTS');
   require('./assets/bots.json').forEach(ua => next(ua, 'BT'));
-  for (const n of [...Array(24).keys()]) {
+  for (const n of [...Array(25).keys()]) {
     const s = (n + 1).toString().padStart(2, 0);
     console.log('List', s);
     require(`./assets/list-${s}.json`).forEach(ua => next(ua, s));
@@ -165,7 +165,7 @@ fs.readdir('../v2/firefox/data/popup/browsers/', (err, files) => {
       }
 
       fs.writeFile('invalids.txt', invalids.map(a => a.join(' ')).join('\n'), () => {});
-      fs.writeFile('../v2/firefox/data/popup/map.json', JSON.stringify({
+      fs.writeFile('../v3/data/popup/map.json', JSON.stringify({
         browser: Object.values(map.browser).map(k => k[0]),
         os: Object.values(map.os).map(k => k[0]),
         matching: map.matching

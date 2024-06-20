@@ -1,7 +1,6 @@
 let port = self.port = document.getElementById('uas-port');
 const id = (Math.random() + 1).toString(36).substring(7);
 const override = reason => {
-  // console.log(reason, document);
   port.dispatchEvent(new CustomEvent('override', {
     detail: {
       id,
