@@ -13,7 +13,7 @@
     <span id="toggle-blacklist-desc" data-localize="description">Description</span>
   </div>
   <p for="toggle-blacklist-desc" class="note hidden" data-localize="blackListModeDescription">Apply the custom user-agent string to all tabs except the tabs with the following top-level hostnames (comma-separated list of hostnames). Note that even if a window-based user-agent string is set from the toolbar popup, your browser's default user-agent string is used.</p>
-  <textarea id="blacklist" rows="3" placeholder="e.g.: www.google.com, www.bing.com"></textarea>
+  <textarea id="blacklist" rows="5" placeholder="e.g.: www.google.com, www.bing.com"></textarea>
 
   <div class="mode">
     <input type="radio" name="mode" value="whitelist" id="mode-whitelist">
@@ -21,7 +21,7 @@
     <span id="toggle-whitelist-desc" data-localize="description">Description</span>
   </div>
   <p for="toggle-whitelist-desc" class="note hidden" data-localize="whiteListModeDescription">Only apply the custom user-agent string to the tabs with following top-level hostnames. Note that if a window-based user-agent string is set from the toolbar popup, this user-agent will overwrite the global one.</p>
-  <textarea id="whitelist" rows="3" placeholder="e.g.: www.google.com, www.bing.com"></textarea>
+  <textarea id="whitelist" rows="5" placeholder="e.g.: www.google.com, www.bing.com"></textarea>
 
   <div class="mode">
     <input type="radio" name="mode" value="custom" id="mode-custom">
@@ -33,7 +33,7 @@
 
   <div class="checked">
     <input type="checkbox" id="userAgentData">
-    <label for="userAgentData" data-localize="userAgentData">Expose "navigator.userAgentData" object on Chromium browsers</label>
+    <label for="userAgentData" data-localize="userAgentData">Expose "navigator.userAgentData" object on Chromium user-agents</label>
   </div>
 
   <div class="mode-2">
@@ -48,7 +48,7 @@
     <span id="toggle-parser-desc" data-localize="description">Description</span>
   </div>
   <p for="toggle-parser-desc" class="note hidden"><span data-localize="customUserAgentParsingDescription">A JSON object to bypass the internal user-agent string parsing method. The keys are the actual user-agent strings and the value of each key is an object of the keys that need to be set for the "navigator" object. You can use the "[delete]" keyword if you want a key in the "navigator" object to get deleted.</span> <a href="#" id="sample-2" data-localize="insertSample">Insert a sample</a>.</p>
-  <textarea id="parser" rows="5" wrap="off"></textarea>
+  <textarea id="parser" rows="12" wrap="off"></textarea>
 
   <div class="admin" data-localize="managedStorage">This extension supports managed storage. All the preferences can be pre-configured by the domain administrator</div>
   <div id="backup">

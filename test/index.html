@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script type="text/javascript">
+    const f = document.createElement('frame');
+    document.head.append(f);
+    const v = f.contentWindow.navigator.userAgent;
+    f.remove();
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('wete').append(document.createTextNode(v));
+    });
+  </script>
+</head>
+<body>
+  <div>
+    <h3>Dynamic iframe (on head)</h3>
+    <span id="wete"></span>
+  </div>
+  <script type="text/javascript">document.write(`<div>
+    <h3>document.write</h3>
+    <span>${navigator.userAgent}</span>
+  </div>`)</script>
+  <iframe src="one.htm" id="one" sandbox="allow-same-origin" width="100%" height="250"></iframe>
+  <script type="text/javascript">
+    document.getElementById('one').onload = e => {
+      e.target.contentWindow.one.textContent = e.target.contentWindow.navigator.userAgent;
+
+      for (let n = 0; n < frames.length; n += 1) {
+        const iframe = e.target.contentWindow.frames[n];
+        if (iframe) {
+          const m = 'frame ' + n + ':' + iframe.navigator.userAgent;
+          iframe.document.body.append(document.createTextNode(m));
+        }
+      }
+    }
+  </script>
+  <iframe width="100%" height="60px" srcdoc="
+    <!DOCTYPE html>
+    <html lang='en'>
+    <body>
+      <p id='userAgent'></p>
+      <script>
+        document.getElementById('userAgent').textContent = navigator.userAgent;
+      </script>
+    </body>
+    </html>
+  "></iframe>
+  <iframe width="100%" height="200px" src="two.htm"></iframe>
+  <iframe id="adsd" width="100%" height="80px" src="javascript:false"></iframe>
+  <script>{
+    const frame = document.getElementById('adsd');
+    const b = document.createElement('h3');
+    b.textContent = 'javascript:false';
+    const span = document.createElement('span');
+    span.textContent = frame.contentWindow.navigator.userAgent;
+    frame.contentDocument.body.append(b, span);
+  }</script>
+  <iframe width="100%" height="200px" src="http://www.example.com"></iframe>
+  <div>
+    <h3>Dynamic iframe (on body)</h3>
+    <span id="wety"></span>
+  </div>
+  <script type="text/javascript">{
+    const f = document.createElement('frame');
+    document.body.append(f);
+    document.getElementById('wety').append(document.createTextNode(f.contentWindow.navigator.userAgent));
+    f.remove();
+  }</script>
+</body>
+</html>

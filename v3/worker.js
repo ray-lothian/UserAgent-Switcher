@@ -1,14 +1,14 @@
 /* global Network */
 
 self.importScripts('context.js');
-self.importScripts('ua-parser.min.js', 'agent.js', 'network.js');
+self.importScripts('/external/ua-parser.min.js', 'agent.js', 'network.js');
 self.importScripts('managed.js');
 
 const network = new Network();
 
 chrome.storage.onChanged.addListener((ps, type) => {
   if (
-    ps.mode || ps.ua || ps.blacklist || ps.whitelist || ps.custom || ps.sibilings || ps.protected ||
+    ps.mode || ps.ua || ps.blacklist || ps.whitelist || ps.custom || ps.sibilings || ps.protected || ps.userAgentData ||
     type === 'session'
   ) {
     network.configure();

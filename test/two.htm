@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title></title>
+</head>
+<body>
+  <p>two</p>
+  <script type="text/javascript">document.write(navigator.userAgent)</script>
+  <iframe width="100%" height="100px" srcdoc="
+    <!DOCTYPE html>
+    <html lang='en'>
+    <body>
+      <p id='userAgent'></p>
+      <p id='cookie'></p>
+      <script>
+        document.getElementById('userAgent').textContent = navigator.userAgent;
+        document.getElementById('cookie').textContent = document.cookie || 'no cookie';
+      </script>
+    </body>
+    </html>
+  "></iframe>
+</body>
+</html>

@@ -81,6 +81,9 @@ h1 {
 .mode-2 {
   grid-template-columns: min-content min-content;
 }
+.mode input[type=radio] {
+  margin: 0;
+}
 #toggle-sibling-desc,
 #toggle-parser-desc,
 #toggle-protected-desc,

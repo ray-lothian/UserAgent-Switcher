@@ -26,7 +26,8 @@ class Network {
         'accounts.google.com',
         'accounts.youtube.com',
         'gitlab.com/users/sign_in'
-      ]
+      ],
+      'userAgentData': true
     }, resolve));
 
     this.agent = new Agent();
@@ -56,6 +57,11 @@ class Network {
         'operation': 'set',
         'value': o.userAgent
       }];
+      const chrs = [
+        'sec-ch-ua-platform', 'sec-ch-ua', 'sec-ch-ua-mobile', 'sec-fetch-dest', 'sec-fetch-mode', 'sec-fetch-site',
+        'sec-fetch-user', 'sec-ch-ua-arch', 'sec-ch-ua-bitness', 'sec-ch-ua-full-version',
+        'sec-ch-ua-full-version-list', 'sec-ch-ua-model', 'sec-ch-ua-platform-version'
+      ];
       if (o.userAgentDataBuilder) {
         let platform = o.userAgentDataBuilder.p?.os?.name || 'Windows';
         if (platform.toLowerCase().includes('mac')) {
@@ -84,15 +90,19 @@ class Network {
           'operation': 'set',
           'value': /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(o.userAgent) ? '?1' : '?0'
         });
+        // remove unsupported Chrome headers
+        for (const header of chrs) {
+          if (['sec-ch-ua-platform', 'sec-ch-ua', 'sec-ch-ua-mobile'].includes(header)) {
+            continue;
+          }
+          r.requestHeaders.push({
+            header,
+            'operation': 'remove'
+          });
+        }
       }
       else {
-        const headers = [
-          'sec-ch-ua-platform', 'sec-ch-ua', 'sec-ch-ua-mobile', 'sec-fetch-dest', 'sec-fetch-mode', 'sec-fetch-site',
-          'sec-fetch-user', 'sec-ch-ua-arch', 'sec-ch-ua-bitness', 'sec-ch-ua-full-version',
-          'sec-ch-ua-full-version-list', 'sec-ch-ua-model', 'sec-ch-ua-platform-version'
-        ];
-
-        for (const header of headers) {
+        for (const header of chrs) {
           r.requestHeaders.push({
             header,
             'operation': 'remove'
@@ -262,9 +272,9 @@ class Network {
           }
           addRules.push({
             id,
-            'priority': 4, // to override all even set cookie
+            'priority': 4, // to discard all headers even set-cookie
             'action': {
-              'type': 'allowAllRequests'
+              'type': 'allowAllRequests' // only allowAllRequests can bypass set-cookie header
             },
             'condition': {
               'resourceTypes': ['main_frame', 'sub_frame'],

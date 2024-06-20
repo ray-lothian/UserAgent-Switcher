@@ -33,7 +33,7 @@
     "message": "Insert a sample"
   },
   "userAgentData": {
-    "message": "Expose \"navigator.userAgentData\" object on Chromium browsers"
+    "message": "Expose \"navigator.userAgentData\" object on Chromium user-agents"
   },
   "disableSpoofing": {
     "message": "Disable Spoofing"
