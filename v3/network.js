@@ -25,7 +25,8 @@ class Network {
         'gstatic.com/recaptcha',
         'accounts.google.com',
         'accounts.youtube.com',
-        'gitlab.com/users/sign_in'
+        'gitlab.com/users/sign_in',
+        '/cdn-cgi/challenge-platform/'
       ],
       'userAgentData': true
     }, resolve));

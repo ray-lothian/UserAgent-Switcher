@@ -15,4 +15,4 @@ Download Links:
   * Opera: https://addons.opera.com/extensions/details/user-agent-switcher-8/
 
 Usage Instruction:
-  * https://add0n.com/useragent-switcher.html
+  * https://webextension.org/listing/useragent-switcher.html
