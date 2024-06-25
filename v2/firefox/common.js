@@ -52,7 +52,7 @@ const expand = () => {
       if (k) {
         expand.rules[k] = prefs.custom[key];
         // make sure all siblings have the same expanded rule
-        const i = prefs.siblings[key];
+        const i = prefs.siblings[k];
         if (i !== undefined) {
           for (const [hostname, j] of Object.entries(prefs.siblings)) {
             if (i === j) {
