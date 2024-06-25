@@ -3,6 +3,7 @@
     if (port.dataset.ready !== true) {
       port.prepare();
     }
+
     try {
       if (port.prefs.userAgentDataBuilder) {
         const v = new class NavigatorUAData {
@@ -15,14 +16,14 @@
             const name = p.browser.name === 'Chrome' ? 'Google Chrome' : p.browser.name;
 
             this.brands = [{
-              brand: name,
-              version
+              brand: 'Not/A)Brand',
+              version: '8'
             }, {
               brand: 'Chromium',
               version
             }, {
-              brand: 'Not=A?Brand',
-              version: '24'
+              brand: name,
+              version
             }];
 
             this.mobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua);

@@ -26,7 +26,7 @@ class Network {
         'accounts.google.com',
         'accounts.youtube.com',
         'gitlab.com/users/sign_in',
-        '/cdn-cgi/challenge-platform/'
+        'challenges.cloudflare.com'
       ],
       'userAgentData': true
     }, resolve));
@@ -59,9 +59,8 @@ class Network {
         'value': o.userAgent
       }];
       const chrs = [
-        'sec-ch-ua-platform', 'sec-ch-ua', 'sec-ch-ua-mobile', 'sec-fetch-dest', 'sec-fetch-mode', 'sec-fetch-site',
-        'sec-fetch-user', 'sec-ch-ua-arch', 'sec-ch-ua-bitness', 'sec-ch-ua-full-version',
-        'sec-ch-ua-full-version-list', 'sec-ch-ua-model', 'sec-ch-ua-platform-version'
+        'sec-ch-ua-platform', 'sec-ch-ua', 'sec-ch-ua-mobile', 'sec-ch-ua-arch', 'sec-ch-ua-bitness',
+        'sec-ch-ua-full-version', 'sec-ch-ua-full-version-list', 'sec-ch-ua-model', 'sec-ch-ua-platform-version'
       ];
       if (o.userAgentDataBuilder) {
         let platform = o.userAgentDataBuilder.p?.os?.name || 'Windows';
@@ -85,7 +84,7 @@ class Network {
         }, {
           'header': 'sec-ch-ua',
           'operation': 'set',
-          'value': `"${name}";v="${version}", "Chromium";v="${version}", "Not=A?Brand";v="24"`
+          'value': `"Not/A)Brand";v="8", "Chromium";v="${version}", "${name}";v="${version}"`
         }, {
           'header': 'sec-ch-ua-mobile',
           'operation': 'set',

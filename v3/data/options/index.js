@@ -90,7 +90,7 @@ function restore() {
       'accounts.google.com',
       'accounts.youtube.com',
       'gitlab.com/users/sign_in',
-      '/cdn-cgi/challenge-platform/'
+      'challenges.cloudflare.com'
     ]
   }, prefs => {
     document.getElementById('userAgentData').checked = prefs.userAgentData;
