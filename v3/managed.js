@@ -1,4 +1,4 @@
-// update prefs.ua from the managed storage or an external server
+// update preferences from the managed storage or an external server
 {
   const configure = j => chrome.storage.local.get({
     'json-guid': 'na'
@@ -7,7 +7,6 @@
       chrome.storage.local.set(j);
       console.info('preferences are updated by an admin');
     }
-    console.log(prefs['json-guid'], j['json-guid'], j);
   });
 
   const run = () => {
