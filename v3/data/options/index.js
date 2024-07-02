@@ -59,13 +59,14 @@ function save() {
   }
 
   chrome.storage.local.set({
-    userAgentData: document.getElementById('userAgentData').checked,
-    blacklist: prepare(document.getElementById('blacklist').value),
-    whitelist: prepare(document.getElementById('whitelist').value),
+    'userAgentData': document.getElementById('userAgentData').checked,
+    'blacklist': prepare(document.getElementById('blacklist').value),
+    'whitelist': prepare(document.getElementById('whitelist').value),
     custom,
     parser,
-    mode: document.querySelector('[name="mode"]:checked').value,
-    protected: document.getElementById('protected').value.split(/\s*,\s*/).filter(s => s.length > 4)
+    'mode': document.querySelector('[name="mode"]:checked').value,
+    'protected': document.getElementById('protected').value.split(/\s*,\s*/).filter(s => s.length > 4),
+    'remote-address': document.getElementById('remote-address').value
   }, () => {
     restore();
     notify(chrome.i18n.getMessage('optionsSaved'));
@@ -78,20 +79,21 @@ function save() {
 
 function restore() {
   chrome.storage.local.get({
-    userAgentData: true,
-    mode: 'blacklist',
-    whitelist: [],
-    blacklist: [],
-    custom: {},
-    parser: {},
-    protected: [
+    'userAgentData': true,
+    'mode': 'blacklist',
+    'whitelist': [],
+    'blacklist': [],
+    'custom': {},
+    'parser': {},
+    'protected': [
       'google.com/recaptcha',
       'gstatic.com/recaptcha',
       'accounts.google.com',
       'accounts.youtube.com',
       'gitlab.com/users/sign_in',
       'challenges.cloudflare.com'
-    ]
+    ],
+    'remote-address': ''
   }, prefs => {
     document.getElementById('userAgentData').checked = prefs.userAgentData;
     document.querySelector(`[name="mode"][value="${prefs.mode}"`).checked = true;
@@ -100,6 +102,7 @@ function restore() {
     document.getElementById('custom').value = JSON.stringify(prefs.custom, null, 2);
     document.getElementById('parser').value = JSON.stringify(prefs.parser, null, 2);
     document.getElementById('protected').value = prefs.protected.join(', ');
+    document.getElementById('remote-address').value = prefs['remote-address'];
   });
 }
 document.addEventListener('DOMContentLoaded', restore);
@@ -236,3 +239,10 @@ document.getElementById('toggle-protected-desc').addEventListener('click', () =>
 document.getElementById('toggle-parser-desc').addEventListener('click', () => {
   document.querySelector('[for="toggle-parser-desc"]').classList.toggle('hidden');
 });
+
+// links
+for (const a of [...document.querySelectorAll('[data-href]')]) {
+  if (a.hasAttribute('href') === false) {
+    a.href = chrome.runtime.getManifest().homepage_url + '#' + a.dataset.href;
+  }
+}

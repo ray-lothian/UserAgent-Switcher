@@ -9,7 +9,7 @@
 <body>
   <div class="mode">
     <input type="radio" name="mode" value="blacklist" id="mode-blacklist">
-    <label for="mode-blacklist"><h1 data-localize="blackListMode">Black-List Mode</h1></label>
+    <label for="mode-blacklist"><h1><a data-href="faq14" data-localize="blackListMode">Black-List Mode</a></h1></label>
     <span id="toggle-blacklist-desc" data-localize="description">Description</span>
   </div>
   <p for="toggle-blacklist-desc" class="note hidden" data-localize="blackListModeDescription">Apply the custom user-agent string to all tabs except the tabs with the following top-level hostnames (comma-separated list of hostnames). Note that even if a window-based user-agent string is set from the toolbar popup, your browser's default user-agent string is used.</p>
@@ -51,10 +51,16 @@
   <textarea id="parser" rows="12" wrap="off"></textarea>
 
   <div class="admin" data-localize="managedStorage">This extension supports managed storage. All the preferences can be pre-configured by the domain administrator</div>
-  <div id="backup">
+
+  <div class="mode-3">
+    <h1><a data-href="faq20" target="_blank" data-localize="remoteAddress">Remote configuration server</a></h1>
+    <input type="text" id="remote-address" placeholder="https://.../configuration.json">
+  </div>
+
+  <p id="backup">
     <button id="import" data-localize="importSettings">Import Settings</button>
     <button data-localized-title="exportSettingsTitle" title="To generate minified version, press Shift key while pressing this button" id="export" data-localize="exportSettings">Export Settings</button>
-  </div>
+  </p>
   <div id="tools">
     <button id="help" data-localize="help">FAQs Page (Help)</button>
     <button id="donate" data-localize="donate">Support Development</button>

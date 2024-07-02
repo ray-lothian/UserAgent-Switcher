@@ -187,5 +187,8 @@
   },
   "dbReset": {
     "message": "Double-click to reset!"
+  },
+  "remoteAddress": {
+    "message": "Remote configuration server"
   }
 }
