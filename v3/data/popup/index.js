@@ -112,12 +112,12 @@ function get(path) {
     }
   }).open('agents').catch(() => cf).then(cache => {
     const link = 'https://cdn.jsdelivr.net/gh/ray-lothian/UserAgent-Switcher@latest/v3/data/popup/' + path;
-    // updating agents once per 7 days
+    // updating agents once per day
     chrome.storage.local.get({
       ['cache.' + path]: 0
     }, prefs => {
       const now = Date.now();
-      if (now - prefs['cache.' + path] > 7 * 24 * 60 * 60 * 1000) {
+      if (now - prefs['cache.' + path] > 1 * 24 * 60 * 60 * 1000) {
         cache.add(link).then(() => chrome.storage.local.set({
           ['cache.' + path]: now
         }));

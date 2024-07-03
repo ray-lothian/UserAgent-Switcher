@@ -58,7 +58,9 @@ chrome.runtime.onMessage.addListener((request, sender, response) => {
     });
   }
   else {
-    console.error('UNKOWN_COMMAND', request);
+    if (request.method !== 'update-from-remote') {
+      console.error('UNKOWN_COMMAND', request);
+    }
   }
 });
 

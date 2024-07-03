@@ -47,6 +47,7 @@ input[type=button] {
   text-shadow: rgb(240, 240, 240) 0 1px 0;
   border: solid 1px rgba(0, 0, 0, 0.25);
 }
+button:disabled,
 input[type=button]:disabled {
   opacity: 0.5;
 }
@@ -81,6 +82,7 @@ a:visited {
   color: var(--color-a);
   text-decoration: none;
 }
+.mode-3,
 .mode-2,
 .mode {
   display: grid;
@@ -95,7 +97,10 @@ a:visited {
   grid-template-columns: min-content min-content;
 }
 .mode-3 {
-  grid-template-columns: 1fr;
+  grid-template-columns: 1fr min-content;
+}
+.mode-3 h1 {
+  grid-column: 1/3;
 }
 .mode input[type=radio] {
   margin: 0;

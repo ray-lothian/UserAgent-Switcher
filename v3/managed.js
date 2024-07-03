@@ -47,4 +47,13 @@
   });
   chrome.runtime.onInstalled.addListener(run);
   chrome.runtime.onStartup.addListener(run);
+
+  chrome.runtime.onMessage.addListener((request, sender, response) => {
+    if (request.method === 'update-from-remote') {
+      fetch(request.href).then(r => r.json()).then(configure)
+        .then(() => response(true)).catch(e => response(e.message));
+
+      return true;
+    }
+  });
 }

@@ -16,12 +16,15 @@ document.querySelectorAll('[data-localized-title]').forEach(e => {
   }
 });
 
-function notify(msg, period = 750) {
+function notify(msg, period = 750, c = () => {}) {
   // Update status to let user know options were saved.
   const status = document.getElementById('status');
   status.textContent = msg;
   clearTimeout(notify.id);
-  notify.id = setTimeout(() => status.textContent = '', period);
+  notify.id = setTimeout(() => {
+    status.textContent = '';
+    c();
+  }, period);
 }
 
 function prepare(str) {
@@ -103,6 +106,7 @@ function restore() {
     document.getElementById('parser').value = JSON.stringify(prefs.parser, null, 2);
     document.getElementById('protected').value = prefs.protected.join(', ');
     document.getElementById('remote-address').value = prefs['remote-address'];
+    document.getElementById('remote-address').dispatchEvent(new Event('input'));
   });
 }
 document.addEventListener('DOMContentLoaded', restore);
@@ -246,3 +250,27 @@ for (const a of [...document.querySelectorAll('[data-href]')]) {
     a.href = chrome.runtime.getManifest().homepage_url + '#' + a.dataset.href;
   }
 }
+
+// Remote update
+document.getElementById('remote-address').oninput = e => {
+  try {
+    new URL(e.target.value);
+    document.getElementById('update').disabled = false;
+  }
+  catch (e) {
+    document.getElementById('update').disabled = true;
+  }
+};
+document.getElementById('update').onclick = () => chrome.runtime.sendMessage({
+  method: 'update-from-remote',
+  href: document.getElementById('remote-address').value
+}, resp => {
+  if (resp === true) {
+    notify('Updated, refreshing options page...', 1200, () => {
+      location.reload();
+    });
+  }
+  else {
+    alert(resp);
+  }
+});

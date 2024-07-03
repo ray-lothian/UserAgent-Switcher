@@ -190,5 +190,8 @@
   },
   "remoteAddress": {
     "message": "Remote configuration server"
+  },
+  "updateFromRemote": {
+    "message": "Update from Remote Server"
   }
 }
