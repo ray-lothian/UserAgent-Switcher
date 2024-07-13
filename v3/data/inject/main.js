@@ -20,12 +20,14 @@
     for (const timing of entry.serverTiming || []) {
       if (timing.name === 'uasw-json-data') {
         port.dataset.str = timing.description;
-        port.prepare();
       }
     }
   }
 
-  if (!port.dataset.str) {
+  if (port.dataset.str) {
+    port.prepare();
+  }
+  else {
     // extension is not active for this tab
     if (self.top === self) {
       port.dataset.disabled = true;
