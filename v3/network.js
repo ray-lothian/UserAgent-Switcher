@@ -112,9 +112,9 @@ class Network {
     }
     if (types.includes('js')) {
       r.responseHeaders = [{
-        'header': 'set-cookie',
+        'header': 'Server-Timing',
         'operation': 'append',
-        'value': `uasw-json-data=${encodeURIComponent(JSON.stringify(o))}`
+        'value': `uasw-json-data;dur=0;desc="${encodeURIComponent(JSON.stringify(o))}"`
       }];
     }
     return r;

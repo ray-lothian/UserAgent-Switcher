@@ -16,14 +16,16 @@
 
   document.documentElement.append(port);
   // find user-agent data
-  const ck = document.cookie.split('uasw-json-data=');
-  if (ck.length > 1) {
-    document.cookie = `uasw-json-data=; expires=Thu, 01 Jan 1970 00:00:00 UTC`;
-
-    port.dataset.str = ck[1].split(';')[0];
-    port.prepare();
+  for (const entry of performance.getEntriesByType('navigation')) {
+    for (const timing of entry.serverTiming || []) {
+      if (timing.name === 'uasw-json-data') {
+        port.dataset.str = timing.description;
+        port.prepare();
+      }
+    }
   }
-  else {
+
+  if (!port.dataset.str) {
     // extension is not active for this tab
     if (self.top === self) {
       port.dataset.disabled = true;
