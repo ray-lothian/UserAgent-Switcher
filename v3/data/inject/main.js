@@ -1,3 +1,5 @@
+console.log('main.js', location.href);
+
 {
   const port = document.createElement('span');
   port.id = 'uas-port';

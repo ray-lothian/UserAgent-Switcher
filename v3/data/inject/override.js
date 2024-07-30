@@ -1,6 +1,7 @@
+console.log('override.js');
 {
   const override = (nav, reason) => {
-    if (port.dataset.ready !== true) {
+    if (port.dataset.ready !== 'true') {
       port.prepare();
     }
 

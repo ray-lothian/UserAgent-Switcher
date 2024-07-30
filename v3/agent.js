@@ -53,10 +53,33 @@ class Agent {
       o.appVersion = '5.0 ' + o.appVersion.replace('5.0 ', '').split(/[\s;]/)[0] + ')';
     }
     const p = (new UAParser(s)).getResult();
-    o.platform = p.os.name || '';
-    if (o.platform === 'Mac OS') {
+
+    // platform
+    if (p.os.name === 'Mac OS' || p.os.name === 'macOS') {
       o.platform = 'MacIntel';
     }
+    else if (p.os.name === 'Windows') {
+      o.platform = 'Win32';
+    }
+    else if (p.os.name === 'Linux') {
+      o.platform = o.oscpu;
+    }
+    else if (p.os.name === 'Android') {
+      if (p.cpu.architecture) {
+        o.platform = 'Linux ' + p.cpu.architecture;
+      }
+      else {
+        o.platform = 'Linux armv81';
+      }
+    }
+    else if (p.os.name === 'iOS') {
+      o.platform = p.device.model;
+    }
+    // backup plan
+    o.platform = o.platform ||
+      (p.cpu.architecture ? ('Linux ' + p.cpu.architecture) : (p.os.name || ''));
+
+
     o.vendor = p.device.vendor || '';
     if (isSF) {
       o.vendor = 'Apple Computer, Inc.';
