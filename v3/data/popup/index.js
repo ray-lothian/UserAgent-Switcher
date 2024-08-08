@@ -187,8 +187,8 @@ function update(ua) {
       else {
         throw Error('OS is not found');
       }
-    // FF 55.0 does not support finally
-    }).catch(() => {}).then(() => {
+      // FF 55.0 does not support finally
+    }).catch(() => { }).then(() => {
       parent.dataset.loading = false;
     });
 }
@@ -203,7 +203,7 @@ document.getElementById('sort').addEventListener('change', e => chrome.storage.l
   'popup-sort': e.target.value
 }));
 
-document.addEventListener('change', ({target}) => {
+document.addEventListener('change', ({ target }) => {
   if (target.closest('#filter')) {
     chrome.storage.local.get({
       ua: ''
@@ -250,7 +250,7 @@ document.addEventListener('DOMContentLoaded', () => fetch('./map.json').then(r =
   });
 }));
 
-document.getElementById('list').addEventListener('click', ({target}) => {
+document.getElementById('list').addEventListener('click', ({ target }) => {
   const tr = target.closest('tbody tr');
   if (tr) {
     const input = tr.querySelector('input');
@@ -263,7 +263,7 @@ document.getElementById('list').addEventListener('click', ({target}) => {
   }
 });
 
-document.getElementById('custom').addEventListener('keyup', ({target}) => {
+document.getElementById('custom').addEventListener('keyup', ({ target }) => {
   const value = target.value;
   [...document.querySelectorAll('#list tbody tr')]
     .forEach(tr => tr.dataset.matched = tr.textContent.toLowerCase().indexOf(value.toLowerCase()) !== -1);
@@ -281,9 +281,37 @@ function msg(msg) {
   toast.textContent = msg;
   window.setTimeout(() => toast.textContent = '', 2000);
 }
+// get random elements
+function getRandomElement(array) {
+  console.log(array);
+  return array[Math.floor(Math.random() * array.length)];
+}
+
+// gets random browser and os
+function getRandomBrowserAndOS() {
+  return fetch('./map.json')
+    .then(response => response.json())
+    .then(map => {
+      const randomBrowser = getRandomElement(map.browser);
+      console.log(randomBrowser);
+      const randomOS = getRandomElement(map.matching[randomBrowser.toLowerCase()]);
+      return { randomBrowser, randomOS };
+    });
+}
+
+// getRandomUserAgent: uses random browser and os to get random user agent
+function getRandomUserAgent() {
+  return getRandomBrowserAndOS().then(({ randomBrowser, randomOS }) => {
+    const path = `browsers/${randomBrowser.toLowerCase()}-${randomOS.toLowerCase().replace(/\//g, '-')}.json`;
+    return get(path).then(response => response.json()).then(list => {
+      const randomUserAgent = getRandomElement(list);
+      return randomUserAgent;
+    });
+  });
+}
 
 // commands
-document.addEventListener('click', ({target}) => {
+document.addEventListener('click', ({ target }) => {
   const cmd = target.dataset.cmd;
   if (cmd) {
     if (cmd === 'apply') {
@@ -323,6 +351,17 @@ document.addEventListener('click', ({target}) => {
           ua: value,
           cookieStoreId: tab.cookieStoreId
         }
+      });
+    }
+    else if (cmd === 'random') {
+      getRandomUserAgent().then(randomUA => {
+        document.getElementById('ua').value = randomUA.ua;
+        document.getElementById('browser').value = randomUA.browser.name;
+        document.getElementById('os').value = randomUA.os.name;
+        document.getElementById('ua').dispatchEvent(new Event('input'));
+
+        // document.getElementById('sort').value = randomUA['popup-sort'];    
+        msg(chrome.i18n.getMessage('msgRandomUASet'));
       });
     }
     else if (cmd === 'reset') {

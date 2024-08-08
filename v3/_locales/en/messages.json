@@ -98,11 +98,11 @@
   "testUATitle": {
     "message": "Test your user-agent string"
   },
-  "considerContainers": {
-    "message": "Consider Containers"
+  "selectRandom": {
+    "message": "Select Random"
   },
-  "considerContainersTitle": {
-    "message": "Allow the extension to access your browser's containers. If this permission is granted, tabs inside isolated containers do not follow the default container's user-agent string. You need to set this string for each new container."
+  "selectRandomTitle": {
+    "message": "Select a random User-Agent."
   },
   "applyActiveTab": {
     "message": "Apply (this tab)"
