@@ -1,4 +1,4 @@
-console.log('main.js', location.href);
+// console.log('main.js', location.href);
 
 {
   const port = document.createElement('span');

@@ -1,6 +1,6 @@
 /* global cloneInto */
 
-console.log('isolated.js');
+// console.log('isolated.js');
 let port = self.port = document.getElementById('uas-port');
 
 const id = (Math.random() + 1).toString(36).substring(7);

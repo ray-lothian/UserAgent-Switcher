@@ -1,4 +1,4 @@
-console.log('override.js');
+// console.log('override.js');
 {
   const override = (nav, reason) => {
     if (port.dataset.ready !== 'true') {
