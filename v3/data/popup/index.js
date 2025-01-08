@@ -398,7 +398,6 @@ document.getElementById('ua').addEventListener('input', e => {
       agent.prefs(prefs);
       const o = agent.parse(value);
 
-      document.getElementById('appVersion').value = o.appVersion;
       document.getElementById('platform').value = o.platform;
       document.getElementById('vendor').value = o.vendor;
       document.getElementById('product').value = o.product;

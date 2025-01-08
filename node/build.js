@@ -71,6 +71,13 @@ fs.readdir('../v3/data/popup/browsers/', (err, files) => {
     }
 
     if (o.browser.name && o.os.name) {
+      if (o.os.name === 'macOS') {
+        o.os.name = 'Mac OS';
+      }
+      else if (o.os.name === 'Chrome OS') {
+        o.os.name = 'Chromium OS';
+      }
+
       const bb = o.browser.name.toLowerCase();
       const ss = o.os.name.toLowerCase();
 
@@ -100,7 +107,7 @@ fs.readdir('../v3/data/popup/browsers/', (err, files) => {
 
   console.log('BOTS');
   require('./assets/bots.json').forEach(ua => next(ua, 'BT'));
-  for (const n of [...Array(26).keys()]) {
+  for (const n of [...Array(27).keys()]) {
     const s = (n + 1).toString().padStart(2, 0);
     console.log('List', s);
     require(`./assets/list-${s}.json`).forEach(ua => next(ua, s));

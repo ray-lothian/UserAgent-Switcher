@@ -1,8 +1,10 @@
 /* global Network */
 
-self.importScripts('context.js');
-self.importScripts('/external/ua-parser.min.js', 'agent.js', 'network.js');
-self.importScripts('managed.js');
+if (typeof importScripts !== 'undefined') {
+  self.importScripts('context.js');
+  self.importScripts('external/ua-parser.min.js', 'agent.js', 'network.js');
+  self.importScripts('managed.js');
+}
 
 const network = new Network();
 
