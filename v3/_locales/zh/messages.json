@@ -1,0 +1,198 @@
+{
+   "extensionName": {
+     "message": "User-Agent Switcher and Manager"
+   },
+   "extensionDescription": {
+     "message": "欺骗性网站试图收集有关你的网页导航的信息，以提供你可能不想要的独特内容"
+   },
+   "userAgentSwitcherandManagerOptions": {
+     "message": "选项页面：User-Agent Switcher and Manager"
+   },
+   "blackListMode": {
+     "message": "黑名单模式"
+   },
+   "description": {
+     "message": "说明"
+   },
+   "blackListModeDescription": {
+     "message": "将自定义UA字符串应用到所有标签页，但具有以下域名的标签页除外（逗号分隔域名名列表）。注意，如果通过栏弹出窗口设置了基于标签页的UA字符串，则此UA字符串将用于此会话。"
+   },
+   "whiteListMode": {
+     "message": "白名单模式"
+   },
+   "whiteListModeDescription": {
+     "message": "将自定义UA字符串仅应用于具有以下域名的标签页。注意，如果通过工具栏弹出窗口设置了基于标签页的UA字符串，该UA将覆盖全局UA。"
+   },
+   "customMode": {
+     "message": "自定义模式"
+   },
+   "customModeDescription": {
+     "message": "尝试从 JSON 对象中解析UA字符串；否则，要么使用默认UA字符串，要么使用用户在弹出界面中设置的UA字符串。使用  \"*\"  作为主机名以匹配所有域。通过提供数组而不是固定字符串，可以从多个UA字符串中随机选择。如果你的 JSON 对象中有一个指向主机名数组的键，那么扩展程序只会为该列表中的每个主机名随机选择一次UA字符串。如果你不想在浏览器会话结束前改变随机UA，这一点就很有用。"
+   },
+   "insertSample": {
+     "message": "插入样本"
+   },
+   "userAgentData": {
+     "message": "在浏览器UA上公开 \"navigator.userAgentData\" 对象"
+   },
+   "disableSpoofing": {
+     "message": "禁用UA欺骗"
+   },
+   "disableSpoofingDescription": {
+     "message": "以逗号分隔的关键字列表，表示扩展不应欺骗UA标头。使用此列表来保护包含这些受保护的 URL。每个关键字至少需要 5 个字符。"
+   },
+   "customUserAgentParsing": {
+     "message": "自定义UA解析"
+   },
+   "customUserAgentParsingDescription": {
+     "message": "用于绕过内部用户代理字符串解析方法的 JSON 对象。这些键是实际的用户代理字符串，每个键的值是需要为 \"navigator\" 对象设置的键的对象。如果您希望删除“navigator”对象中的键，可以使用 \"[delete]\" 关键字。"
+   },
+   "importSettings": {
+     "message": "导入设置"
+   },
+   "exportSettings": {
+     "message": "导出设置"
+   },
+   "exportSettingsTitle": {
+     "message": "要生成最小化版本，请在按此按钮的同时按住 Shift 键"
+   },
+   "help": {
+     "message": "常见问题页面（帮助）"
+   },
+   "donate": {
+     "message": "开发支持"
+   },
+   "save": {
+     "message": "保存"
+   },
+   "managedStorage": {
+     "message": "该扩展支持托管存储，因此可以自动更改首选项，也可以由域管理员预先配置。请阅读常见问题页面了解更多信息。"
+   },
+   "options": {
+     "message": "设置"
+   },
+   "optionsTitle": {
+     "message": "打开设置页面"
+   },
+   "restart": {
+     "message": "重新启动"
+   },
+   "restartTitle": {
+     "message": "单击以重置扩展。这将清除所有基于标签页的UA字符串。"
+   },
+   "refreshTab": {
+     "message": "刷新标签页"
+   },
+   "refreshTabTitle": {
+     "message": "刷新当前网页"
+   },
+   "reset": {
+     "message": "重置"
+   },
+   "resetTitle": {
+     "message": "将浏览器的UA字符串重置为默认字符串。这不会重置基于标签页的UA字符串。要重置它们，请使用 “重新启动” 按钮。"
+   },
+   "testUA": {
+     "message": "测试 UA"
+   },
+   "testUATitle": {
+     "message": "测试UA字符串"
+   },
+   "considerContainers": {
+     "message": "考虑容器"
+   },
+   "considerContainersTitle": {
+     "message": "允许扩展访问浏览器容器。如果授予此权限，隔离容器内的标签页将不遵循默认容器的用户代理字符串。您需要为每个新容器设置该字符串。"
+   },
+   "applyActiveTab": {
+     "message": "应用（此标签页）"
+   },
+   "applyActiveTabTitle": {
+     "message": "为当前标签页设置UA字符串"
+   },
+   "applyAllWindows": {
+     "message": "应用（所有标签页）"
+   },
+   "applyAllWindowsTitle": {
+     "message": "将此UA字符串设置为浏览器的UA字符串"
+   },
+   "applyContainer": {
+     "message": "应用（容器）"
+   },
+   "applyContainerTitle": {
+     "message": "将此UA字符串设置为当前容器的UA字符串"
+   },
+   "applyContainerTab": {
+     "message": "应用（标签页上的容器）"
+   },
+   "applyContainerTabTitle": {
+     "message": "为容器中的当前选项卡设置此UA字符串"
+   },
+   "resetContainer": {
+     "message": "重置（容器）"
+   },
+   "resetContainerTitle": {
+     "message": "将容器的用户代理字符串重置为默认字符串。这不会重置基于制表符的用户代理字符串。要重置它们，请使用 “重新启动 ”按钮。"
+   },
+   "oscpuTitle": {
+     "message": "这是一个只读字段。使用选项页面进行自定义解析。"
+   },
+   "appVersionTitle": {
+     "message": "这是一个只读字段。使用选项页面进行自定义解析。"
+   },
+   "platformTitle": {
+     "message": "这是一个只读字段。使用选项页面进行自定义解析。"
+   },
+   "vendorTitle": {
+     "message": "这是一个只读字段。使用选项页面进行自定义解析。"
+   },
+   "productTitle": {
+     "message": "这是一个只读字段。使用选项页面进行自定义解析。"
+   },
+   "uaTitle": {
+     "message": "要设置空白的用户代理字符串，请使用 “empty ”关键字。要根据当前浏览器的导航器对象构建自定义用户代理字符串，请使用 ${} 符号。符号中的内容将从 “导航器 ”对象中读取。例如，在默认用户代理中添加一个字符串， 使用 “${userAgent} 这是附加字符串” "
+   },
+   "uaPlaceholder": {
+     "message": "您首选的UA字符串"
+   },
+   "noMatch": {
+     "message": "此查询没有匹配的UA字符串"
+   },
+   "ztoa": {
+     "message": "Z 到 A"
+   },
+   "atoz": {
+     "message": "A 到 Z"
+   },
+   "filterAmong": {
+     "message": "筛选 $1"
+   },
+   "filterAgents": {
+     "message": "过滤器"
+   },
+   "msgDefaultUA": {
+     "message": "默认 UA，请按重置按钮"
+   },
+   "msgUASet": {
+     "message": "UA 已设置"
+   },
+   "msgDisabledOnContainer": {
+     "message": "在此容器上禁用。使用默认的UA字符串。"
+   },
+   "msgDisabled": {
+     "message": "禁用。使用默认的UA字符串。"
+   },
+   "optionsSaved": {
+     "message": "选项已保存。"
+   },
+   "dbReset": {
+     "message": "双击进行重置！"
+   },
+   "remoteAddress": {
+     "message": "配置远程服务器"
+   },
+   "updateFromRemote": {
+     "message": "从远程服务器更新"
+   }
+ }
+ 
