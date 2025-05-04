@@ -17,6 +17,7 @@
   });
 
   document.documentElement.append(port);
+
   // find user-agent data
   for (const entry of performance.getEntriesByType('navigation')) {
     for (const timing of entry.serverTiming || []) {

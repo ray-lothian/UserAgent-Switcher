@@ -18,12 +18,7 @@ if (port) {
   port.remove();
 
   if (self.top === self) {
-    if (port.dataset.disabled === 'true') {
-      chrome.runtime.sendMessage({
-        method: 'no-tab-spoofing'
-      });
-    }
-    else {
+    if (port.dataset.disabled !== 'true') {
       chrome.runtime.sendMessage({
         method: 'tab-spoofing',
         str: port.dataset.str,
@@ -33,31 +28,37 @@ if (port) {
   }
 }
 else { // iframe[sandbox]
-  const hierarchy = [];
-  let [p, s] = [parent, self];
-  for (;;) {
-    for (let n = 0; n < p.frames.length; n += 1) {
-      if (p.frames[n] === s) {
-        hierarchy.unshift(n);
+  try {
+    const hierarchy = [];
+    let [p, s] = [parent, self];
+    for (;;) {
+      for (let n = 0; n < p.frames.length; n += 1) {
+        if (p.frames[n] === s) {
+          hierarchy.unshift(n);
+        }
       }
-    }
-    if (p.port) {
-      port = p.port;
-      if (port.dataset.disabled !== 'true') {
-        port.dispatchEvent(new CustomEvent('register', {
-          detail: {
-            id,
-            hierarchy
-          }
-        }));
+      if (p.port) {
+        port = p.port;
+        if (port.dataset.disabled !== 'true') {
+          port.dispatchEvent(new CustomEvent('register', {
+            detail: {
+              id,
+              hierarchy
+            }
+          }));
+        }
+        break;
       }
-      break;
-    }
-    [s, p] = [p, p.parent];
+      [s, p] = [p, p.parent];
 
-    if (s === p) {
-      break;
+      if (s === p) {
+        break;
+      }
     }
+  }
+  // cross-origin sandboxed iframe
+  catch (e) {
+    console.info('[user-agent leaked]', e, location.href);
   }
 }
 
@@ -77,8 +78,10 @@ if (port) {
             port.dataset.disabled = true;
           }
           else {
-            port.dataset.str = p.port.dataset.str;
-            override('parent');
+            if ('str' in p.port.dataset) {
+              port.dataset.str = p.port.dataset.str;
+              override('parent');
+            }
           }
           break;
         }

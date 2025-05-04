@@ -8,12 +8,17 @@ class Network {
   #MAX_PROTECTED_RULES = 50;
   #PERTAB_INDEX = 3000;
   #MAX_PERTAB_RULES = 200;
+  #ISFARARI = location.protocol.startsWith('safari-');
 
-  #RESOURCETYPE = Object.values(chrome.declarativeNetRequest.ResourceType);
+  // Safari does not support "object", "csp_report", "webtransport", "webbundle"
+  #RESOURCETYPE = Object.values(chrome.declarativeNetRequest.ResourceType || [
+    'main_frame', 'sub_frame', 'stylesheet', 'script', 'image', 'font', 'xmlhttprequest', 'ping',
+    'media', 'websocket', 'other'
+  ]);
 
   async configure() {
     let size = 0;
-    const dps = await new Promise(resolve => chrome.storage.local.get({
+    const dps = await chrome.storage.local.get({
       'mode': 'blacklist',
       'ua': '',
       'blacklist': [],
@@ -29,23 +34,16 @@ class Network {
         'challenges.cloudflare.com'
       ],
       'userAgentData': true
-    }, resolve));
+    });
 
     this.agent = new Agent();
     this.agent.prefs(dps);
 
     size += await this.dnet(dps);
 
-    const sps = await new Promise(resolve => chrome.storage.session.get(null, resolve));
+    const sps = await chrome.storage.session.get(null);
     size += await this.snet(sps);
 
-    chrome.action.setIcon({
-      path: {
-        '16': 'data/icons/' + (size ? 'active' : '') + '/16.png',
-        '32': 'data/icons/' + (size ? 'active' : '') + '/32.png',
-        '48': 'data/icons/' + (size ? 'active' : '') + '/48.png'
-      }
-    });
     await this.page(size);
   }
   action(o, ...types) {
@@ -58,7 +56,8 @@ class Network {
         'operation': 'set',
         'value': o.userAgent
       }];
-      const chrs = [
+
+      const chrs = this.#ISFARARI ? [] : [
         'sec-ch-ua-platform', 'sec-ch-ua', 'sec-ch-ua-mobile', 'sec-ch-ua-arch', 'sec-ch-ua-bitness',
         'sec-ch-ua-full-version', 'sec-ch-ua-full-version-list', 'sec-ch-ua-model', 'sec-ch-ua-platform-version'
       ];
@@ -77,19 +76,21 @@ class Network {
           name = 'Google Chrome';
         }
 
-        r.requestHeaders.push({
-          'header': 'sec-ch-ua-platform',
-          'operation': 'set',
-          'value': '"' + platform + '"'
-        }, {
-          'header': 'sec-ch-ua',
-          'operation': 'set',
-          'value': `"Not/A)Brand";v="8", "Chromium";v="${version}", "${name}";v="${version}"`
-        }, {
-          'header': 'sec-ch-ua-mobile',
-          'operation': 'set',
-          'value': /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(o.userAgent) ? '?1' : '?0'
-        });
+        if (!this.#ISFARARI) {
+          r.requestHeaders.push({
+            'header': 'sec-ch-ua-platform',
+            'operation': 'set',
+            'value': '"' + platform + '"'
+          }, {
+            'header': 'sec-ch-ua',
+            'operation': 'set',
+            'value': `"Not/A)Brand";v="8", "Chromium";v="${version}", "${name}";v="${version}"`
+          }, {
+            'header': 'sec-ch-ua-mobile',
+            'operation': 'set',
+            'value': /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(o.userAgent) ? '?1' : '?0'
+          });
+        }
         // remove unsupported Chrome headers
         for (const header of chrs) {
           if (['sec-ch-ua-platform', 'sec-ch-ua', 'sec-ch-ua-mobile'].includes(header)) {
@@ -113,7 +114,7 @@ class Network {
     if (types.includes('js')) {
       r.responseHeaders = [{
         'header': 'Server-Timing',
-        'operation': 'append',
+        'operation': 'set',
         'value': `uasw-json-data;dur=0;desc="${encodeURIComponent(JSON.stringify(o))}"`
       }];
     }
@@ -126,23 +127,26 @@ class Network {
     o.type = 'user';
 
     if (prefs.ua && prefs.mode === 'blacklist') {
-      addRules.push({
+      const r1 = {
         'id': 1,
         'priority': 1,
         'action': this.action(o, 'net'),
         'condition': {
-          'resourceTypes': this.#RESOURCETYPE,
-          'excludedRequestDomains': prefs.blacklist
+          'resourceTypes': this.#RESOURCETYPE
         }
-      }, {
+      };
+      const r2 = {
         'id': 2,
-        'priority': 3,
+        'priority': 1,
         'action': this.action(o, 'js'),
         'condition': {
-          'resourceTypes': ['main_frame', 'sub_frame'],
-          'excludedRequestDomains': prefs.blacklist
+          'resourceTypes': ['main_frame', 'sub_frame']
         }
-      });
+      };
+      if (prefs.blacklist.length) {
+        r1.condition.excludedRequestDomains = r2.condition.excludedRequestDomains = prefs.blacklist;
+      }
+      addRules.push(r1, r2);
     }
     else if (prefs.ua && prefs.mode === 'whitelist' && prefs.whitelist.length) {
       addRules.push({
@@ -163,7 +167,7 @@ class Network {
         }
       }, {
         'id': 3,
-        'priority': 3,
+        'priority': 1,
         'action': this.action(o, 'net', 'js'),
         'condition': {
           'requestDomains': prefs.whitelist,
@@ -189,7 +193,7 @@ class Network {
           }
         }, {
           'id': 2,
-          'priority': 3, // for custom ones to be called after
+          'priority': 1, // for custom ones to be called after
           'action': this.action(o, 'js'),
           'condition': {
             'resourceTypes': ['main_frame', 'sub_frame']
@@ -289,7 +293,7 @@ class Network {
     await chrome.declarativeNetRequest.updateDynamicRules({
       addRules,
       removeRuleIds
-    }).then(() => addRules.length);
+    });
 
     return addRules.length;
   }
@@ -313,7 +317,7 @@ class Network {
         }
       }, {
         'id': m + 1,
-        'priority': 1, // to override the global set-cookie with priority 2
+        'priority': 3, // to override the global set-cookie with priority 2
         'action': this.action(o, 'js'),
         'condition': {
           tabIds,

@@ -114,8 +114,13 @@
       override(navigator, e.detail.reason);
     }
     else {
-      const nav = port.ogs.get(e.detail.id).navigator;
-      override(nav, e.detail.reason);
+      try {
+        const nav = port.ogs.get(e.detail.id).navigator;
+        override(nav, e.detail.reason);
+      }
+      catch (err) {
+        console.info('[Failed to override]', err);
+      }
     }
   });
 }

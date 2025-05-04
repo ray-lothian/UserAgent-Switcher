@@ -29,16 +29,6 @@ chrome.runtime.onMessage.addListener((request, sender, response) => {
     }).then(r => response(r[0].result));
     return true;
   }
-  else if (request.method === 'no-tab-spoofing') {
-    chrome.action.setIcon({
-      tabId: sender.tab.id,
-      path: {
-        '16': '/data/icons/ignored/16.png',
-        '32': '/data/icons/ignored/32.png',
-        '48': '/data/icons/ignored/48.png'
-      }
-    });
-  }
   else if (request.method === 'tab-spoofing') {
     let dir = 'active';
     if (request.type === 'per-tab' || request.type === 'custom') {
@@ -68,28 +58,31 @@ chrome.runtime.onMessage.addListener((request, sender, response) => {
 
 /* FAQs & Feedback */
 {
-  const {management, runtime: {onInstalled, setUninstallURL, getManifest}, storage, tabs} = chrome;
+  chrome.management = chrome.management || {
+    getSelf(c) {
+      c({installType: 'normal'});
+    }
+  };
   if (navigator.webdriver !== true) {
-    const page = getManifest().homepage_url;
-    const {name, version} = getManifest();
-    onInstalled.addListener(({reason, previousVersion}) => {
-      management.getSelf(({installType}) => installType === 'normal' && storage.local.get({
+    const {homepage_url: page, name, version} = chrome.runtime.getManifest();
+    chrome.runtime.onInstalled.addListener(({reason, previousVersion}) => {
+      chrome.management.getSelf(({installType}) => installType === 'normal' && chrome.storage.local.get({
         'faqs': true,
         'last-update': 0
       }, prefs => {
         if (reason === 'install' || (prefs.faqs && reason === 'update')) {
           const doUpdate = (Date.now() - prefs['last-update']) / 1000 / 60 / 60 / 24 > 45;
           if (doUpdate && previousVersion !== version) {
-            tabs.query({active: true, lastFocusedWindow: true}, tbs => tabs.create({
+            chrome.tabs.query({active: true, lastFocusedWindow: true}, tbs => chrome.tabs.create({
               url: page + '?version=' + version + (previousVersion ? '&p=' + previousVersion : '') + '&type=' + reason,
               active: reason === 'install',
               ...(tbs && tbs.length && {index: tbs[0].index + 1})
             }));
-            storage.local.set({'last-update': Date.now()});
+            chrome.storage.local.set({'last-update': Date.now()});
           }
         }
       }));
     });
-    setUninstallURL(page + '?rd=feedback&name=' + encodeURIComponent(name) + '&version=' + version);
+    chrome.runtime.setUninstallURL(page + '?rd=feedback&name=' + encodeURIComponent(name) + '&version=' + version);
   }
 }
