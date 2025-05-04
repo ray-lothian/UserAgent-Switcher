@@ -1160,3 +1160,12 @@ HTP 25 Go-http-client/1.1
 PRS 25 Mediapartners-Google
 SHT 25 -
 PRS 27 Mozilla/5.0 (compatible; Baiduspider-render/2.0; +http://www.baidu.com/search/spider.html)
+HTP 28 Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36 Edg/136.0.0.0 UltraBlock/689.25.1.6.6 (https://ultrablock.org)
+SHT 28 -
+HTP 28 Mozilla/5.0 (Linux; Android 7.0; SM-G930V Build/NRD90M) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.125 Mobile Safari/537.36 (compatible; Google-Read-Aloud; +https://support.google.com/webmasters/answer/1061943)
+PRS 28 Mozilla/4.0 (compatible;)
+HTP 28 facebookexternalhit/1.1 (+http://www.facebook.com/externalhit_uatext.php)
+PRS 28 meta-externalagent/1.1 (+https://developers.facebook.com/docs/sharing/webmasters/crawler)
+PRS 28 Mozilla/5.0 (compatible; Baiduspider-render/2.0; +http://www.baidu.com/search/spider.html)
+PRS 28 your custom user-agent
+PRS 28 Mozilla/5.0 (Windows

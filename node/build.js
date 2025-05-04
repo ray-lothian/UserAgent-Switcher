@@ -107,7 +107,7 @@ fs.readdir('../v3/data/popup/browsers/', (err, files) => {
 
   console.log('BOTS');
   require('./assets/bots.json').forEach(ua => next(ua, 'BT'));
-  for (const n of [...Array(27).keys()]) {
+  for (const n of [...Array(28).keys()]) {
     const s = (n + 1).toString().padStart(2, 0);
     console.log('List', s);
     require(`./assets/list-${s}.json`).forEach(ua => next(ua, s));
