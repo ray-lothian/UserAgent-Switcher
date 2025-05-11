@@ -36,59 +36,68 @@ You can install the latest stable version from your browser's official add-on st
 For detailed instructions on how to use the extension, including configuration options and features, please visit:
 [UserAgent-Switcher Usage Guide](https://webextension.org/listing/useragent-switcher.html)
 
-## Manual Installation for Firefox (from Source)
+## Manual Installation (from Source Files)
 
-If you have cloned or downloaded the source files from this repository, you can manually install the extension in Firefox. This is useful for development, testing the latest (potentially unstable) code, or if you prefer to install extensions manually.
+If you have cloned or downloaded the source files from this repository, you can manually install the extension in your browser. This is useful for development, testing the latest (potentially unstable) code, or if you prefer to install extensions directly from source.
 
-### Method 1: Load Temporary Add-on (for Development/Testing)
+### For Chromium-based Browsers (Google Chrome, Microsoft Edge, Opera)
+
+The process for these browsers involves loading the extension as an "unpacked extension":
+
+1.  **Get the Source:** Ensure you have the extension's source files (including `manifest.json` at the root of the extension's directory structure) on your local machine. If you've cloned this repository, these files are typically in the main or a `src/` directory. If there's a build process (e.g., `npm run build`), run it first to generate the distributable files, typically in a `dist/` or `build/` folder.
+2.  **Open Browser Extensions Page:**
+    * **Chrome:** Navigate to `chrome://extensions`
+    * **Edge:** Navigate to `edge://extensions`
+    * **Opera:** Navigate to `opera://extensions`
+3.  **Enable Developer Mode:**
+    * Look for a toggle switch labeled "Developer mode" (usually in the top-right or bottom-left corner of the extensions page) and turn it **on**.
+4.  **Load Unpacked Extension:**
+    * Once Developer Mode is enabled, a button like "Load unpacked" will appear. Click it.
+    * A file dialog will open. Navigate to and select the directory containing the extension's source files (the folder that has the `manifest.json` directly inside it). Click "Select Folder" or "Open."
+
+The UserAgent-Switcher extension should now be loaded and active. If you make changes to the source code, you'll typically need to return to the extensions page and click a "Reload" icon or button for the extension to apply the changes.
+
+### For Mozilla Firefox
+
+#### Method 1: Load Temporary Add-on (for Development/Testing)
 
 This method allows you to load the extension directly from the source files. It will remain installed until you restart Firefox or manually remove it.
 
-1.  **Get the Source:** Ensure you have the extension's source files (including `manifest.json` at the root of the extension's directory structure) on your local machine. If you've cloned this repository, these files are typically in the main or a `src/` directory.
+1.  **Get the Source:** Ensure you have the extension's source files (including `manifest.json` at the root of the extension's directory structure) on your local machine.
 2.  **Open Firefox.**
 3.  **Navigate to Debugging Tools:** Type `about:debugging` into the Firefox address bar and press Enter.
 4.  **Select "This Firefox":** In the left-hand sidebar, click on "This Firefox".
 5.  **Load Add-on:** Click the "Load Temporary Add-on..." button.
-6.  **Select Manifest File:** Navigate to the directory where you have the extension's source code and select the `manifest.json` file. Click "Open."
+6.  **Select Manifest File:** Navigate to the directory where you have the extension's source code and select the `manifest.json` file (or any file within the extension's root directory). Click "Open."
 
-The UserAgent-Switcher extension should now be loaded and active. If you make changes to the source code, you can click the "Reload" button next to the extension's entry on the `about:debugging` page to apply them.
+The UserAgent-Switcher extension should now be loaded. If you make changes to the source code, you can click the "Reload" button next to the extension's entry on the `about:debugging` page.
 
-### Method 2: Package as an .xpi File and Install
-
-For a more persistent local installation from the source files, you can package the extension into an `.xpi` file.
+#### Method 2: Package as an .xpi File and Install (More Persistent Local Install)
 
 1.  **Prepare Files:**
-    * Ensure all necessary source files are present, with `manifest.json` at the root of what will become the packaged extension.
-    * If this repository uses a build process (e.g., `npm run build`), run it first to generate the distributable files, typically in a `dist/`, `build/`, or `web-ext-artifacts/` folder. These instructions assume you are packaging the correct set of files for distribution.
+    * Ensure all necessary source files are present, with `manifest.json` at the root.
+    * If this repository uses a build process, run it first.
 2.  **Create a ZIP Archive:**
-    * Navigate to the directory containing the finalized extension files (e.g., your `src/` folder or the build output directory).
-    * Select all files and subfolders *inside* this directory. **Crucially, the `manifest.json` file must be at the root level within the ZIP archive, not nested inside another folder.**
+    * Navigate to the directory containing the finalized extension files.
+    * Select all files and subfolders *inside* this directory. The `manifest.json` file must be at the root level within the ZIP archive.
     * Compress the selected items into a ZIP archive (e.g., `user_agent_switcher.zip`).
-3.  **Rename to .xpi:**
-    * Change the file extension of the ZIP archive from `.zip` to `.xpi` (e.g., rename `user_agent_switcher.zip` to `user_agent_switcher.xpi`). You might need to enable viewing file extensions in your operating system's file explorer settings.
+3.  **Rename to .xpi:** Change the file extension from `.zip` to `.xpi` (e.g., `user_agent_switcher.xpi`).
 4.  **Install in Firefox:**
-    * Open Firefox.
-    * Go to the Add-ons Manager (you can type `about:addons` in the address bar or press `Ctrl+Shift+A` on Windows/Linux or `Cmd+Shift+A` on Mac).
-    * In the Add-ons Manager tab, select the "Extensions" panel.
-    * Click on the gear icon (⚙️) in the upper-right area of the Extensions panel.
-    * Select "Install Add-on From File..." from the dropdown menu.
-    * Navigate to where you saved your `.xpi` file, select it, and click "Open."
-    * Firefox will prompt you to confirm the installation and show the permissions the extension requires. Click "Add" if you trust the extension.
+    * Open Firefox and go to the Add-ons Manager (`about:addons` or `Ctrl+Shift+A` / `Cmd+Shift+A`).
+    * Click the gear icon (⚙️) on the Extensions panel.
+    * Select "Install Add-on From File..."
+    * Locate and select your `.xpi` file and click "Open." Confirm the installation.
 
-#### Important Considerations for .xpi Installation (from Source):
+### Important Considerations for Manual Installation (from Source):
 
-* **Extension Signing:** `.xpi` files created this way are unsigned. Standard versions of Firefox require extensions to be signed by Mozilla for security reasons.
-    * To install unsigned extensions (primarily for development and testing), you can use Firefox Developer Edition or Firefox Nightly, where you can set the `xpinstall.signatures.required` preference to `false` in `about:config`. **This is not recommended for regular Browse as it lowers your security.**
-    * Alternatively, you can submit the packaged `.xpi` to [addons.mozilla.org (AMO)](https://addons.mozilla.org/developers/) to get it signed by Mozilla (either for public listing or as an unlisted add-on).
-* **Add-on ID:** For consistent behavior, especially if you intend to use the extension long-term, test features like storage, or update it, ensure the `manifest.json` in the source includes a unique add-on ID. If it's not already present, you can add it like this:
-    ```json
-    "browser_specific_settings": {
-      "gecko": {
-        "id": "user-agent-switcher@your-repository-or-domain.com"
-      }
-    }
-    ```
-    Replace the example ID with a unique identifier for your version.
+* **Extension ID Consistency:** For stable development and testing (especially if your extension uses storage or needs a consistent ID for APIs):
+    * **Chromium-based browsers:** You can add a `"key"` field to your `manifest.json`. This is a Base64 encoded public key. If the `key` field is present when loading an unpacked extension, Chrome/Edge/Opera will derive a consistent ID. Without it, the ID may change if the path to the extension folder changes.
+    * **Firefox:** Ensure the `manifest.json` includes a unique add-on ID via the `browser_specific_settings.gecko.id` field (e.g., `"id": "user-agent-switcher@your-domain.com"`).
+* **Persistence:** Loading an unpacked extension (Chromium) or as a temporary add-on (Firefox) typically means the extension is active for the current session or until manually reloaded/removed. The Firefox `.xpi` method provides a more permanent installation for that browser.
+* **Packaging for Distribution:** If you intend to distribute the extension more widely outside of simply loading the source files:
+    * **Chromium-based browsers:** Extensions are packaged into `.crx` files, often handled through the respective web stores (Chrome Web Store, Microsoft Edge Add-ons, Opera addons).
+    * **Firefox:** Extensions are packaged as signed `.xpi` files, typically distributed via [addons.mozilla.org (AMO)](https://addons.mozilla.org/developers/).
+    * Signing is a crucial step for official distribution to ensure security and integrity. Standard browser versions often restrict or warn against installing unsigned extensions from outside their official stores.
 
 ---
 
