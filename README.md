@@ -9,8 +9,8 @@ UserAgent-Switcher modifies both the User-Agent in your browser's request header
 * **Comprehensive Spoofing:** Modifies both HTTP request headers and JavaScript `navigator` objects.
 * **Granular Control:**
     * Spoof User-Agent per specific hostname.
-    * Set different User-Agents for individual browser windows.
-    * Utilize Firefox's container feature for distinct User-Agents per container.
+    * Set different User-Agents for individual browser tabs.
+    * Utilize Firefox's container feature for distinct User-Agents per container (not available on manifest v3 yet).
 * **Randomization:** Option to randomly select a User-Agent from a user-defined list.
 * **Easy Import/Export:** Manage your User-Agent lists with simple import and export functionality.
 
