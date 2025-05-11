@@ -3,9 +3,46 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title></title>
+  <style type="text/css">
+    iframe {
+      height: 60px;
+      border: solid 1px;
+    }
+  </style>
 </head>
 <body>
-  <iframe src="http://example.com/" id="one" sandbox="allow-same-origin" width="100%" height="250"></iframe>
+  <div>
+    <span>sync:</span>
+    <span id="sync"></span>
+  </div>
+  <div>
+    <span>async:</span>
+    <span id="async"></span>
+  </div>
+  <script type="text/javascript">
+    document.getElementById('sync').textContent = navigator.userAgent;
+    setTimeout(() => {
+      document.getElementById('async').textContent = navigator.userAgent;
+    }, 1000);
+  </script>
+  <h1>Sandboxed Same-Origin Frame</h1>
+  <iframe src="frame.html" sandbox="allow-same-origin" width="100%" height="250"></iframe>
+  <h1>Normal Same-Origin Frame</h1>
+  <iframe src="frame.html" width="100%" height="250"></iframe>
+  <h1>Normal about:blank Frame</h1>
+  <iframe id="abl" src="about:blank" width="100%" height="250"></iframe>
+  <script type="text/javascript">
+    const sync = document.createElement('div');
+    const async = document.createElement('div');
+    const f = document.getElementById('abl');
+    f.onload = () => {
+      setTimeout(() => {
+        async.textContent = 'async: ' +  f.contentWindow.navigator.userAgent;
+      }, 1000);
+      sync.textContent = 'sync: ' + f.contentWindow.navigator.userAgent;
+      f.contentDocument.body.append(sync, async);
+    }
+    f.onload();
+  </script>
 </body>
 </html>

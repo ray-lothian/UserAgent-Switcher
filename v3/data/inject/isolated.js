@@ -37,8 +37,10 @@ else { // iframe[sandbox]
           hierarchy.unshift(n);
         }
       }
+      console.log(p);
       if (p.port) {
         port = p.port;
+        console.log(port);
         if (port.dataset.disabled !== 'true') {
           port.dispatchEvent(new CustomEvent('register', {
             detail: {
@@ -91,8 +93,13 @@ if (port) {
           break;
         }
       }
+      // Firefox -> iframe[about:blank]
+      if (!port.dataset.str) {
+        throw Error('UA_SET_FAILED');
+      }
     }
     catch (e) { // cross-origin frame
+      console.info('[user-agent leaked]', 'using async method', location.href);
       chrome.runtime.sendMessage({
         method: 'get-port-string'
       }, str => {
