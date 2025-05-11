@@ -1,46 +1,45 @@
-const context = () => {
+const context = async () => {
   if (context.ran) {
     return;
   }
   context.ran = true;
 
-  chrome.storage.local.get({
+  const prefs = await chrome.storage.local.get({
     'mode': 'blacklist'
-  }, prefs => {
-    // we do not support custom mode on m3 anymore
-    chrome.contextMenus.create({
-      id: 'blacklist',
-      title: 'Switch to "black-list" mode',
-      contexts: ['action'],
-      type: 'radio',
-      checked: prefs.mode === 'blacklist'
-    }, () => chrome.runtime.lastError);
-    chrome.contextMenus.create({
-      id: 'whitelist',
-      title: 'Switch to "white-list" mode',
-      contexts: ['action'],
-      type: 'radio',
-      checked: prefs.mode === 'whitelist'
-    }, () => chrome.runtime.lastError);
-    chrome.contextMenus.create({
-      id: 'custom',
-      title: 'Switch to "custom" mode',
-      contexts: ['action'],
-      type: 'radio',
-      checked: prefs.mode === 'custom'
-    }, () => chrome.runtime.lastError);
-
-    chrome.contextMenus.create({
-      id: 'pause-tab',
-      title: 'Pause on This Tab',
-      contexts: ['action']
-    }, () => chrome.runtime.lastError);
-    chrome.contextMenus.create({
-      id: 'resume-tab',
-      title: 'Resume on This Tab',
-      contexts: ['action']
-    }, () => chrome.runtime.lastError);
   });
+  // we do not support custom mode on m3 anymore
+  chrome.contextMenus.create({
+    id: 'blacklist',
+    title: 'Switch to "black-list" mode',
+    contexts: ['action'],
+    type: 'radio',
+    checked: prefs.mode === 'blacklist'
+  }, () => chrome.runtime.lastError);
+  chrome.contextMenus.create({
+    id: 'whitelist',
+    title: 'Switch to "white-list" mode',
+    contexts: ['action'],
+    type: 'radio',
+    checked: prefs.mode === 'whitelist'
+  }, () => chrome.runtime.lastError);
+  chrome.contextMenus.create({
+    id: 'custom',
+    title: 'Switch to "custom" mode',
+    contexts: ['action'],
+    type: 'radio',
+    checked: prefs.mode === 'custom'
+  }, () => chrome.runtime.lastError);
+
+  chrome.contextMenus.create({
+    id: 'pause-tab',
+    title: 'Pause on This Tab',
+    contexts: ['action']
+  }, () => chrome.runtime.lastError);
+  chrome.contextMenus.create({
+    id: 'resume-tab',
+    title: 'Resume on This Tab',
+    contexts: ['action']
+  }, () => chrome.runtime.lastError);
 };
 
 chrome.contextMenus.onClicked.addListener((info, tab) => {

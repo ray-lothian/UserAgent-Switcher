@@ -47,5 +47,11 @@
     "_execute_action": {
       "description": "Execute Action"
     }
+  },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "{a6c4a591-f1b2-4f03-b3ff-767e5bedf4e7}",
+      "strict_min_version": "132.0"
+    }
   }
 }
