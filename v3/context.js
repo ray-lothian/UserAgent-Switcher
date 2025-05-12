@@ -4,30 +4,24 @@ const context = async () => {
   }
   context.ran = true;
 
-  const prefs = await chrome.storage.local.get({
-    'mode': 'blacklist'
-  });
   // we do not support custom mode on m3 anymore
   chrome.contextMenus.create({
     id: 'blacklist',
     title: 'Switch to "black-list" mode',
     contexts: ['action'],
-    type: 'radio',
-    checked: prefs.mode === 'blacklist'
+    type: 'radio'
   }, () => chrome.runtime.lastError);
   chrome.contextMenus.create({
     id: 'whitelist',
     title: 'Switch to "white-list" mode',
     contexts: ['action'],
-    type: 'radio',
-    checked: prefs.mode === 'whitelist'
+    type: 'radio'
   }, () => chrome.runtime.lastError);
   chrome.contextMenus.create({
     id: 'custom',
     title: 'Switch to "custom" mode',
     contexts: ['action'],
-    type: 'radio',
-    checked: prefs.mode === 'custom'
+    type: 'radio'
   }, () => chrome.runtime.lastError);
 
   chrome.contextMenus.create({
@@ -40,6 +34,13 @@ const context = async () => {
     title: 'Resume on This Tab',
     contexts: ['action']
   }, () => chrome.runtime.lastError);
+
+  const prefs = await chrome.storage.local.get({
+    'mode': 'blacklist'
+  });
+  chrome.contextMenus.update(prefs.mode, {
+    checked: true
+  });
 };
 
 chrome.contextMenus.onClicked.addListener((info, tab) => {

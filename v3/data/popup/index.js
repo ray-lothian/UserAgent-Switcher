@@ -298,6 +298,19 @@ document.addEventListener('click', ({target}) => {
     else if (cmd === 'reload') {
       chrome.runtime.reload();
     }
+    else if (cmd === 'tab') {
+      chrome.tabs.query({
+        active: true,
+        lastFocusedWindow: true
+      }).then(([tab]) => {
+        const value = document.getElementById('ua').value;
+        chrome.storage.session.set({
+          [tab.id]: {
+            ua: value
+          }
+        });
+      });
+    }
     else if (cmd === 'test') {
       chrome.storage.local.get({
         'test': 'https://webbrowsertools.com/useragent/?method=normal&verbose=false'

@@ -150,7 +150,7 @@
     "message": "This is a readonly field. Use options page for custom parsing."
   },
   "uaTitle": {
-    "message": "To set a blank user-agent string, use the 'empty' keyword. To construct a custom user-agent string based on the current browser's navigator object, use ${} notation. Whatever is inside this notation is read from the 'navigator' object. For instance, to append a string to the default user-agent, use '${userAgent} THIS IS THE APPENDED STRING'"
+    "message": "To set a blank user-agent string, use the 'empty' keyword. To construct a custom user-agent string based on the current browser's navigator object, use $${} notation. Whatever is inside this notation is read from the 'navigator' object. For instance, to append a string to the default user-agent, use '$${userAgent} THIS IS THE APPENDED STRING'"
   },
   "uaPlaceholder": {
     "message": "Your preferred user-agent string"
