@@ -10,7 +10,8 @@ const network = new Network();
 
 chrome.storage.onChanged.addListener((ps, type) => {
   if (
-    ps.mode || ps.ua || ps.blacklist || ps.whitelist || ps.custom || ps.sibilings || ps.protected || ps.userAgentData ||
+    ps.mode || ps.ua || ps.blacklist || ps.whitelist || ps.custom || ps.sibilings ||
+    ps.protected || ps.userAgentData || ps.parser ||
     type === 'session'
   ) {
     network.configure();
