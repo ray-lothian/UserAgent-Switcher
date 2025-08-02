@@ -2,7 +2,7 @@
 
 A highly configurable browser extension for spoofing your User-Agent string.
 
-UserAgent-Switcher modifies both the User-Agent in your browser's request headers and relevant JavaScript `navigator` properties (e.g., `navigator.userAgent`, `navigator.appVersion`, `navigator.platform`). This allows for precise control over how your browser identifies itself to websites.
+UserAgent-Switcher modifies both the User-Agent in your browser's request headers and relevant JavaScript `navigator` properties (e.g., `navigator.userAgent`, `navigator.appVersion`, `navigator.platform`). It also supports modern browser identification mechanisms such as Client Hints headers and the `navigator.userAgentData` object, ensuring consistent and comprehensive spoofing across all detection methods.
 
 ## Key Features
 
