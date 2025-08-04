@@ -69,7 +69,8 @@ function save() {
     parser,
     'mode': document.querySelector('[name="mode"]:checked').value,
     'protected': document.getElementById('protected').value.split(/\s*,\s*/).filter(s => s.length > 4),
-    'remote-address': document.getElementById('remote-address').value
+    'remote-address': document.getElementById('remote-address').value,
+    'user-styling': document.getElementById('user-styling').value
   }, () => {
     restore();
     notify(chrome.i18n.getMessage('optionsSaved'));
@@ -96,7 +97,8 @@ function restore() {
       'gitlab.com/users/sign_in',
       'challenges.cloudflare.com'
     ],
-    'remote-address': ''
+    'remote-address': '',
+    'user-styling': ''
   }, prefs => {
     document.getElementById('userAgentData').checked = prefs.userAgentData;
     document.querySelector(`[name="mode"][value="${prefs.mode}"`).checked = true;
@@ -107,6 +109,7 @@ function restore() {
     document.getElementById('protected').value = prefs.protected.join(', ');
     document.getElementById('remote-address').value = prefs['remote-address'];
     document.getElementById('remote-address').dispatchEvent(new Event('input'));
+    document.getElementById('user-styling').value = prefs['user-styling'];
   });
 }
 document.addEventListener('DOMContentLoaded', restore);

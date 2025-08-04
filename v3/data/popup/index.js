@@ -1,6 +1,12 @@
 /* global Agent */
 'use strict';
 
+chrome.storage.local.get({
+  'user-styling': ''
+}, prefs => {
+  document.getElementById('user-styling').textContent = prefs['user-styling'];
+});
+
 // localization
 document.querySelectorAll('[data-localized-value]').forEach(e => {
   const ref = e.dataset.localizedValue;
