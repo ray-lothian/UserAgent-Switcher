@@ -12,6 +12,9 @@ const map = {
 };
 const invalids = [];
 
+const print = (code, file, ...args) => {
+  console.log('\x1b[31m%s\x1b[0m \x1b[32m%s\x1b[0m %s', code.padEnd(25, ' '), file, ...args);
+};
 
 const parser = new UAParser();
 
@@ -47,16 +50,16 @@ fs.readdir('../v3/data/popup/browsers/', (err, files) => {
 
     if (ua.length < 10) {
       invalids.push(['SHT', source, ua]);
-      return console.log('[short agent  ]', source, ua);
+      return print('[short agent]', source, ua);
     }
     if (ua.length > 400) {
       invalids.push(['LNG', source, ua]);
-      return console.log('[long agent   ]', source, ua);
+      return print('[long agent]', source, ua);
     }
     if (ua.indexOf('http') !== -1) {
       if (ua.indexOf('QtWeb') === -1 && ua.toLowerCase().indexOf('crawler') === -1 && ua.toLowerCase().indexOf('bot') === -1 && ua.toLowerCase().indexOf('spider') === -1) {
         invalids.push(['HTP', source, ua]);
-        return console.log('[contains HTTP]', source, ua);
+        return print('[contains HTTP]', source, ua);
       }
     }
     parser.setUA(ua);
@@ -66,7 +69,7 @@ fs.readdir('../v3/data/popup/browsers/', (err, files) => {
     if (o.browser.version && ['Chrome', 'Opera', 'Firefox', 'Yandex', 'Chromium', 'Brave', 'Edge'].includes(o.browser.name)) {
       const v = parseFloat(o.browser.version);
       if (v > 200) {
-        return console.log('[Invalid Browser Version]', o.browser.version, source, ua);
+        return print('[Invalid Browser Version]', source, o.browser.version, ua);
       }
     }
 
@@ -101,16 +104,20 @@ fs.readdir('../v3/data/popup/browsers/', (err, files) => {
     }
     else {
       invalids.push(['PRS', source, ua]);
-      console.log('[cannot parse]', source, ua);
+      print('[cannot parse]', source, ua);
     }
   };
 
-  console.log('BOTS');
   require('./assets/bots.json').forEach(ua => next(ua, 'BT'));
-  for (const n of [...Array(28).keys()]) {
-    const s = (n + 1).toString().padStart(2, 0);
-    console.log('List', s);
-    require(`./assets/list-${s}.json`).forEach(ua => next(ua, s));
+
+  {
+    const files = fs.readdirSync('./assets/');
+    for (const file of files) {
+      console.log(' -> Working on', file);
+      if (file.endsWith('.json')) {
+        require(`./assets/${file}`).forEach(ua => next(ua, file));
+      }
+    }
   }
 
   const contents = [];
