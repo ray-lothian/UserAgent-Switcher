@@ -61,6 +61,19 @@ function save() {
     }, 1000);
   }
 
+  const oss = document.getElementById('popular-oss').value.split(/\s*,\s*/).filter((s, i, l) => {
+    return s && l.indexOf(s) === i;
+  });
+  if (oss.length === 0) {
+    oss.push('Windows');
+  }
+  const browsers = document.getElementById('popular-browsers').value.split(/\s*,\s*/).filter((s, i, l) => {
+    return s && l.indexOf(s) === i;
+  });
+  if (browsers.length === 0) {
+    browsers.push('Chrome');
+  }
+
   chrome.storage.local.set({
     'userAgentData': document.getElementById('userAgentData').checked,
     'blacklist': prepare(document.getElementById('blacklist').value),
@@ -70,7 +83,9 @@ function save() {
     'mode': document.querySelector('[name="mode"]:checked').value,
     'protected': document.getElementById('protected').value.split(/\s*,\s*/).filter(s => s.length > 4),
     'remote-address': document.getElementById('remote-address').value,
-    'user-styling': document.getElementById('user-styling').value
+    'user-styling': document.getElementById('user-styling').value,
+    'popular-oss': oss,
+    'popular-browsers': browsers
   }, () => {
     restore();
     notify(chrome.i18n.getMessage('optionsSaved'));
@@ -98,7 +113,9 @@ function restore() {
       'challenges.cloudflare.com'
     ],
     'remote-address': '',
-    'user-styling': ''
+    'user-styling': '',
+    'popular-oss': ['Windows', 'Mac OS', 'Linux', 'Chromium OS', 'Android'],
+    'popular-browsers': ['Internet Explorer', 'Safari', 'Chrome', 'Firefox', 'Opera', 'Edge', 'Vivaldi']
   }, prefs => {
     document.getElementById('userAgentData').checked = prefs.userAgentData;
     document.querySelector(`[name="mode"][value="${prefs.mode}"`).checked = true;
@@ -110,6 +127,8 @@ function restore() {
     document.getElementById('remote-address').value = prefs['remote-address'];
     document.getElementById('remote-address').dispatchEvent(new Event('input'));
     document.getElementById('user-styling').value = prefs['user-styling'];
+    document.getElementById('popular-oss').value = prefs['popular-oss'].join(', ');
+    document.getElementById('popular-browsers').value = prefs['popular-browsers'].join(', ');
   });
 }
 document.addEventListener('DOMContentLoaded', restore);
@@ -277,3 +296,32 @@ document.getElementById('update').onclick = () => chrome.runtime.sendMessage({
     alert(resp);
   }
 });
+
+fetch('/data/popup/map.json').then(r => r.json()).then(o => {
+  for (const browser of o.browser) {
+    const option = document.createElement('option');
+    option.value = option.textContent = browser;
+    document.getElementById('popular-browsers-selector').append(option);
+  }
+  for (const os of o.os) {
+    const option = document.createElement('option');
+    option.value = option.textContent = os;
+    document.getElementById('popular-oss-selector').append(option);
+  }
+});
+document.getElementById('popular-browsers-selector').onchange = e => {
+  const editor = document.getElementById('popular-browsers');
+  if (e.target.value) {
+    const v = editor.value;
+    editor.value += (v ? ', ' : '') + e.target.value;
+  }
+  e.target.value = '';
+};
+document.getElementById('popular-oss-selector').onchange = e => {
+  const editor = document.getElementById('popular-oss');
+  if (e.target.value) {
+    const v = editor.value;
+    editor.value += (v ? ', ' : '') + e.target.value;
+  }
+  e.target.value = '';
+};

@@ -195,40 +195,58 @@ document.addEventListener('change', ({target}) => {
   }
 });
 
-document.addEventListener('DOMContentLoaded', () => fetch('./map.json').then(r => r.json()).then(o => {
+// startup
+fetch('./map.json').then(async r => {
+  const o = await r.json();
   Object.assign(map, o);
 
-  const f1 = document.createDocumentFragment();
-  for (const browser of map.browser) {
-    const option = document.createElement('option');
-    option.value = option.textContent = browser;
-    f1.appendChild(option);
-  }
-  const f2 = document.createDocumentFragment();
-  for (const os of map.os) {
-    const option = document.createElement('option');
-    option.value = option.textContent = os;
-    f2.appendChild(option);
-  }
-
-  document.querySelector('#browser optgroup:last-of-type').appendChild(f1);
-  document.querySelector('#os optgroup:last-of-type').appendChild(f2);
-
-  chrome.storage.local.get({
+  const prefs = await chrome.storage.local.get({
     'popup-browser': 'Chrome',
     'popup-os': 'Windows',
     'popup-sort': 'descending',
-    'ua': ''
-  }, prefs => {
-    document.getElementById('browser').value = prefs['popup-browser'];
-    document.getElementById('os').value = prefs['popup-os'];
-    document.getElementById('sort').value = prefs['popup-sort'];
-
-    update(prefs.ua);
-    document.getElementById('ua').value = prefs.ua;
-    document.getElementById('ua').dispatchEvent(new Event('input'));
+    'ua': '',
+    'popular-oss': ['Windows', 'Mac OS', 'Linux', 'Chromium OS', 'Android'],
+    'popular-browsers': ['Internet Explorer', 'Safari', 'Chrome', 'Firefox', 'Opera', 'Edge', 'Vivaldi']
   });
-}));
+
+  const f1 = document.createDocumentFragment();
+  const f3 = document.createDocumentFragment();
+  for (const browser of map.browser) {
+    const option = document.createElement('option');
+    option.value = option.textContent = browser;
+    if (prefs['popular-browsers'].includes(browser)) {
+      f3.appendChild(option);
+    }
+    else {
+      f1.appendChild(option);
+    }
+  }
+  const f2 = document.createDocumentFragment();
+  const f4 = document.createDocumentFragment();
+  for (const os of map.os) {
+    const option = document.createElement('option');
+    option.value = option.textContent = os;
+    if (prefs['popular-oss'].includes(os)) {
+      f4.appendChild(option);
+    }
+    else {
+      f2.appendChild(option);
+    }
+  }
+
+  document.querySelector('#browser optgroup:first-of-type').appendChild(f3);
+  document.querySelector('#browser optgroup:last-of-type').appendChild(f1);
+  document.querySelector('#os optgroup:first-of-type').appendChild(f4);
+  document.querySelector('#os optgroup:last-of-type').appendChild(f2);
+
+  document.getElementById('browser').value = prefs['popup-browser'];
+  document.getElementById('os').value = prefs['popup-os'];
+  document.getElementById('sort').value = prefs['popup-sort'];
+
+  update(prefs.ua);
+  document.getElementById('ua').value = prefs.ua;
+  document.getElementById('ua').dispatchEvent(new Event('input'));
+});
 
 document.getElementById('list').addEventListener('click', ({target}) => {
   const tr = target.closest('tbody tr');
