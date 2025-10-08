@@ -193,5 +193,11 @@
   },
   "updateFromRemote": {
     "message": "Update from Remote Server"
+  },
+  "popularOSs": {
+    "message": "Popular Operating Systems on the Popup Interface"
+  },
+  "popularBrowsers": {
+    "message": "Popular Browsers on the Popup Interface"
   }
 }
