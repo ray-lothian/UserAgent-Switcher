@@ -4,8 +4,13 @@
     'json-guid': 'na'
   }, prefs => {
     if (prefs['json-guid'] !== j['json-guid'] || j['json-forced']) {
-      chrome.storage.local.set(j);
-      console.info('preferences are updated by an admin');
+      if (j['json-guid']) {
+        chrome.storage.local.set(j);
+        console.info('preferences are updated by an admin');
+      }
+      else {
+        console.info('update from server is rejected: no "json-guid" key.');
+      }
     }
   });
 
