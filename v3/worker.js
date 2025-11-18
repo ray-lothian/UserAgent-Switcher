@@ -1,4 +1,4 @@
-/* global Network */
+/* global Network, Agent */
 
 if (typeof importScripts !== 'undefined') {
   self.importScripts('context.js');
@@ -22,17 +22,47 @@ chrome.runtime.onInstalled.addListener(() => network.configure());
 
 chrome.runtime.onMessage.addListener((request, sender, response) => {
   if (request.method === 'get-port-string') {
-    chrome.scripting.executeScript({
-      target: {
+    // wait for the first real web request and then resolve the UA
+    if (request.cached && request.top) {
+      const observe = d => {
+        if (d.requestHeaders) {
+          for (const o of d.requestHeaders) {
+            if (o.name === 'User-Agent') {
+              chrome.webRequest.onSendHeaders.removeListener(observe);
+              const ua = o.value;
+              const agent = new Agent();
+              agent.prefs().then(() => {
+                const o = agent.parse(ua);
+                o.type = 'worker';
+                response(encodeURIComponent(JSON.stringify(o)));
+              });
+
+              break;
+            }
+          }
+        }
+      };
+
+      chrome.webRequest.onSendHeaders.addListener(observe, {
+        urls: ['*://*/*'],
         tabId: sender.tab.id
-      },
-      func: () => self.port.dataset.disabled === 'true' ? '' : (self.port.dataset.str || '')
-    }).then(r => response(r[0].result));
+      }, ['requestHeaders']);
+    }
+    else {
+      chrome.scripting.executeScript({
+        target: {
+          tabId: sender.tab.id
+        },
+        func: () => self.port.dataset.disabled === 'true' ? '' : (self.port.dataset.str || '')
+      }).then(r => response(r[0].result));
+    }
+
+
     return true;
   }
   else if (request.method === 'tab-spoofing') {
     let dir = 'active';
-    if (request.type === 'per-tab' || request.type === 'custom') {
+    if (request.type === 'per-tab' || request.type === 'custom' || request.type === 'worker') {
       dir = request.type;
     }
 

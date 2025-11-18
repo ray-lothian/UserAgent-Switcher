@@ -18,27 +18,9 @@ class Network {
 
   async configure() {
     let size = 0;
-    const dps = await chrome.storage.local.get({
-      'mode': 'blacklist',
-      'ua': '',
-      'blacklist': [],
-      'whitelist': [],
-      'custom': {},
-      'parser': {},
-      'protected': [
-        'google.com/recaptcha',
-        'gstatic.com/recaptcha',
-        'accounts.google.com',
-        'accounts.youtube.com',
-        'gitlab.com/users/sign_in',
-        'challenges.cloudflare.com'
-      ],
-      'userAgentData': true
-    });
 
     this.agent = new Agent();
-    this.agent.prefs(dps);
-
+    const dps = await this.agent.prefs();
     size += await this.dnet(dps);
 
     const sps = await chrome.storage.session.get(null);

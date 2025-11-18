@@ -26,14 +26,23 @@
       }
     }
   }
+  // cached
+  for (const entry of performance.getEntriesByType('navigation')) {
+    if (entry.deliveryType === 'cache-storage') {
+      port.dataset.cached = true;
+      break;
+    }
+  }
 
   if (port.dataset.str) {
     port.prepare();
   }
   else {
-    // extension is not active for this tab
+    // extension is not active for this tab or top-level request is from service worker
     if (self.top === self) {
-      port.dataset.disabled = true;
+      if (port.dataset.cached !== 'true') {
+        port.dataset.disabled = true;
+      }
     }
   }
 }

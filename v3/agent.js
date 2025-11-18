@@ -2,8 +2,26 @@
 class Agent {
   #prefs = {}; // userAgentData, parser
 
-  prefs(prefs) {
-    this.#prefs = prefs;
+  async prefs(ps) {
+    const dps = await chrome.storage.local.get(ps || {
+      'mode': 'blacklist',
+      'ua': '',
+      'blacklist': [],
+      'whitelist': [],
+      'custom': {},
+      'parser': {},
+      'protected': [
+        'google.com/recaptcha',
+        'gstatic.com/recaptcha',
+        'accounts.google.com',
+        'accounts.youtube.com',
+        'gitlab.com/users/sign_in',
+        'challenges.cloudflare.com'
+      ],
+      'userAgentData': true
+    });
+    this.#prefs = dps;
+    return dps;
   }
   parse(s = '') {
     // log('ua.parse is called', s);

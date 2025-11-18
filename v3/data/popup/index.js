@@ -350,26 +350,23 @@ document.addEventListener('click', ({target}) => {
   }
 });
 
-document.getElementById('ua').addEventListener('input', e => {
+document.getElementById('ua').addEventListener('input', async e => {
   const value = e.target.value;
   document.querySelector('[data-cmd=apply]').disabled = value === '';
   document.querySelector('[data-cmd=tab]').disabled = value === '';
 
   if (value) {
     const agent = new Agent();
-
-    chrome.storage.local.get({
+    await agent.prefs({
       'userAgentData': true,
       'parser': {} // maps ua string to a ua object
-    }, prefs => {
-      agent.prefs(prefs);
-      const o = agent.parse(value);
-
-      document.getElementById('platform').value = o.platform;
-      document.getElementById('vendor').value = o.vendor;
-      document.getElementById('product').value = o.product;
-      document.getElementById('oscpu').value = o.oscpu;
     });
+    const o = agent.parse(value);
+
+    document.getElementById('platform').value = o.platform;
+    document.getElementById('vendor').value = o.vendor;
+    document.getElementById('product').value = o.product;
+    document.getElementById('oscpu').value = o.oscpu;
   }
 });
 document.getElementById('ua').addEventListener('keyup', e => {

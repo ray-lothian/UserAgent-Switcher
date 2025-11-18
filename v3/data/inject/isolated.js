@@ -7,18 +7,12 @@ const id = (Math.random() + 1).toString(36).substring(7);
 
 const override = reason => {
   const detail = typeof cloneInto === 'undefined' ? {id, reason} : cloneInto({id, reason}, self);
-
   port.dispatchEvent(new CustomEvent('override', {
     detail
   }));
-};
 
-if (port) {
-  port.dataset.id = id;
-  port.remove();
-
-  if (self.top === self) {
-    if (port.dataset.disabled !== 'true') {
+  if (self.top === top) {
+    if (port.dataset.str) {
       chrome.runtime.sendMessage({
         method: 'tab-spoofing',
         str: port.dataset.str,
@@ -26,6 +20,11 @@ if (port) {
       });
     }
   }
+};
+
+if (port) {
+  port.dataset.id = id;
+  port.remove();
 }
 else { // iframe[sandbox]
   try {
@@ -98,10 +97,13 @@ if (port) {
         throw Error('UA_SET_FAILED');
       }
     }
-    catch (e) { // cross-origin frame
-      console.info('[user-agent leaked]', 'using async method', location.href);
+    catch (e) { // cross-origin frame or when top-level is from service worker
+      console.info('[user-agent leaked]', 'using async method', location.href, port.dataset.cached);
+
       chrome.runtime.sendMessage({
-        method: 'get-port-string'
+        method: 'get-port-string',
+        cached: port.dataset.cached === 'true',
+        top: self.top === self
       }, str => {
         if (str) {
           port.dataset.str = str;
