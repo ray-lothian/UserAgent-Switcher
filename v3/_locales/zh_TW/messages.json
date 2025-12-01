@@ -1,0 +1,203 @@
+{
+  "extensionName": {
+    "message": "User-Agent Switcher and Manager"
+  },
+  "extensionDescription": {
+    "message": "裝作是不同的瀏覽來源，以應對試著收集您網路瀏覽資訊來提供可能不服期待的特定內容的網站"
+  },
+  "userAgentSwitcherandManagerOptions": {
+    "message": "選項頁面 :: User-Agent Switcher and Manager"
+  },
+  "blackListMode": {
+    "message": "黑名單模式"
+  },
+  "description": {
+    "message": "描述"
+  },
+  "blackListModeDescription": {
+    "message": "將自訂使用者代理字串套用到所有分頁，除了以下頂層主機名稱的分頁以外（以逗號分隔）。請注意，從工具列彈出介面設定分頁的使用者代理字串之後，將對這個工作階段使用這個使用者代理字串。"
+  },
+  "whiteListMode": {
+    "message": "白名單模式"
+  },
+  "whiteListModeDescription": {
+    "message": "只套用自訂使用者代理字串到以下頂層主機名稱。請注意，從工具列彈出介面設定分頁的使用者代理字串之後，這個使用者代理字串會覆蓋全域的使用者代理字串。"
+  },
+  "customMode": {
+    "message": "自訂模式"
+  },
+  "customModeDescription": {
+    "message": "嘗試從 JSON 物件解析使用者代理字串；否則使用預設的使用者代理字串或是使用者從彈出介面設定的代理字串。用 \"*\" 作為主機名稱來代表所有網域。您可以提供陣列而非固定字串來從多個使用者代理字串當中隨機選取一個。如果您的 JSON 物件裡有一個 \"_\" 鍵，而它的值是一個主機名稱陣列，則本擴充功能只會為陣列中的主機名稱選取隨機選取一次使用者代理字串。這可以用來讓隨機選取的使用者代理字串不會在瀏覽器工作階段結束前重新隨機選取。"
+  },
+  "insertSample": {
+    "message": "插入範例"
+  },
+  "userAgentData": {
+    "message": "使用 Chromium 使用者代理時提供 \"navigator.userAgentData\" 物件供使用"
+  },
+  "disableSpoofing": {
+    "message": "停用欺騙"
+  },
+  "disableSpoofingDescription": {
+    "message": "本擴充功能不應改變使用者代理標頭的關鍵詞列表，以逗號分隔。包含這些關鍵詞的網址所使用的使用者代理不會被改變。每個關鍵詞必須至少有 5 個字元長。"
+  },
+  "customUserAgentParsing": {
+    "message": "自訂使用者代理剖析"
+  },
+  "customUserAgentParsingDescription": {
+    "message": "用來指定跳過內部使用者代理字串剖析方法的 JSON 物件。這個物件的欄位應是實際的使用者代理字串，而值則是要設定於 \"navigator\" 物件的鍵與值。用 \"[delete]\" 來指定該欄位應從 \"navigator\" 物件刪除。"
+  },
+  "importSettings": {
+    "message": "匯入設定"
+  },
+  "exportSettings": {
+    "message": "匯出設定"
+  },
+  "exportSettingsTitle": {
+    "message": "要產生極簡化 (minified) 版本，請按住 Shift 再按這個按鈕"
+  },
+  "help": {
+    "message": "常見問題頁面 (說明)"
+  },
+  "donate": {
+    "message": "支持開發"
+  },
+  "save": {
+    "message": "儲存選項"
+  },
+  "managedStorage": {
+    "message": "這個擴充功能支援 managed storage，讓偏好設定可以自動調整或是由網域管理員預先設定。更多資訊請閱讀常見問題頁面。"
+  },
+  "options": {
+    "message": "選項"
+  },
+  "optionsTitle": {
+    "message": "開啟選項頁面"
+  },
+  "restart": {
+    "message": "重新啟動"
+  },
+  "restartTitle": {
+    "message": "點擊以重新載入擴充功能。這會清除所有為分頁所設定的使用者代理字串。"
+  },
+  "refreshTab": {
+    "message": "重新整理分頁"
+  },
+  "refreshTabTitle": {
+    "message": "重新整理目前頁面"
+  },
+  "reset": {
+    "message": "重設"
+  },
+  "resetTitle": {
+    "message": "將瀏覽器的使用者代理字串重設為預設值。這不會重設分頁設定。要重設分頁設定，請使用「重新啟動」按鈕。"
+  },
+  "testUA": {
+    "message": "測試使用者代理字串"
+  },
+  "testUATitle": {
+    "message": "測試您的使用者代理字串"
+  },
+  "considerContainers": {
+    "message": "考量容器"
+  },
+  "considerContainersTitle": {
+    "message": "允許本擴充元件存取您的瀏覽器的容器。允許使用此權限時，隔離容器內的分頁不會使用預設容器的使用者代理字串。您將會需要為各個容器設定此字串。"
+  },
+  "applyActiveTab": {
+    "message": "套用（此分頁）"
+  },
+  "applyActiveTabTitle": {
+    "message": "讓目前分頁使用這個使用者代理字串"
+  },
+  "applyAllWindows": {
+    "message": "套用（所有分頁）"
+  },
+  "applyAllWindowsTitle": {
+    "message": "讓整個瀏覽器使用這個使用者代理字串"
+  },
+  "applyContainer": {
+    "message": "套用（容器）"
+  },
+  "applyContainerTitle": {
+    "message": "讓目前容器使用這個使用者代理字串"
+  },
+  "applyContainerTab": {
+    "message": "套用（容器中的分頁）"
+  },
+  "applyContainerTabTitle": {
+    "message": "讓容器中目前分頁使用這個使用者代理字串"
+  },
+  "resetContainer": {
+    "message": "重設（容器）"
+  },
+  "resetContainerTitle": {
+    "message": "將容器的使用者代理字串重設回預設值。這不會重設分頁設定。要重設分頁設定，請使用「重新啟動」按鈕。"
+  },
+  "oscpuTitle": {
+    "message": "這是唯獨欄位。對於自訂剖析請使用選項頁面。"
+  },
+  "appVersionTitle": {
+    "message": "這是唯獨欄位。對於自訂剖析請使用選項頁面。"
+  },
+  "platformTitle": {
+    "message": "這是唯獨欄位。對於自訂剖析請使用選項頁面。"
+  },
+  "vendorTitle": {
+    "message": "這是唯獨欄位。對於自訂剖析請使用選項頁面。"
+  },
+  "productTitle": {
+    "message": "這是唯獨欄位。對於自訂剖析請使用選項頁面。"
+  },
+  "uaTitle": {
+    "message": "要設定空白的使用者代理字串，請使用 'empty' 關鍵詞。要依目前瀏覽器的 navigator 物件建立自訂使用者代理字串，請利用 $${} 語法。這個語法內的欄位名稱會用來存取 'navigator' 物件。舉例來說，要在預設使用者代理字串後面加上文字的話，可以使用 '$${userAgent} 後綴字串範例'"
+  },
+  "uaPlaceholder": {
+    "message": "您希望使用的使用者代理字串"
+  },
+  "noMatch": {
+    "message": "沒有相符的使用者代理字串"
+  },
+  "ztoa": {
+    "message": "Z 到 A"
+  },
+  "atoz": {
+    "message": "A 到 Z"
+  },
+  "filterAmong": {
+    "message": "在 $1 當中過濾"
+  },
+  "filterAgents": {
+    "message": "過濾代理字串"
+  },
+  "msgDefaultUA": {
+    "message": "預設使用者代理，請改按重設按鈕"
+  },
+  "msgUASet": {
+    "message": "已設定使用者代理"
+  },
+  "msgDisabledOnContainer": {
+    "message": "已在此容器停用。目前使用預設使用者代理字串。"
+  },
+  "msgDisabled": {
+    "message": "已停用。目前使用預設使用者代理字串。"
+  },
+  "optionsSaved": {
+    "message": "已儲存選項。"
+  },
+  "dbReset": {
+    "message": "點兩下以重設！"
+  },
+  "remoteAddress": {
+    "message": "遠端設定伺服器"
+  },
+  "updateFromRemote": {
+    "message": "從遠端伺服器更新"
+  },
+  "popularOSs": {
+    "message": "彈出介面當中顯示的常用作業系統"
+  },
+  "popularBrowsers": {
+    "message": "彈出介面當中顯示的常用瀏覽器"
+  }
+}
