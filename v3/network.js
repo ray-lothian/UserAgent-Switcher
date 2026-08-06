@@ -221,53 +221,51 @@ class Network {
       }
     }
 
-    if ((prefs.mode === 'blacklist' || prefs.mode === 'custom') && addRules.length) {
-      if (prefs.protected.length) {
-        let n = this.#PROTECTED_INDEX;
-        let rule = '';
-        const rules = new Map();
-        for (const c of prefs.protected) {
-          const regex = c.replace(/[.*+?^${}()|[\]\\/]/g, '\\$&');
-          const v = await chrome.declarativeNetRequest.isRegexSupported({
-            regex
+    if (addRules.length && prefs.protected.length) {
+      let n = this.#PROTECTED_INDEX;
+      let rule = '';
+      const rules = new Map();
+      for (const c of prefs.protected) {
+        const regex = c.replace(/[.*+?^${}()|[\]\\/]/g, '\\$&');
+        const v = await chrome.declarativeNetRequest.isRegexSupported({
+          regex
+        });
+        if (v.isSupported) {
+          const tmp = rule + (rule !== '' ? '|' : '') + regex;
+          const w = await chrome.declarativeNetRequest.isRegexSupported({
+            regex: tmp
           });
-          if (v.isSupported) {
-            const tmp = rule + (rule !== '' ? '|' : '') + regex;
-            const w = await chrome.declarativeNetRequest.isRegexSupported({
-              regex: tmp
-            });
-            if (w.isSupported) {
-              rule = tmp;
-            }
-            else {
-              rules.set(n, rule);
-              rule = regex;
-              n += 1;
-            }
+          if (w.isSupported) {
+            rule = tmp;
           }
           else {
-            console.error('IGNORING_PROTECTED', c, v.reason);
+            rules.set(n, rule);
+            rule = regex;
+            n += 1;
           }
         }
-        if (rule !== '') {
-          rules.set(n, rule);
+        else {
+          console.error('IGNORING_PROTECTED', c, v.reason);
         }
-        for (const [id, regexFilter] of rules.entries()) {
-          if (id >= this.#PROTECTED_INDEX + this.#MAX_PROTECTED_RULES) {
-            break;
+      }
+      if (rule !== '') {
+        rules.set(n, rule);
+      }
+      for (const [id, regexFilter] of rules.entries()) {
+        if (id >= this.#PROTECTED_INDEX + this.#MAX_PROTECTED_RULES) {
+          break;
+        }
+        addRules.push({
+          id,
+          'priority': 4, // to discard all headers even set-cookie
+          'action': {
+            'type': 'allowAllRequests' // only allowAllRequests can bypass set-cookie header
+          },
+          'condition': {
+            'resourceTypes': ['main_frame', 'sub_frame'],
+            regexFilter
           }
-          addRules.push({
-            id,
-            'priority': 4, // to discard all headers even set-cookie
-            'action': {
-              'type': 'allowAllRequests' // only allowAllRequests can bypass set-cookie header
-            },
-            'condition': {
-              'resourceTypes': ['main_frame', 'sub_frame'],
-              regexFilter
-            }
-          });
-        }
+        });
       }
     }
 
