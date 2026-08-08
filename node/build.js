@@ -25,16 +25,24 @@ const write = ({name, content}, callback) => fs.writeFile('../v3/data/popup/brow
   setTimeout(callback, 0);
 });
 
-// reduce total number to < 400 entries while keeping the last 10 percent of uas
-const reduce = (arr, length = 400) => {
+// reduce the total number of entries to < length while keeping a varied
+// selection of older user agents and a larger share of the newest ones
+// (newer user agents sit at the end of each list)
+const reduce = (arr, length = 400, newest = 0.5) => {
+  if (arr.length <= length) {
+    return arr;
+  }
+  const keepNew = Math.min(Math.round(length * newest), arr.length);
+  const older = arr.slice(0, arr.length - keepNew);
+  const target = Math.max(length - keepNew, 1);
   let pos = 1;
-  while (arr.length > length) {
-    arr.splice(pos, 1);
+  while (older.length > target) {
+    older.splice(pos, 1);
     pos += 1;
-    pos = pos % (arr.length - Math.round(length / 10));
+    pos = pos % Math.max(older.length - Math.round(target / 10), 1);
   }
 
-  return arr;
+  return older.concat(arr.slice(arr.length - keepNew));
 };
 
 fs.readdir('../v3/data/popup/browsers/', (err, files) => {
