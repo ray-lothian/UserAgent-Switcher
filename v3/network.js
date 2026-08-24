@@ -43,10 +43,25 @@ class Network {
     const dps = await this.agent.prefs();
 
     this.#scope = {all: false, include: [], exclude: []};
-    await this.dnet(dps);
+    try {
+      await this.dnet(dps);
+    }
+    catch (e) {
+      // updateDynamicRules is atomic; stale dynamic rules might still be active
+      console.error('[network] dynamic rules failed', e);
+    }
 
-    const sps = await chrome.storage.session.get(null);
-    const perTab = await this.snet(sps);
+    let perTab = 0;
+    try {
+      const sps = await chrome.storage.session.get(null);
+      perTab = await this.snet(sps);
+    }
+    catch (e) {
+      // commit failed atomically -> old per-tab rules may still be active;
+      // keep global injection so those tabs never run without it
+      perTab = 1;
+      console.error('[network] session rules failed', e);
+    }
 
     await this.page(perTab);
   }
@@ -370,8 +385,33 @@ class Network {
 
     return addRules.length;
   }
+  // registers all three content scripts; rejects on the first failure
+  async #register(props) {
+    const scripts = [{
+      'id': 'main',
+      'js': ['/data/inject/main.js'],
+      'world': 'MAIN'
+    }, {
+      'id': 'override',
+      'js': ['/data/inject/override.js'],
+      'world': 'MAIN'
+    }, {
+      'id': 'isolated',
+      'js': ['/data/inject/isolated.js'],
+      'world': 'ISOLATED'
+    }];
+    // since order is important, do not register simultaneously
+    for (const script of scripts) {
+      await chrome.scripting.registerContentScripts([{
+        ...script,
+        ...props
+      }]);
+    }
+  }
   async page(perTab = 0) {
-    await chrome.scripting.unregisterContentScripts();
+    await chrome.scripting.unregisterContentScripts().catch(e => {
+      console.error('[injection] unregister failed', e);
+    });
 
     const {all, include, exclude} = this.#scope;
     const uniq = [...new Set(include)];
@@ -413,24 +453,27 @@ class Network {
       props
     });
 
-    // since order is important, do not register simultaneously
-    await chrome.scripting.registerContentScripts([{
-      'id': 'main',
-      'js': ['/data/inject/main.js'],
-      'world': 'MAIN',
-      ...props
-    }]);
-    await chrome.scripting.registerContentScripts([{
-      'id': 'override',
-      'js': ['/data/inject/override.js'],
-      'world': 'MAIN',
-      ...props
-    }]);
-    await chrome.scripting.registerContentScripts([{
-      'id': 'isolated',
-      'js': ['/data/inject/isolated.js'],
-      'world': 'ISOLATED',
-      ...props
-    }]);
+    try {
+      await this.#register(props);
+    }
+    catch (e) {
+      // the API validates inputs only at call-time and rejects the whole
+      // batch; wipe any partial registration before recovering
+      console.error('[injection] registration failed', props, e);
+      await chrome.scripting.unregisterContentScripts().catch(() => {});
+
+      // extra patterns or exclusions might be what got rejected; retry with
+      // plain all-urls scope (over-injection is harmless, under-injection is
+      // not: spoofed pages must never run without the scripts)
+      const safe = {...props, 'matches': ['*://*/*']};
+      delete safe.excludeMatches;
+      try {
+        await this.#register(safe);
+        console.warn('[injection] recovered using all-urls scope', safe);
+      }
+      catch (err) {
+        console.error('[injection] unusable; injection is disabled', err);
+      }
+    }
   }
 }
