@@ -10,6 +10,19 @@ class Network {
   #MAX_PERTAB_RULES = 200;
   #ISFARARI = location.protocol.startsWith('safari-');
 
+  // where the network layer actually changes the user-agent; the content
+  // scripts must be registered on exactly the same scope
+  #scope = {all: false, include: [], exclude: []};
+
+  // converts a domain into a content-script match pattern
+  #pattern(domain) {
+    const h = String(domain).trim().toLowerCase()
+      .replace(/^\*\./, '')
+      .replace(/\.$/, '')
+      .split(':')[0];
+    return /^[a-z0-9]([a-z0-9.-]*[a-z0-9])?$/.test(h) ? '*://*.' + h + '/*' : '';
+  }
+
   // Safari does not support "object", "csp_report", "webtransport", "webbundle"
   #RESOURCETYPE = Object.values(chrome.declarativeNetRequest.ResourceType || [
     'main_frame', 'sub_frame', 'stylesheet', 'script', 'image', 'font', 'xmlhttprequest', 'ping',
@@ -17,16 +30,16 @@ class Network {
   ]);
 
   async configure() {
-    let size = 0;
-
     this.agent = new Agent();
     const dps = await this.agent.prefs();
-    size += await this.dnet(dps);
+
+    this.#scope = {all: false, include: [], exclude: []};
+    await this.dnet(dps);
 
     const sps = await chrome.storage.session.get(null);
-    size += await this.snet(sps);
+    const perTab = await this.snet(sps);
 
-    await this.page(size);
+    await this.page(perTab);
   }
   action(o, ...types) {
     const r = {
@@ -109,6 +122,8 @@ class Network {
     o.type = 'user';
 
     if (prefs.ua && prefs.mode === 'blacklist') {
+      this.#scope.all = true;
+      this.#scope.exclude = prefs.blacklist;
       const r1 = {
         'id': 1,
         'priority': 1,
@@ -131,6 +146,7 @@ class Network {
       addRules.push(r1, r2);
     }
     else if (prefs.ua && prefs.mode === 'whitelist' && prefs.whitelist.length) {
+      this.#scope.include = prefs.whitelist;
       addRules.push({
         'id': 1,
         'priority': 1,
@@ -159,6 +175,7 @@ class Network {
     }
     else if (prefs.mode === 'custom') {
       if (prefs.custom['*'] || prefs.ua) {
+      this.#scope.all = true;
         const ua = Array.isArray(prefs.custom['*']) ?
           prefs.custom['*'][Math.floor(Math.random() * prefs.custom['*'].length)] :
           (prefs.custom['*'] || prefs.ua);
@@ -193,6 +210,7 @@ class Network {
         o.type = 'custom';
 
         const domains = hosts.split(/\s*,\s*/);
+        this.#scope.include.push(...domains);
 
         addRules.push({
           'id': n,
@@ -275,6 +293,12 @@ class Network {
       removeRuleIds
     });
 
+    console.info('[network] dynamic rules', {
+      mode: prefs.mode,
+      rules: addRules,
+      scope: {...this.#scope}
+    });
+
     return addRules.length;
   }
   async snet(prefs) {
@@ -283,6 +307,9 @@ class Network {
 
     let m = this.#PERTAB_INDEX;
     for (const [key, {ua}] of Object.entries(prefs)) {
+      if (!ua) {
+        continue;
+      }
       const o = this.agent.parse(ua);
       o.type = 'per-tab';
 
@@ -319,37 +346,74 @@ class Network {
       removeRuleIds
     }).then(() => addRules.length);
 
+    console.info('[network] per-tab session rules', {
+      rules: addRules,
+      tabs: addRules.filter(r => r.condition.tabIds).flatMap(r => r.condition.tabIds)
+    });
+
     return addRules.length;
   }
-  async page(size) {
+  async page(perTab = 0) {
     await chrome.scripting.unregisterContentScripts();
 
-    if (size) {
-      const props = {
-        'matches': ['*://*/*'],
-        'allFrames': true,
-        'matchOriginAsFallback': true,
-        'runAt': 'document_start'
-      };
-      // since order is important, do not register simultaneously
-      await chrome.scripting.registerContentScripts([{
-        'id': 'main',
-        'js': ['/data/inject/main.js'],
-        'world': 'MAIN',
-        ...props
-      }]);
-      await chrome.scripting.registerContentScripts([{
-        'id': 'override',
-        'js': ['/data/inject/override.js'],
-        'world': 'MAIN',
-        ...props
-      }]);
-      await chrome.scripting.registerContentScripts([{
-        'id': 'isolated',
-        'js': ['/data/inject/isolated.js'],
-        'world': 'ISOLATED',
-        ...props
-      }]);
+    const {all, include, exclude} = this.#scope;
+    const uniq = [...new Set(include)];
+    const patterns = uniq.map(d => this.#pattern(d)).filter(Boolean);
+    const excluded = [...new Set(exclude)].map(d => this.#pattern(d)).filter(Boolean);
+
+    // per-tab rules are bound to tabIds which content-script matching cannot
+    // express; unparsable hosts and oversized lists also fall back to all-urls,
+    // otherwise some spoofed pages would run without injection (out of sync)
+    const forcedAll = perTab > 0 ||
+      (!all && uniq.length !== 0 && patterns.length !== uniq.length) ||
+      patterns.length > 50;
+
+    if (!all && !forcedAll && patterns.length === 0) {
+      console.info('[injection] disabled', {
+        reason: 'no active network rules'
+      });
+      return;
     }
+
+    const props = {
+      'allFrames': true,
+      'matchOriginAsFallback': true,
+      'runAt': 'document_start'
+    };
+    if (all || forcedAll) {
+      props.matches = ['*://*/*'];
+      if (all && excluded.length && perTab === 0) {
+        props.excludeMatches = excluded;
+      }
+    }
+    else {
+      props.matches = patterns;
+    }
+
+    console.info('[injection] content scripts', {
+      perTab,
+      forcedAll: forcedAll && !all,
+      props
+    });
+
+    // since order is important, do not register simultaneously
+    await chrome.scripting.registerContentScripts([{
+      'id': 'main',
+      'js': ['/data/inject/main.js'],
+      'world': 'MAIN',
+      ...props
+    }]);
+    await chrome.scripting.registerContentScripts([{
+      'id': 'override',
+      'js': ['/data/inject/override.js'],
+      'world': 'MAIN',
+      ...props
+    }]);
+    await chrome.scripting.registerContentScripts([{
+      'id': 'isolated',
+      'js': ['/data/inject/isolated.js'],
+      'world': 'ISOLATED',
+      ...props
+    }]);
   }
 }
