@@ -14,13 +14,22 @@ class Network {
   // scripts must be registered on exactly the same scope
   #scope = {all: false, include: [], exclude: []};
 
-  // converts a domain into a content-script match pattern
-  #pattern(domain) {
-    const h = String(domain).trim().toLowerCase()
+  // normalizes user input into a DNR-compatible hostname ('' when invalid);
+  // both the network rules and the injection scope must consume the exact
+  // same normalized values to stay in sync
+  #normalizeHost(host) {
+    const h = String(host).trim().toLowerCase()
+      .replace(/^https?:\/\//, '')
       .replace(/^\*\./, '')
-      .replace(/\.$/, '')
-      .split(':')[0];
-    return /^[a-z0-9]([a-z0-9.-]*[a-z0-9])?$/.test(h) ? '*://*.' + h + '/*' : '';
+      .split('/')[0]
+      .split(':')[0]
+      .replace(/\.$/, '');
+    return /^[a-z0-9]([a-z0-9.-]*[a-z0-9])?$/.test(h) ? h : '';
+  }
+
+  // converts an already normalized hostname into a match pattern
+  #pattern(host) {
+    return '*://*.' + host + '/*';
   }
 
   // Safari does not support "object", "csp_report", "webtransport", "webbundle"
@@ -123,7 +132,8 @@ class Network {
 
     if (prefs.ua && prefs.mode === 'blacklist') {
       this.#scope.all = true;
-      this.#scope.exclude = prefs.blacklist;
+      const blacklist = prefs.blacklist.map(h => this.#normalizeHost(h)).filter(Boolean);
+      this.#scope.exclude = blacklist;
       const r1 = {
         'id': 1,
         'priority': 1,
@@ -140,42 +150,45 @@ class Network {
           'resourceTypes': ['main_frame', 'sub_frame']
         }
       };
-      if (prefs.blacklist.length) {
-        r1.condition.excludedRequestDomains = r2.condition.excludedRequestDomains = prefs.blacklist;
+      if (blacklist.length) {
+        r1.condition.excludedRequestDomains = r2.condition.excludedRequestDomains = blacklist;
       }
       addRules.push(r1, r2);
     }
-    else if (prefs.ua && prefs.mode === 'whitelist' && prefs.whitelist.length) {
-      this.#scope.include = prefs.whitelist;
-      addRules.push({
-        'id': 1,
-        'priority': 1,
-        'action': this.action(o, 'net'),
-        'condition': {
-          'initiatorDomains': prefs.whitelist,
-          'excludedResourceTypes': ['main_frame', 'sub_frame']
-        }
-      }, {
-        'id': 2,
-        'priority': 1,
-        'action': this.action(o, 'net'),
-        'condition': {
-          'requestDomains': prefs.whitelist,
-          'resourceTypes': ['main_frame', 'sub_frame']
-        }
-      }, {
-        'id': 3,
-        'priority': 1,
-        'action': this.action(o, 'net', 'js'),
-        'condition': {
-          'requestDomains': prefs.whitelist,
-          'resourceTypes': ['main_frame', 'sub_frame']
-        }
-      });
+    else if (prefs.ua && prefs.mode === 'whitelist') {
+      const whitelist = prefs.whitelist.map(h => this.#normalizeHost(h)).filter(Boolean);
+      this.#scope.include = whitelist;
+      if (whitelist.length) {
+        addRules.push({
+          'id': 1,
+          'priority': 1,
+          'action': this.action(o, 'net'),
+          'condition': {
+            'initiatorDomains': whitelist,
+            'excludedResourceTypes': ['main_frame', 'sub_frame']
+          }
+        }, {
+          'id': 2,
+          'priority': 1,
+          'action': this.action(o, 'net'),
+          'condition': {
+            'requestDomains': whitelist,
+            'resourceTypes': ['main_frame', 'sub_frame']
+          }
+        }, {
+          'id': 3,
+          'priority': 1,
+          'action': this.action(o, 'net', 'js'),
+          'condition': {
+            'requestDomains': whitelist,
+            'resourceTypes': ['main_frame', 'sub_frame']
+          }
+        });
+      }
     }
     else if (prefs.mode === 'custom') {
       if (prefs.custom['*'] || prefs.ua) {
-      this.#scope.all = true;
+        this.#scope.all = true;
         const ua = Array.isArray(prefs.custom['*']) ?
           prefs.custom['*'][Math.floor(Math.random() * prefs.custom['*'].length)] :
           (prefs.custom['*'] || prefs.ua);
@@ -209,7 +222,11 @@ class Network {
         const o = this.agent.parse(ua);
         o.type = 'custom';
 
-        const domains = hosts.split(/\s*,\s*/);
+        const domains = hosts.split(/\s*,\s*/).map(h => this.#normalizeHost(h)).filter(Boolean);
+        if (domains.length === 0) {
+          console.error('IGNORING_CUSTOM', hosts, 'no valid hostname');
+          continue;
+        }
         this.#scope.include.push(...domains);
 
         addRules.push({
