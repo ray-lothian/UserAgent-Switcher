@@ -325,11 +325,16 @@ class Network {
       removeRuleIds
     });
 
-    console.info('[network] dynamic rules', {
-      mode: prefs.mode,
-      rules: addRules,
-      scope: {...this.#scope}
-    });
+    if (addRules.length) {
+      console.info('[network] dynamic rules', {
+        mode: prefs.mode,
+        rules: addRules,
+        scope: {...this.#scope}
+      });
+    }
+    else {
+      console.info('[network] dynamic rules', 'disabled');
+    }
 
     return addRules.length;
   }
@@ -378,10 +383,15 @@ class Network {
       removeRuleIds
     }).then(() => addRules.length);
 
-    console.info('[network] per-tab session rules', {
-      rules: addRules,
-      tabs: addRules.filter(r => r.condition.tabIds).flatMap(r => r.condition.tabIds)
-    });
+    if (addRules.length) {
+      console.info('[network] per-tab session rules', {
+        rules: addRules,
+        tabs: addRules.filter(r => r.condition.tabIds).flatMap(r => r.condition.tabIds)
+      });
+    }
+    else {
+      console.info('[network] per-tab session rules', 'disabled');
+    }
 
     return addRules.length;
   }
@@ -426,9 +436,7 @@ class Network {
       patterns.length > 50;
 
     if (!all && !forcedAll && patterns.length === 0) {
-      console.info('[injection] disabled', {
-        reason: 'no active network rules'
-      });
+      console.info('[injection] content scripts', 'disabled');
       return;
     }
 

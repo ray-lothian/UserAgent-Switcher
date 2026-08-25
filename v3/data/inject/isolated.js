@@ -11,7 +11,7 @@ const override = reason => {
     detail
   }));
 
-  if (self.top === top) {
+  if (window === window.top) {
     if (port.dataset.str) {
       chrome.runtime.sendMessage({
         method: 'tab-spoofing',
@@ -39,10 +39,8 @@ else { // iframe[sandbox]
           hierarchy.unshift(n);
         }
       }
-      console.log(p);
       if (p.port) {
         port = p.port;
-        console.log(port);
         if (port.dataset.disabled !== 'true') {
           port.dispatchEvent(new CustomEvent('register', {
             detail: {
@@ -67,10 +65,17 @@ else { // iframe[sandbox]
 }
 
 if (port && port.dataset) {
-  if (port.dataset.str) {
-    if (port.dataset.disabled !== 'true') {
-      override('normal');
+  // on per-tab only UA set, all tabs get injected, but only the spoofed tab
+  // has "port.dataset.str"; others are intentionally disabled. bail out for
+  // any disabled context (top or frame) so the async path never falsely logs
+  // "[user-agent leaked]"
+  if (port.dataset.disabled === 'true') {
+    if (self === self.top) {
+      console.info('[User-Agent Switcher and Manager]', 'disabled on this tab');
     }
+  }
+  else if (port.dataset.str) {
+    override('normal');
   }
   // sub-frames and cross-origin frames
   else {
@@ -96,7 +101,11 @@ if (port && port.dataset) {
         }
       }
       // Firefox -> iframe[about:blank]
-      if (!port.dataset.str) {
+      if (port.dataset.disabled === 'true') {
+        // parent context is intentionally disabled (e.g. per-tab only UA);
+        // nothing to spoof here, so do not fall back to the async path
+      }
+      else if (!port.dataset.str) {
         throw Error('UA_SET_FAILED');
       }
     }

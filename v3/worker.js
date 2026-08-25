@@ -20,6 +20,10 @@ chrome.storage.onChanged.addListener((ps, type) => {
 chrome.runtime.onStartup.addListener(() => network.configure());
 chrome.runtime.onInstalled.addListener(() => network.configure());
 
+chrome.tabs.onRemoved.addListener(tabId => {
+  chrome.storage.session.remove(String(tabId));
+});
+
 chrome.runtime.onMessage.addListener((request, sender, response) => {
   if (request.method === 'get-port-string') {
     // wait for the first real web request and then resolve the UA

@@ -220,6 +220,7 @@ select {
   color: var(--bg-color);
   background-color: #e6850b;
 }
+[data-cmd="tab"],
 [data-cmd="reload"],
 [data-cmd="options"],
 [data-cmd="refresh"] {

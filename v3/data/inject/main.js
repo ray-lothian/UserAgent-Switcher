@@ -35,7 +35,6 @@
         break;
       }
     }
-
     if (port.dataset.str) {
       port.prepare();
     }
