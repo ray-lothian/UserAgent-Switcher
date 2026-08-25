@@ -23,8 +23,11 @@ const override = reason => {
 };
 
 if (port) {
-  port.dataset.id = id;
-  port.remove();
+  // ignore XML documents
+  if (port.dataset) {
+    port.dataset.id = id;
+    port.remove();
+  }
 }
 else { // iframe[sandbox]
   try {
@@ -63,7 +66,7 @@ else { // iframe[sandbox]
   }
 }
 
-if (port) {
+if (port && port.dataset) {
   if (port.dataset.str) {
     if (port.dataset.disabled !== 'true') {
       override('normal');

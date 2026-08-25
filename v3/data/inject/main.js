@@ -1,4 +1,4 @@
-console.log('main.js', location.href);
+// console.log('main.js', location.href);
 
 {
   const port = document.createElement('span');
@@ -18,31 +18,35 @@ console.log('main.js', location.href);
 
   document.documentElement.append(port);
 
-  // find user-agent data
-  for (const entry of performance.getEntriesByType('navigation')) {
-    for (const timing of entry.serverTiming || []) {
-      if (timing.name === 'uasw-json-data') {
-        port.dataset.str = timing.description;
+  // XML document -> https://www.w3schools.com/xml/note.xml
+  if (port.dataset) {
+    // find user-agent data
+    for (const entry of performance.getEntriesByType('navigation')) {
+      for (const timing of entry.serverTiming || []) {
+        if (timing.name === 'uasw-json-data') {
+          port.dataset.str = timing.description;
+        }
       }
     }
-  }
-  // cached
-  for (const entry of performance.getEntriesByType('navigation')) {
-    if (entry.deliveryType === 'cache-storage') {
-      port.dataset.cached = true;
-      break;
+    // cached
+    for (const entry of performance.getEntriesByType('navigation')) {
+      if (entry.deliveryType === 'cache-storage') {
+        port.dataset.cached = true;
+        break;
+      }
+    }
+
+    if (port.dataset.str) {
+      port.prepare();
+    }
+    else {
+      // extension is not active for this tab or top-level request is from service worker
+      if (self.top === self) {
+        if (port.dataset.cached !== 'true') {
+          port.dataset.disabled = true;
+        }
+      }
     }
   }
 
-  if (port.dataset.str) {
-    port.prepare();
-  }
-  else {
-    // extension is not active for this tab or top-level request is from service worker
-    if (self.top === self) {
-      if (port.dataset.cached !== 'true') {
-        port.dataset.disabled = true;
-      }
-    }
-  }
 }
