@@ -48,5 +48,10 @@
       }
     }
   }
-
+  else {
+    console.info(
+      '[User-Agent Switcher and Manager] Cannot spoof this context: This might be an XML document',
+      location.href
+    );
+  }
 }

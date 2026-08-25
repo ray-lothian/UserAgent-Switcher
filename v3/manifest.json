@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "__MSG_extensionName__",
+  "name": "User-Agent Switcher and Manager",
   "version": "0.6.8",
   "default_locale": "en",
   "description": "__MSG_extensionDescription__",
