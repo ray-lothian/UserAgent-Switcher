@@ -38,13 +38,44 @@ class Network {
     'media', 'websocket', 'other'
   ]);
 
-  async configure() {
-    this.agent = new Agent();
-    const dps = await this.agent.prefs();
+  #busy = false;
+  #pending = false;
+  #current = Promise.resolve();
+
+  // concurrent requests never interleave: while one run is in-flight the
+  // others collapse into a single rerun that applies with fresh prefs once
+  // the run settles
+  configure() {
+    if (this.#busy) {
+      this.#pending = true;
+      return this.#current;
+    }
+    this.#busy = true;
+    this.#current = this.#drain();
+    return this.#current;
+  }
+  async #drain() {
+    while (true) {
+      this.#pending = false;
+      try {
+        await this.#configure();
+      }
+      catch (e) {
+        console.error('[network] configure failed', e);
+      }
+      if (!this.#pending) {
+        break;
+      }
+    }
+    this.#busy = false;
+  }
+  async #configure() {
+    const agent = new Agent();
+    const dps = await agent.prefs();
 
     this.#scope = {all: false, include: [], exclude: []};
     try {
-      await this.dnet(dps);
+      await this.dnet(agent, dps);
     }
     catch (e) {
       // updateDynamicRules is atomic; stale dynamic rules might still be active
@@ -54,7 +85,7 @@ class Network {
     let perTab = 0;
     try {
       const sps = await chrome.storage.session.get(null);
-      perTab = await this.snet(sps);
+      perTab = await this.snet(agent, sps);
     }
     catch (e) {
       // commit failed atomically -> old per-tab rules may still be active;
@@ -139,10 +170,10 @@ class Network {
     }
     return r;
   }
-  async dnet(prefs) {
+  async dnet(agent, prefs) {
     const addRules = [];
 
-    const o = this.agent.parse(prefs.ua);
+    const o = agent.parse(prefs.ua);
     o.type = 'user';
 
     if (prefs.ua && prefs.mode === 'blacklist') {
@@ -208,7 +239,7 @@ class Network {
           prefs.custom['*'][Math.floor(Math.random() * prefs.custom['*'].length)] :
           (prefs.custom['*'] || prefs.ua);
 
-        const o = this.agent.parse(ua);
+        const o = agent.parse(ua);
         o.type = prefs.custom['*'] ? '*' : 'user';
 
         addRules.push({
@@ -234,7 +265,7 @@ class Network {
         }
 
         const ua = Array.isArray(value) ? value[Math.floor(Math.random() * value.length)] : value;
-        const o = this.agent.parse(ua);
+        const o = agent.parse(ua);
         o.type = 'custom';
 
         const domains = hosts.split(/\s*,\s*/).map(h => this.#normalizeHost(h)).filter(Boolean);
@@ -338,7 +369,7 @@ class Network {
 
     return addRules.length;
   }
-  async snet(prefs) {
+  async snet(agent, prefs) {
     // per-tab rules
     const addRules = [];
 
@@ -347,7 +378,7 @@ class Network {
       if (!ua) {
         continue;
       }
-      const o = this.agent.parse(ua);
+      const o = agent.parse(ua);
       o.type = 'per-tab';
 
       const tabIds = key.split(',').map(Number);

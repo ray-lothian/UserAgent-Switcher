@@ -26,11 +26,12 @@ class Agent {
   parse(s = '') {
     // log('ua.parse is called', s);
 
-    if (this.#prefs.parser[s]) {
+    const parser = this.#prefs.parser || {};
+    if (parser[s]) {
       // log('ua.parse is resolved using parser');
       return Object.assign({
         userAgent: s
-      }, this.#prefs.parser[s]);
+      }, parser[s]);
     }
 
     // build ua string from the navigator object or from a custom UAParser;

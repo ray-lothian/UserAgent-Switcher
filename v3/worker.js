@@ -17,8 +17,17 @@ chrome.storage.onChanged.addListener((ps, type) => {
     network.configure();
   }
 });
-chrome.runtime.onStartup.addListener(() => network.configure());
-chrome.runtime.onInstalled.addListener(() => network.configure());
+{
+  const once = () => {
+    if (once.done) {
+      return;
+    }
+    once.done = true;
+    network.configure();
+  };
+  chrome.runtime.onStartup.addListener(once);
+  chrome.runtime.onInstalled.addListener(once);
+}
 
 chrome.tabs.onRemoved.addListener(tabId => {
   chrome.storage.session.remove(String(tabId));
