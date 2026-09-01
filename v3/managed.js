@@ -41,7 +41,6 @@
         }
         else {
           delete rps.json;
-          console.log(Object.keys(rps).length, rps);
           // to support direct configuration without providing JSON
           if (Object.keys(rps).length) {
             configure(rps);

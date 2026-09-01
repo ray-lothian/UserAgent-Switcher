@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "User-Agent Switcher and Manager",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "default_locale": "en",
   "description": "__MSG_extensionDescription__",
   "permissions": [
