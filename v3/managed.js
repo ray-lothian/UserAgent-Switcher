@@ -1,10 +1,18 @@
 // update preferences from the managed storage or an external server
 {
   const configure = j => chrome.storage.local.get({
-    'json-guid': 'na'
+    'json-guid': 'na',
+    'remote-address': ''
   }, prefs => {
     if (prefs['json-guid'] !== j['json-guid'] || j['json-forced']) {
       if (j['json-guid']) {
+        if ('remote-address' in j) {
+          // Prevent Firefox from looping when managed storage set all preferences
+          if (prefs['remote-address'] === j['remote-address']) {
+            delete j['remote-address'];
+          }
+        }
+
         chrome.storage.local.set(j);
         console.info('preferences are updated by an admin');
       }
