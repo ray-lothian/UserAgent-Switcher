@@ -20,12 +20,15 @@
         console.info('update from server is rejected: no "json-guid" key.');
       }
     }
+    else if (prefs['json-guid'] === j['json-guid']) {
+      console.info('update from server is rejected: up-to-date');
+    }
   });
 
   const run = () => {
-    chrome.storage.managed.get({
-      'json': ''
-    }, rps => {
+    chrome.storage.managed.get(null, rps => {
+      rps = rps || {};
+
       if (!chrome.runtime.lastError) {
         if (rps.json) {
           try {
@@ -34,6 +37,14 @@
           }
           catch (e) {
             console.error('MANAGED_JSON_PARSE_ERROR', e);
+          }
+        }
+        else {
+          delete rps.json;
+          console.log(Object.keys(rps).length, rps);
+          // to support direct configuration without providing JSON
+          if (Object.keys(rps).length) {
+            configure(rps);
           }
         }
       }
@@ -51,8 +62,10 @@
   };
 
   chrome.storage.onChanged.addListener((ps, type) => {
-    if (type === 'managed' && ps.json) {
-      run();
+    if (type === 'managed') {
+      if (ps.json || ps.ua) {
+        run();
+      }
     }
     if (type === 'local' && ps['remote-address']) {
       run();
