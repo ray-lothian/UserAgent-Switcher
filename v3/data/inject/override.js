@@ -224,6 +224,48 @@
     return (m ? m[1] : (p?.device?.model || '')).split(/\s+Build\b/)[0].trim();
   };
 
+  // ------------------------------------------------------------------------
+  // prototype-level spoofing. Placing the accessors on the navigator's
+  // prototype (like the real browser does) closes the classic detection
+  // vector of reading the original value through the prototype descriptor:
+  // Object.getOwnPropertyDescriptor(Navigator.prototype, 'userAgent')
+  //   .get.call(navigator)
+  // must return the spoofed value, and the navigator instance must not carry
+  // any own property (real Chrome has none)
+  // ------------------------------------------------------------------------
+
+  // builds a named accessor whose name, arity and toString() output match the
+  // native ones (verified on Chrome 154: "function get userAgent() {
+  // [native code] }")
+  const nativeGetter = (key, get) => {
+    const getter = {
+      [key]: function() {
+        return get(this);
+      }
+    }[key];
+    Object.defineProperty(getter, 'name', {
+      value: 'get ' + key,
+      configurable: true
+    });
+    getter.toString = () => `function get ${key}() { [native code] }`;
+    return getter;
+  };
+
+  // defines the accessor on the navigator's prototype and falls back to the
+  // instance when the prototype is frozen (or inaccessible, e.g. Firefox
+  // Xray wrappers) so spoofing never silently fails
+  const define = (nav, key, get) => {
+    const getter = nativeGetter(key, get);
+    const proto = Object.getPrototypeOf(nav);
+    try {
+      proto.__defineGetter__(key, getter);
+    }
+    catch (e) {
+      console.info('[User-Agent Switcher and Manager]', 'prototype define failed for', key, e);
+      nav.__defineGetter__(key, getter);
+    }
+  };
+
   const override = (nav, reason, win = null) => {
     if (port.dataset.ready !== 'true') {
       port.prepare();
@@ -343,7 +385,18 @@
           value: 'NavigatorUAData'
         });
 
-        nav.__defineGetter__('userAgentData', () => {
+        // native method/constructor toString() outputs (verified on
+        // Chrome 154); the methods' name, arity and the constructor's
+        // .prototype presence already match
+        for (const [fn, source] of [
+          [v.toJSON, 'function toJSON() { [native code] }'],
+          [v.getHighEntropyValues, 'function getHighEntropyValues() { [native code] }'],
+          [v.constructor, 'function NavigatorUAData() { [native code] }']
+        ]) {
+          fn.toString = () => source;
+        }
+
+        define(nav, 'userAgentData', () => {
           return v;
         });
       }
@@ -357,7 +410,7 @@
           delete Object.getPrototypeOf(nav)[key];
         }
         else {
-          nav.__defineGetter__(key, () => {
+          define(nav, key, () => {
             if (port.prefs[key] === 'empty') {
               return '';
             }
