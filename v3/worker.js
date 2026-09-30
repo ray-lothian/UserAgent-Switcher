@@ -75,19 +75,23 @@ chrome.runtime.onMessage.addListener((request, sender, response) => {
       }, ['requestHeaders']);
 
       // fully cached documents may never fire onSendHeaders; without this
-      // the requesting frame stays unspoofed forever (a real-UA leak)
+      // the requesting frame stays unspoofed forever (a real-UA leak).
+      // resolveFor mirrors the DNR scope so out-of-scope or protected URLs
+      // resolve to '' (real UA) instead of being spoofed here
       setTimeout(() => {
         chrome.webRequest.onSendHeaders.removeListener(observe);
         const agent = new Agent();
-        agent.prefs().then(dps => {
-          if (!dps.ua) {
-            reply('');
-            return;
-          }
-          const o = agent.parse(dps.ua);
-          o.type = 'worker';
-          reply(encodeURIComponent(JSON.stringify(o)));
-        });
+        chrome.tabs.get(sender.tab.id).then(({url}) => agent.resolveFor(url))
+          .then(str => {
+            if (!str) {
+              reply('');
+              return;
+            }
+            const o = agent.parse(str);
+            o.type = 'worker';
+            reply(encodeURIComponent(JSON.stringify(o)));
+          })
+          .catch(() => reply(''));
       }, 5000);
     }
     else {

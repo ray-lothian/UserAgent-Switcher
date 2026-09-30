@@ -192,8 +192,11 @@ class Network {
         'id': 2,
         'priority': 1,
         'action': this.action(o, 'js'),
+        // 'other' keeps the JS marker alive on service-worker-relayed
+        // navigations; the inner fetch() of a SW passthrough is classified
+        // as 'other' while its request headers are already spoofed by r1
         'condition': {
-          'resourceTypes': ['main_frame', 'sub_frame']
+          'resourceTypes': ['main_frame', 'sub_frame', 'other']
         }
       };
       if (blacklist.length) {
@@ -225,9 +228,10 @@ class Network {
           'id': 3,
           'priority': 1,
           'action': this.action(o, 'net', 'js'),
+          // 'other' keeps the JS marker alive on SW-relayed navigations
           'condition': {
             'requestDomains': whitelist,
-            'resourceTypes': ['main_frame', 'sub_frame']
+            'resourceTypes': ['main_frame', 'sub_frame', 'other']
           }
         });
       }
@@ -253,8 +257,9 @@ class Network {
           'id': 2,
           'priority': 1, // for custom ones to be called after
           'action': this.action(o, 'js'),
+          // 'other' keeps the JS marker alive on SW-relayed navigations
           'condition': {
-            'resourceTypes': ['main_frame', 'sub_frame']
+            'resourceTypes': ['main_frame', 'sub_frame', 'other']
           }
         });
       }
@@ -287,9 +292,10 @@ class Network {
           'id': n + 1,
           'priority': 2,
           'action': this.action(o, 'net', 'js'),
+          // 'other' keeps the JS marker alive on SW-relayed navigations
           'condition': {
             'requestDomains': domains,
-            'resourceTypes': ['main_frame', 'sub_frame']
+            'resourceTypes': ['main_frame', 'sub_frame', 'other']
           }
         });
 

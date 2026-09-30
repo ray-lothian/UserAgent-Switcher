@@ -22,6 +22,69 @@ class Agent {
     this.#prefs = dps;
     return dps;
   }
+
+  // JS-side mirror of the network layer's scope decision (network.js); the
+  // async fallback must not spoof pages the DNR rules leave alone, or we
+  // reintroduce the header/JS mismatch that Cloudflare flags. Keep the
+  // host normalization in lockstep with Network#normalizeHost
+  async resolveFor(url) {
+    const dps = await this.prefs();
+
+    let host = '';
+    try {
+      host = new URL(url).hostname;
+    }
+    catch (e) {
+      return '';
+    }
+
+    const matches = list => (list || []).some(d => {
+      const h = String(d).trim().toLowerCase()
+        .replace(/^https?:\/\//, '')
+        .replace(/^\*\./, '')
+        .split('/')[0]
+        .split(':')[0]
+        .replace(/\.$/, '');
+      return h && (host === h || host.endsWith('.' + h));
+    });
+    const pick = v => Array.isArray(v) ? v[Math.floor(Math.random() * v.length)] : v;
+
+    if (dps.mode === 'whitelist') {
+      return dps.ua && matches(dps.whitelist) ? dps.ua : '';
+    }
+    if (dps.mode === 'custom') {
+      // per-host entries override the global ua with their own value
+      // (network.js registers them at a higher priority)
+      for (const [hosts, value] of Object.entries(dps.custom || {})) {
+        if (hosts === '*' || hosts === '_') {
+          continue;
+        }
+        if (matches(hosts.split(/\s*,\s*/))) {
+          return pick(value);
+        }
+      }
+      // wildcard entry is the global override
+      if (dps.custom && dps.custom['*']) {
+        return pick(dps.custom['*']) || dps.ua || '';
+      }
+      // a global ua spoofs everything in this mode
+      return dps.ua || '';
+    }
+    // blacklist: nothing set -> no spoof; protected URLs stay real on the
+    // JS side too
+    if (!dps.ua) {
+      return '';
+    }
+    const regex = dps.protected
+      .filter(c => typeof c === 'string' && c !== '')
+      .map(c => c.replace(/[.*+?^${}()|[\]\\/]/g, '\\$&'))
+      .join('|');
+    if (regex && new RegExp(regex).test(url)) {
+      return '';
+    }
+    return dps.ua;
+  }
+
   parse(s = '') {
     // log('ua.parse is called', s);
 
