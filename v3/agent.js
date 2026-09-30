@@ -15,8 +15,7 @@ class Agent {
         'gstatic.com/recaptcha',
         'accounts.google.com',
         'accounts.youtube.com',
-        'gitlab.com/users/sign_in',
-        'challenges.cloudflare.com'
+        'gitlab.com/users/sign_in'
       ],
       'userAgentData': true
     });
@@ -136,6 +135,12 @@ class Agent {
         }
       });
     }
+
+    // The injected scripts must evaluate the same protected URLs as the
+    // network layer (network.js), so a protected page never ends up with a
+    // spoofed navigator on top of its real request headers
+    o.protected = this.#prefs.protected || [];
+
     return o;
   }
 }

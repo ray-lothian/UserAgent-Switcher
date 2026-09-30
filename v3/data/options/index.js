@@ -109,8 +109,7 @@ function restore() {
       'gstatic.com/recaptcha',
       'accounts.google.com',
       'accounts.youtube.com',
-      'gitlab.com/users/sign_in',
-      'challenges.cloudflare.com'
+      'gitlab.com/users/sign_in'
     ],
     'remote-address': '',
     'user-styling': '',

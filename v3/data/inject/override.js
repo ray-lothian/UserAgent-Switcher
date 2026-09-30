@@ -1,8 +1,41 @@
 // console.log('override.js');
 {
-  const override = (nav, reason) => {
+  // escapes the protected list exactly like the network layer does
+  // (network.js -> regexFilter), so both layers evaluate the same URLs; a
+  // mismatch would leave a page with real headers but a spoofed navigator,
+  // which is what Cloudflare compares during challenges
+  const protectedRegex = list => {
+    const regex = (list || [])
+      .filter(c => typeof c === 'string' && c !== '')
+      .map(c => c.replace(/[.*+?^${}()|[\]\\/]/g, '\\$&'))
+      .join('|');
+    return regex ? new RegExp(regex) : null;
+  };
+
+  const override = (nav, reason, win = null) => {
     if (port.dataset.ready !== 'true') {
       port.prepare();
+    }
+
+    // keep the JS layer consistent with the network layer: when the URL is
+    // protected, its request headers were already left untouched (DNR
+    // allowAllRequests), so the navigator must stay real as well
+    const regex = protectedRegex(port.prefs.protected);
+    if (regex) {
+      let href = location.href;
+      if (win) { // overriding a registered frame's navigator, not ours
+        try {
+          href = win.location.href;
+        }
+        catch (e) {}
+      }
+      if (regex.test(href)) {
+        if (!win) {
+          port.dataset.disabled = 'true';
+        }
+        console.info('[User-Agent Switcher and Manager]', 'skipped (protected URL)', href);
+        return;
+      }
     }
 
     try {
@@ -87,7 +120,7 @@
       delete port.prefs.userAgentDataBuilder;
 
       for (const key of Object.keys(port.prefs)) {
-        if (key === 'type') {
+        if (key === 'type' || key === 'protected') {
           continue;
         }
         if (port.prefs[key] === '[delete]') {
@@ -115,8 +148,8 @@
     }
     else {
       try {
-        const nav = port.ogs.get(e.detail.id).navigator;
-        override(nav, e.detail.reason);
+        const win = port.ogs.get(e.detail.id);
+        override(win.navigator, e.detail.reason, win);
       }
       catch (err) {
         console.info('[Failed to override]', err);
