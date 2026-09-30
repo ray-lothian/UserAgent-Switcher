@@ -1,7 +1,9 @@
 /* global cloneInto */
 
 // console.log('isolated.js');
-let port = self.port = document.getElementById('uas-port');
+const own = self.port = document.getElementById('uas-port');
+
+let port = own;
 
 const id = (Math.random() + 1).toString(36).substring(7);
 
@@ -110,14 +112,24 @@ if (port && port.dataset) {
       }
     }
     catch (e) { // cross-origin frame or when top-level is from service worker
-      console.info('[user-agent leaked]', 'using async method', location.href, port.dataset.cached);
+      console.info('[user-agent leaked]', 'using async method', location.href, own && own.dataset.cached);
 
       chrome.runtime.sendMessage({
         method: 'get-port-string',
-        cached: port.dataset.cached === 'true',
+        cached: !!own && own.dataset.cached === 'true',
         top: self.top === self
       }, str => {
-        if (str) {
+        if (!str) {
+          return;
+        }
+        // the payload must land on a port this frame can dispatch on: our
+        // own port, or the nearest reachable same-origin ancestor's port.
+        // Throwing here is what used to silently drop the payload and leak
+        // the real UA
+        if (own && own.dataset) {
+          port = own;
+        }
+        if (port && port.dataset) {
           port.dataset.str = str;
           override('async');
         }

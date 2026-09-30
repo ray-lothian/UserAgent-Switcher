@@ -35,8 +35,21 @@ chrome.tabs.onRemoved.addListener(tabId => {
 
 chrome.runtime.onMessage.addListener((request, sender, response) => {
   if (request.method === 'get-port-string') {
+    // opaque-origin frames may message without a usable tab
+    if (!sender.tab || !sender.tab.id) {
+      response('');
+      return true;
+    }
     // wait for the first real web request and then resolve the UA
     if (request.cached && request.top) {
+      let done = false;
+      const reply = str => {
+        if (!done) {
+          done = true;
+          response(str);
+        }
+      };
+
       const observe = d => {
         if (d.requestHeaders) {
           for (const o of d.requestHeaders) {
@@ -47,7 +60,7 @@ chrome.runtime.onMessage.addListener((request, sender, response) => {
               agent.prefs().then(() => {
                 const o = agent.parse(ua);
                 o.type = 'worker';
-                response(encodeURIComponent(JSON.stringify(o)));
+                reply(encodeURIComponent(JSON.stringify(o)));
               });
 
               break;
@@ -60,16 +73,38 @@ chrome.runtime.onMessage.addListener((request, sender, response) => {
         urls: ['*://*/*'],
         tabId: sender.tab.id
       }, ['requestHeaders']);
+
+      // fully cached documents may never fire onSendHeaders; without this
+      // the requesting frame stays unspoofed forever (a real-UA leak)
+      setTimeout(() => {
+        chrome.webRequest.onSendHeaders.removeListener(observe);
+        const agent = new Agent();
+        agent.prefs().then(dps => {
+          if (!dps.ua) {
+            reply('');
+            return;
+          }
+          const o = agent.parse(dps.ua);
+          o.type = 'worker';
+          reply(encodeURIComponent(JSON.stringify(o)));
+        });
+      }, 5000);
     }
     else {
       chrome.scripting.executeScript({
         target: {
           tabId: sender.tab.id
         },
-        func: () => self.port.dataset.disabled === 'true' ? '' : (self.port.dataset.str || '')
-      }).then(r => response(r[0].result));
+        func: () => {
+          try {
+            return self.port.dataset.disabled === 'true' ? '' : (self.port.dataset.str || '');
+          }
+          catch (e) {
+            return '';
+          }
+        }
+      }).then(r => response(r && r[0] ? r[0].result : ''), () => response(''));
     }
-
 
     return true;
   }
