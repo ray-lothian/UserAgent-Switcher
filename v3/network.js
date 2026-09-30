@@ -96,6 +96,126 @@ class Network {
 
     await this.page(perTab);
   }
+  // builds the Sec-CH-UA* header values from the parsed agent. The JS layer
+  // (data/inject/override.js) derives the navigator data from the exact same
+  // algorithms; keep the two implementations in sync or a page ends up with
+  // navigator data that disagrees with its own request headers
+  #clientHints(p, ua) {
+    // Chromium derives the GREASE brand and the brands order from the browser's
+    // major version (components/embedder_support/user_agent_utils.cc ->
+    // GetGreasedUserAgentBrandVersion + ShuffleBrandList); a hardcoded
+    // "Not/A)Brand";v="8" with a fixed order is a reliable detection signal.
+    // Verified against Chrome 154: major 154 -> "Not A(Brand";v="99" with order
+    // [Chromium, Google Chrome, Not A(Brand]
+    const greaseyChars = [' ', '(', ':', '-', '.', '/', ')', ';', '=', '?', '_'];
+    const greasedVersions = ['8', '99', '24'];
+    // the stable permutations Chromium uses to shuffle [grease, Chromium, brand]
+    const brandOrders = [
+      [0, 1, 2], [0, 2, 1], [1, 0, 2], [1, 2, 0], [2, 0, 1], [2, 1, 0]
+    ];
+    const greaseBrand = major => {
+      const m = Number(major);
+      if (Number.isInteger(m) && m >= 0) {
+        return {
+          brand: 'Not' + greaseyChars[m % greaseyChars.length] + 'A' +
+            greaseyChars[(m + 1) % greaseyChars.length] + 'Brand',
+          version: greasedVersions[m % greasedVersions.length]
+        };
+      }
+      // unknown major -> the legacy pair this extension always used
+      return {brand: 'Not/A)Brand', version: '8'};
+    };
+    // brands carry their commercial name, not the UA token; Android Chrome
+    // parses as "Mobile Chrome" but reports the regular "Google Chrome" brand
+    const brandName = name => {
+      if (name === 'Chrome' || name === 'Mobile Chrome') {
+        return 'Google Chrome';
+      }
+      if (name === 'Edge') {
+        return 'Microsoft Edge';
+      }
+      return name || 'Chromium';
+    };
+    const brandListOf = (p, ua) => {
+      const browser = p?.browser || {};
+      const name = browser.name || 'Chrome';
+      const major = String(browser.major || '');
+      const g = greaseBrand(major);
+      const m = Number(major);
+      const seed = Number.isInteger(m) && m >= 0 ? m : 0;
+
+      // the Chromium entry always reflects the Chromium core (the Chrome/
+      // token of the UA), not the browser brand's own version; Opera for
+      // example reports "Opera";v="105", "Chromium";v="119"
+      const chromeMajor = (ua || '').match(/Chrome\/(\d+)/)?.[1] || major;
+
+      let list = [{
+        brand: g.brand,
+        version: g.version
+      }, {
+        brand: 'Chromium',
+        version: chromeMajor
+      }, {
+        brand: brandName(name),
+        version: major
+      }];
+
+      // Edge and Opera prepend their own brand instead of shuffling; unbranded
+      // Chromium only reports two brands
+      if (name === 'Edge' || name === 'Opera') {
+        list = [list[2], list[1], list[0]];
+      }
+      else if (name === 'Chromium') {
+        list = [list[0], list[1]];
+        const shuffled = [];
+        [seed % 2, (seed + 1) % 2].forEach((pos, i) => shuffled[pos] = list[i]);
+        list = shuffled;
+      }
+      else {
+        const shuffled = [];
+        brandOrders[seed % brandOrders.length].forEach((pos, i) => shuffled[pos] = list[i]);
+        list = shuffled;
+      }
+      return list;
+    };
+    // real Chrome only reports the 8 platform values from the spec
+    // (https://wicg.github.io/ua-client-hints/#sec-ch-ua-platform); leaking
+    // "Ubuntu" instead of "Linux" or "Chromium OS" instead of "Chrome OS" is a
+    // giveaway
+    const platform = os => {
+      const name = (os?.name || '').toLowerCase();
+      if (name.includes('mac')) {
+        return 'macOS';
+      }
+      if (name.includes('windows')) {
+        return 'Windows';
+      }
+      if (name.includes('android')) {
+        return 'Android';
+      }
+      if (name.includes('ios')) {
+        return 'iOS';
+      }
+      if (name.includes('chrome os') || name.includes('chromium os')) {
+        return 'Chrome OS';
+      }
+      if (name.includes('fuchsia')) {
+        return 'Fuchsia';
+      }
+      // every Linux distribution (Ubuntu, Debian, Fedora, Mint, ...) reports
+      // plain "Linux"
+      if (/linux|debian|ubuntu|fedora|mint|centos|red ?hat|arch|suse|gentoo|kubuntu|xubuntu|lubuntu|kali|manjaro|deepin|raspbian|elementary|zorin|pop!_os|mandriva|pclinuxos|zenwalk/.test(name)) {
+        return 'Linux';
+      }
+      return 'Unknown';
+    };
+
+    return {
+      platform: platform(p?.os),
+      secChUa: brandListOf(p, ua).map(e => `"${e.brand}";v="${e.version}"`).join(', '),
+      mobile: /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua || '')
+    };
+  }
   action(o, ...types) {
     const r = {
       'type': 'modifyHeaders'
@@ -112,33 +232,20 @@ class Network {
         'sec-ch-ua-full-version', 'sec-ch-ua-full-version-list', 'sec-ch-ua-model', 'sec-ch-ua-platform-version'
       ];
       if (o.userAgentDataBuilder) {
-        let platform = o.userAgentDataBuilder.p?.os?.name || 'Windows';
-        if (platform.toLowerCase().includes('mac')) {
-          platform = 'macOS';
-        }
-        else if (platform.toLowerCase().includes('debian')) {
-          platform = 'Linux';
-        }
-
-        const version = o.userAgentDataBuilder.p?.browser?.major || 107;
-        let name = o.userAgentDataBuilder.p?.browser?.name || 'Google Chrome';
-        if (name === 'Chrome') {
-          name = 'Google Chrome';
-        }
-
+        const hints = this.#clientHints(o.userAgentDataBuilder.p, o.userAgentDataBuilder.ua);
         if (!this.#ISFARARI) {
           r.requestHeaders.push({
             'header': 'sec-ch-ua-platform',
             'operation': 'set',
-            'value': '"' + platform + '"'
+            'value': '"' + hints.platform + '"'
           }, {
             'header': 'sec-ch-ua',
             'operation': 'set',
-            'value': `"Not/A)Brand";v="8", "Chromium";v="${version}", "${name}";v="${version}"`
+            'value': hints.secChUa
           }, {
             'header': 'sec-ch-ua-mobile',
             'operation': 'set',
-            'value': /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(o.userAgent) ? '?1' : '?0'
+            'value': hints.mobile ? '?1' : '?0'
           });
         }
         // remove unsupported Chrome headers

@@ -183,8 +183,12 @@ class Agent {
       o.buildID = '[delete]';
       o.productSub = '20030107';
 
+      // navigator.userAgentData only exists on Chromium-based browsers
+      // (Chrome >= 90); unbranded Chromium reports a two-brand list and
+      // Android Chrome parses as "Mobile Chrome"
       if (this.#prefs.userAgentData && p.browser && p.browser.major) {
-        if (['Opera', 'Chrome', 'Edge'].includes(p.browser.name)) {
+        if (['Opera', 'Chrome', 'Edge', 'Chromium', 'Mobile Chrome'].includes(p.browser.name) &&
+            /Chrome\/\d+/.test(s)) {
           o.userAgentDataBuilder = {p, ua: s};
           delete o.userAgentData;
         }

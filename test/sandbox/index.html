@@ -16,11 +16,16 @@
     <span id="sync"></span>
   </div>
   <div>
+    <span>sync (prototype):</span>
+    <span id="sync-proto"></span>
+  </div>
+  <div>
     <span>async:</span>
     <span id="async"></span>
   </div>
   <script type="text/javascript">
     document.getElementById('sync').textContent = navigator.userAgent;
+    document.getElementById('sync-proto').textContent = Object.getOwnPropertyDescriptor(Navigator.prototype, 'userAgent').get.call(navigator);
     setTimeout(() => {
       document.getElementById('async').textContent = navigator.userAgent;
     }, 1000);
