@@ -8,6 +8,7 @@ class Network {
   #MAX_PROTECTED_RULES = 50;
   #PERTAB_INDEX = 3000;
   #MAX_PERTAB_RULES = 200;
+  #EXEMPT_INDEX = 900;
   #ISFARARI = location.protocol.startsWith('safari-');
 
   // where the network layer actually changes the user-agent; the content
@@ -277,6 +278,24 @@ class Network {
     }
     return r;
   }
+  // YouTube's anti-abuse integrity-token request (/api/jnn/v1/GenerateIT)
+  // posts an attestation computed by the real browser engine. Sending it with
+  // a spoofed user-agent makes YouTube reject the token, after which every
+  // caption (timedtext) response comes back empty (#260). "allow" outranks all
+  // modifyHeaders rules of this extension (max priority 3), so these requests
+  // keep the browser's real headers while the rest of the page stays spoofed
+  #exemption() {
+    return {
+      'id': this.#EXEMPT_INDEX,
+      'priority': 4,
+      'action': {
+        'type': 'allow'
+      },
+      'condition': {
+        'urlFilter': '||youtube.com/api/jnn/'
+      }
+    };
+  }
   async dnet(agent, prefs) {
     const addRules = [];
 
@@ -463,6 +482,10 @@ class Network {
       }
     }
 
+    if (addRules.length) {
+      addRules.push(this.#exemption());
+    }
+
     const removeRuleIds = await chrome.declarativeNetRequest.getDynamicRules().then(arr => arr.map(o => o.id));
     await chrome.declarativeNetRequest.updateDynamicRules({
       addRules,
@@ -519,6 +542,10 @@ class Network {
         console.info('max of per-tab rule reach', 'ignoring other tabs');
         break;
       }
+    }
+
+    if (addRules.length) {
+      addRules.push(this.#exemption());
     }
 
     const removeRuleIds = await chrome.declarativeNetRequest.getSessionRules().then(arr => arr.map(o => o.id));
