@@ -19,7 +19,6 @@ class Agent {
       ],
       'userAgentData': true
     });
-    this.#prefs = dps;
 
     // resolve configured { browser, os } objects into user-agent strings
     for (const domain of Object.keys(dps.custom)) {
@@ -33,6 +32,7 @@ class Agent {
       }
     };
 
+    this.#prefs = dps;
     return dps;
   }
 
