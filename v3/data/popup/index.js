@@ -361,7 +361,7 @@ document.getElementById('ua').addEventListener('input', async e => {
       'userAgentData': true,
       'parser': {} // maps ua string to a ua object
     });
-    const o = agent.parse(value);
+    const o = await agent.parse(value);
 
     document.getElementById('platform').value = o.platform;
     document.getElementById('vendor').value = o.vendor;

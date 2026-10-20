@@ -280,7 +280,7 @@ class Network {
   async dnet(agent, prefs) {
     const addRules = [];
 
-    const o = agent.parse(prefs.ua);
+    const o = await agent.parse(prefs.ua);
     o.type = 'user';
 
     if (prefs.ua && prefs.mode === 'blacklist') {
@@ -350,7 +350,7 @@ class Network {
           prefs.custom['*'][Math.floor(Math.random() * prefs.custom['*'].length)] :
           (prefs.custom['*'] || prefs.ua);
 
-        const o = agent.parse(ua);
+        const o = await agent.parse(ua);
         o.type = prefs.custom['*'] ? '*' : 'user';
 
         addRules.push({
@@ -377,7 +377,7 @@ class Network {
         }
 
         const ua = Array.isArray(value) ? value[Math.floor(Math.random() * value.length)] : value;
-        const o = agent.parse(ua);
+        const o =await agent.parse(ua);
         o.type = 'custom';
 
         const domains = hosts.split(/\s*,\s*/).map(h => this.#normalizeHost(h)).filter(Boolean);
@@ -491,7 +491,7 @@ class Network {
       if (!ua) {
         continue;
       }
-      const o = agent.parse(ua);
+      const o = await agent.parse(ua);
       o.type = 'per-tab';
 
       const tabIds = key.split(',').map(Number);
