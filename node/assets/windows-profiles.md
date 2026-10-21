@@ -29,7 +29,7 @@ These are constructed desktop spoofing profiles based on the verified releases, 
 ## Data maintenance
 
 - `node/assets/list-34.json` supplies the seven strings to the existing v3 build.
-- The corresponding v3 and legacy v2/firefox Windows browser JSON files each receive one parsed entry.
+- The corresponding v3 Windows browser JSON files each receive one parsed entry. Legacy v2/firefox files are unchanged.
 - Entries are appended without replacing or relabeling existing profiles.
 - The build script and its existing sampling limits are unchanged; a future full rebuild still applies those limits.
 - Other browsers, including discontinued Windows browsers, are unchanged.
