@@ -1,0 +1,206 @@
+{
+  "extensionName": {
+    "message": "User-Agent Switcher and Manager"
+  },
+  "extensionDescription": {
+    "message": "브라우징 정보를 수집해 원하지 않는 콘텐츠를 보여주려는 웹사이트를 속입니다"
+  },
+  "userAgentSwitcherandManagerOptions": {
+    "message": "옵션 페이지 :: User-Agent Switcher and Manager"
+  },
+  "blackListMode": {
+    "message": "블랙리스트 모드"
+  },
+  "description": {
+    "message": "설명"
+  },
+  "blackListModeDescription": {
+    "message": "아래 최상위 호스트명(쉼표로 구분)에 해당하는 탭을 제외한 모든 탭에 지정한 사용자 에이전트를 적용합니다. 툴바 팝업에서 탭별 사용자 에이전트를 설정한 경우, 이 세션 동안에는 그 사용자 에이전트가 사용됩니다."
+  },
+  "whiteListMode": {
+    "message": "화이트리스트 모드"
+  },
+  "whiteListModeDescription": {
+    "message": "아래 최상위 호스트명에 해당하는 탭에만 지정한 사용자 에이전트를 적용합니다. 툴바 팝업에서 탭별 사용자 에이전트를 설정한 경우, 그 설정이 전역 설정보다 우선합니다."
+  },
+  "customMode": {
+    "message": "사용자 지정 모드"
+  },
+  "customModeDescription": {
+    "message": "JSON 객체에서 사용자 에이전트를 찾아 적용하고, 없으면 기본 사용자 에이전트 또는 팝업에서 설정한 사용자 에이전트를 사용합니다. 모든 도메인에 적용하려면 호스트명으로 \"*\"를 사용하세요. 고정 문자열 대신 배열을 넣으면 여러 사용자 에이전트 중 하나를 무작위로 선택합니다. JSON 객체에 호스트명 배열을 값으로 가진 \"_\" 키가 있으면, 그 목록의 호스트명마다 사용자 에이전트를 한 번만 무작위로 선택합니다. 브라우저 세션이 끝날 때까지 무작위로 선택된 사용자 에이전트가 바뀌지 않게 하려면 이 방법을 사용하세요."
+  },
+  "insertSample": {
+    "message": "예시 삽입"
+  },
+  "userAgentData": {
+    "message": "Chromium 계열 UA 사용 시 \"navigator.userAgentData\" 객체 노출"
+  },
+  "disableSpoofing": {
+    "message": "UA 변경 제외"
+  },
+  "disableSpoofingDescription": {
+    "message": "사용자 에이전트 헤더를 변경하지 않을 키워드 목록(쉼표로 구분)입니다. 이 키워드가 포함된 URL을 보호하려면 여기에 추가하세요. 각 키워드는 5자 이상이어야 합니다."
+  },
+  "customUserAgentParsing": {
+    "message": "UA 파싱 직접 지정"
+  },
+  "customUserAgentParsingDescription": {
+    "message": "내부 사용자 에이전트 파싱 방식을 우회하기 위한 JSON 객체입니다. 키는 실제 사용자 에이전트 문자열이고, 각 키의 값은 \"navigator\" 객체에 설정할 키들을 담은 객체입니다. \"navigator\" 객체에서 특정 키를 삭제하려면 \"[delete]\" 키워드를 사용하세요."
+  },
+  "importSettings": {
+    "message": "설정 가져오기"
+  },
+  "exportSettings": {
+    "message": "설정 내보내기"
+  },
+  "exportSettingsTitle": {
+    "message": "압축(minified) 버전으로 내보내려면 Shift 키를 누른 채 이 버튼을 클릭하세요"
+  },
+  "help": {
+    "message": "FAQ(도움말)"
+  },
+  "donate": {
+    "message": "개발 후원하기"
+  },
+  "save": {
+    "message": "옵션 저장"
+  },
+  "managedStorage": {
+    "message": "이 확장 프로그램은 관리형 저장소(managed storage)를 지원하므로, 도메인 관리자가 설정을 자동으로 변경하거나 미리 구성할 수 있습니다. 자세한 내용은 FAQ 페이지를 참고하세요."
+  },
+  "options": {
+    "message": "옵션"
+  },
+  "optionsTitle": {
+    "message": "옵션 페이지 열기"
+  },
+  "restart": {
+    "message": "재시작"
+  },
+  "restartTitle": {
+    "message": "확장 프로그램을 다시 불러옵니다. 탭별로 설정한 사용자 에이전트가 모두 지워집니다."
+  },
+  "refreshTab": {
+    "message": "탭 새로고침"
+  },
+  "refreshTabTitle": {
+    "message": "현재 페이지 새로고침"
+  },
+  "reset": {
+    "message": "초기화"
+  },
+  "resetTitle": {
+    "message": "브라우저의 사용자 에이전트를 기본값으로 되돌립니다. 탭별 UA는 초기화되지 않으며, 초기화하려면 '재시작' 버튼을 사용하세요."
+  },
+  "testUA": {
+    "message": "UA 테스트"
+  },
+  "testUATitle": {
+    "message": "내 사용자 에이전트 테스트"
+  },
+  "considerContainers": {
+    "message": "컨테이너 구분"
+  },
+  "considerContainersTitle": {
+    "message": "확장 프로그램이 브라우저의 컨테이너에 접근할 수 있도록 허용합니다. 이 권한을 허용하면 격리된 컨테이너 안의 탭은 기본 컨테이너의 사용자 에이전트를 따르지 않으므로, 새 컨테이너마다 사용자 에이전트를 따로 설정해야 합니다."
+  },
+  "applyActiveTab": {
+    "message": "적용(현재 탭)"
+  },
+  "applyActiveTabTitle": {
+    "message": "현재 탭에 이 사용자 에이전트를 설정합니다"
+  },
+  "applyAllWindows": {
+    "message": "적용(모든 탭)"
+  },
+  "applyAllWindowsTitle": {
+    "message": "이 사용자 에이전트를 브라우저 전체의 User-Agent로 설정합니다"
+  },
+  "applyContainer": {
+    "message": "적용(컨테이너)"
+  },
+  "applyContainerTitle": {
+    "message": "이 사용자 에이전트를 현재 컨테이너의 User-Agent로 설정합니다"
+  },
+  "applyContainerTab": {
+    "message": "적용(컨테이너 내 탭)"
+  },
+  "applyContainerTabTitle": {
+    "message": "컨테이너 안의 현재 탭에 이 사용자 에이전트를 설정합니다"
+  },
+  "resetContainer": {
+    "message": "초기화(컨테이너)"
+  },
+  "resetContainerTitle": {
+    "message": "컨테이너의 사용자 에이전트를 기본값으로 되돌립니다. 탭별 UA는 초기화되지 않으며, 초기화하려면 '재시작' 버튼을 사용하세요."
+  },
+  "oscpuTitle": {
+    "message": "읽기 전용 필드입니다. 파싱을 직접 지정하려면 옵션 페이지를 사용하세요."
+  },
+  "appVersionTitle": {
+    "message": "읽기 전용 필드입니다. 파싱을 직접 지정하려면 옵션 페이지를 사용하세요."
+  },
+  "platformTitle": {
+    "message": "읽기 전용 필드입니다. 파싱을 직접 지정하려면 옵션 페이지를 사용하세요."
+  },
+  "vendorTitle": {
+    "message": "읽기 전용 필드입니다. 파싱을 직접 지정하려면 옵션 페이지를 사용하세요."
+  },
+  "productTitle": {
+    "message": "읽기 전용 필드입니다. 파싱을 직접 지정하려면 옵션 페이지를 사용하세요."
+  },
+  "uaTitle": {
+    "message": "빈 사용자 에이전트 문자열을 설정하려면 'empty' 키워드를 사용하세요. 현재 브라우저의 navigator 객체를 바탕으로 사용자 에이전트 문자열을 만들려면 $${} 표기법을 사용하세요. 이 표기법 안의 내용은 'navigator' 객체에서 읽어옵니다. 예를 들어 기본 사용자 에이전트 뒤에 문자열을 덧붙이려면 '$${userAgent} 덧붙일 문자열'처럼 입력하세요."
+  },
+  "uaPlaceholder": {
+    "message": "원하는 사용자 에이전트 문자열"
+  },
+  "noMatch": {
+    "message": "검색어와 일치하는 사용자 에이전트가 없습니다"
+  },
+  "ztoa": {
+    "message": "Z → A"
+  },
+  "atoz": {
+    "message": "A → Z"
+  },
+  "filterAmong": {
+    "message": "$1개 중 검색"
+  },
+  "filterAgents": {
+    "message": "UA 검색"
+  },
+  "msgDefaultUA": {
+    "message": "기본 UA입니다. 초기화 버튼을 누르세요"
+  },
+  "msgUASet": {
+    "message": "UA 설정 완료"
+  },
+  "msgDisabledOnContainer": {
+    "message": "이 컨테이너에서는 비활성화됨. 기본 UA를 사용합니다."
+  },
+  "msgDisabled": {
+    "message": "비활성화됨. 기본 UA를 사용합니다."
+  },
+  "optionsSaved": {
+    "message": "옵션이 저장되었습니다."
+  },
+  "dbReset": {
+    "message": "초기화하려면 두 번 클릭하세요"
+  },
+  "remoteAddress": {
+    "message": "원격 설정 서버"
+  },
+  "updateFromRemote": {
+    "message": "원격 서버에서 업데이트"
+  },
+  "remoteSanitizedNote": {
+    "message": "원격 설정 서버에서 가져온 업데이트는 필터링됩니다. 응답은 설정 값만 변경할 수 있으며, 원격 주소 자체를 바꾸거나 업데이트를 강제하거나 내부 키를 쓸 수는 없습니다. 무시된 키는 콘솔에 표시됩니다. 관리형 저장소(도메인 관리자)에는 이 제한이 적용되지 않습니다."
+  },
+  "popularOSs": {
+    "message": "팝업에 표시할 주요 운영체제"
+  },
+  "popularBrowsers": {
+    "message": "팝업에 표시할 주요 브라우저"
+  }
+}
