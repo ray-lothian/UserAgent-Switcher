@@ -99,6 +99,31 @@ The UserAgent-Switcher extension should now be loaded. If you make changes to th
     * **Firefox:** Extensions are packaged as signed `.xpi` files, typically distributed via [addons.mozilla.org (AMO)](https://addons.mozilla.org/developers/).
     * Signing is a crucial step for official distribution to ensure security and integrity. Standard browser versions often restrict or warn against installing unsigned extensions from outside their official stores.
 
+### Build Unpacked Extension
+A zero-dependency Node.js script is included to produce browser-ready unpacked extension directories.
+These can be loaded directly via the browser's **Load unpacked** option in developer mode.
+
+### Usage
+```bash
+node build-extension.js
+```
+
+### Output targets (under `dist/`)
+
+表格
+
+| Target | Browsers | Notes |
+| --- | --- | --- |
+| `chromium-v3` | Microsoft Edge, Google Chrome, Brave, all Chromium-based browsers | Manifest V3, `background.scripts` removed for Chromium compliance |
+| `firefox-v3` | Firefox | Manifest V3 with full background script support |
+| `firefox-v2` | Legacy Firefox | Manifest V2 for older Firefox versions |
+
+> 
+> For most modern users (Edge / Chrome): load the `dist/chromium-v3` directory.
+> 
+> 
+> This script works standalone. Run `node/build.js` **only** if you need to regenerate the UA preset database.
+
 ---
 
 ## Contributing
