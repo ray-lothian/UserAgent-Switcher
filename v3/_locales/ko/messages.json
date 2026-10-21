@@ -33,16 +33,16 @@
     "message": "예시 삽입"
   },
   "userAgentData": {
-    "message": "Chromium 계열 UA 사용 시 \"navigator.userAgentData\" 객체 노출"
+    "message": "Chromium 계열 UA 사용 시 \"navigator.userAgentData\" 객체 제공"
   },
   "disableSpoofing": {
     "message": "UA 변경 제외"
   },
   "disableSpoofingDescription": {
-    "message": "사용자 에이전트 헤더를 변경하지 않을 키워드 목록(쉼표로 구분)입니다. 이 키워드가 포함된 URL을 보호하려면 여기에 추가하세요. 각 키워드는 5자 이상이어야 합니다."
+    "message": "사용자 에이전트 헤더 변경에서 제외할 URL 키워드 목록입니다(쉼표로 구분). URL에 이 키워드가 포함되어 있으면 해당 URL의 사용자 에이전트 헤더를 변경하지 않습니다. 각 키워드는 5자 이상이어야 합니다."
   },
   "customUserAgentParsing": {
-    "message": "UA 파싱 직접 지정"
+    "message": "사용자 지정 UA 파싱"
   },
   "customUserAgentParsingDescription": {
     "message": "내부 사용자 에이전트 파싱 방식을 우회하기 위한 JSON 객체입니다. 키는 실제 사용자 에이전트 문자열이고, 각 키의 값은 \"navigator\" 객체에 설정할 키들을 담은 객체입니다. \"navigator\" 객체에서 특정 키를 삭제하려면 \"[delete]\" 키워드를 사용하세요."
@@ -54,7 +54,7 @@
     "message": "설정 내보내기"
   },
   "exportSettingsTitle": {
-    "message": "압축(minified) 버전으로 내보내려면 Shift 키를 누른 채 이 버튼을 클릭하세요"
+    "message": "공백과 줄바꿈을 줄인 JSON으로 내보내려면 Shift 키를 누른 채 이 버튼을 클릭하세요"
   },
   "help": {
     "message": "FAQ(도움말)"
