@@ -1,0 +1,76 @@
+name: Temporary UA asset build verification
+on:
+  push:
+    branches:
+      - add-current-windows-browser-profiles
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out PR branch
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate source data
+        shell: bash
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs');
+          const assert = require('node:assert/strict');
+          const entries = JSON.parse(fs.readFileSync('node/assets/list-34.json', 'utf8'));
+          assert.equal(entries.length, 7);
+          assert.equal(new Set(entries).size, 7);
+          for (const ua of entries) {
+            assert.equal(typeof ua, 'string');
+            assert(ua.includes('Windows NT 10.0'), ua);
+            assert(ua.length >= 10 && ua.length <= 400, ua);
+          }
+          const assets = fs.readdirSync('node/assets').filter(f => f.endsWith('.json'));
+          for (const ua of entries) {
+            let count = 0;
+            for (const file of assets) {
+              count += JSON.parse(fs.readFileSync('node/assets/' + file, 'utf8')).filter(x => x === ua).length;
+            }
+            assert.equal(count, 1, 'Duplicate or missing source UA: ' + ua);
+          }
+          console.log('PASS: all 7 new UAs occur exactly once in source assets');
+          NODE
+      - name: Build generated browser datasets
+        shell: bash
+        run: |
+          cd node
+          node build.js > ../build-output.log 2>&1
+          echo "Build completed; parser log:"
+          tail -20 ../build-output.log
+      - name: Validate generated browser lists and parser errors
+        shell: bash
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs');
+          const assert = require('node:assert/strict');
+          const entries = JSON.parse(fs.readFileSync('node/assets/list-34.json', 'utf8'));
+          const names = ['chrome', 'edge', 'firefox', 'opera', 'vivaldi', 'brave', 'whale'];
+          const invalids = fs.readFileSync('node/invalids.txt', 'utf8');
+          for (let i = 0; i < entries.length; i++) {
+            const file = 'v3/data/popup/browsers/' + names[i] + '-windows.json';
+            const data = JSON.parse(fs.readFileSync(file, 'utf8'));
+            const count = data.filter(x => x.ua === entries[i]).length;
+            assert.equal(count, 1, 'UA missing, duplicate or wrong parser category: ' + names[i] + ' count=' + count);
+            assert(data.length <= 400, 'Over 400 entries: ' + file);
+            assert(!invalids.includes(entries[i]), 'Parser rejected UA: ' + entries[i]);
+            console.log('PASS:', file, 'entries=' + data.length, 'new UA matched');
+          }
+          const map = JSON.parse(fs.readFileSync('v3/data/popup/map.json', 'utf8'));
+          for (const name of names) {
+            assert(map.matching[name]?.includes('windows'), 'map missing ' + name + '-windows');
+          }
+          console.log('PASS: build, output mapping, duplicate source scan and invalid-agent checks');
+          NODE
