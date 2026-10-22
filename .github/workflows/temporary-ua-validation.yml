@@ -57,7 +57,7 @@ jobs:
           const fs = require('node:fs');
           const assert = require('node:assert/strict');
           const entries = JSON.parse(fs.readFileSync('node/assets/list-34.json', 'utf8'));
-          const names = ['chrome', 'edge', 'firefox', 'opera', 'vivaldi', 'brave', 'whale'];
+          const names = ['brave', 'chrome', 'edge', 'firefox', 'opera', 'vivaldi', 'whale'];
           const invalids = fs.readFileSync('node/invalids.txt', 'utf8');
           for (let i = 0; i < entries.length; i++) {
             const file = 'v3/data/popup/browsers/' + names[i] + '-windows.json';
