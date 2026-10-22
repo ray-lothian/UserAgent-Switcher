@@ -63,6 +63,14 @@ jobs:
             const file = 'v3/data/popup/browsers/' + names[i] + '-windows.json';
             const data = JSON.parse(fs.readFileSync(file, 'utf8'));
             const count = data.filter(x => x.ua === entries[i]).length;
+            if (count !== 1) {
+              const parsed = new (require('./node/ua-parser.min.js'))(entries[i]).getResult();
+              console.log('DIAGNOSTIC:', names[i], JSON.stringify(parsed));
+              console.log('LAST OUTPUT:', JSON.stringify(data.slice(-3)));
+              const dir = 'v3/data/popup/browsers';
+              const matches = fs.readdirSync(dir).filter(f => f.endsWith('.json') && JSON.parse(fs.readFileSync(dir + '/' + f, 'utf8')).some(x => x.ua === entries[i]));
+              console.log('MATCHING FILES:', JSON.stringify(matches));
+            }
             assert.equal(count, 1, 'UA missing, duplicate or wrong parser category: ' + names[i] + ' count=' + count);
             assert(data.length <= 400, 'Over 400 entries: ' + file);
             assert(!invalids.includes(entries[i]), 'Parser rejected UA: ' + entries[i]);
