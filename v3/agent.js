@@ -19,6 +19,19 @@ class Agent {
       ],
       'userAgentData': true
     });
+
+    // resolve configured { browser, os } objects into user-agent strings
+    for (const domain of Object.keys(dps.custom)) {
+      const value = dps.custom[domain];
+      if (Array.isArray(value)) {
+        dps.custom[domain] = await Promise.all(value.map((entry) => {
+          return this.getUserAgentString(entry);
+        }))
+      } else {
+        dps.custom[domain] = await this.getUserAgentString(value);
+      }
+    };
+
     this.#prefs = dps;
     return dps;
   }
@@ -209,6 +222,49 @@ class Agent {
     o.protected = this.#prefs.protected || [];
 
     return o;
+  }
+
+  /**
+   * If a user-acent string is passed, just return it.
+   * If it is a { browser, os } configuration object, resolve it to the newest agent.
+   */
+  async getUserAgentString(value) {
+    if (typeof value === "string") {
+      return value;
+    }
+
+    const { browser, os } = value;
+    const response = await fetch('/data/popup/browsers/' + browser.toLowerCase() + '-' + os.toLowerCase().replace(/\//g, '-') + '.json');
+    const list = this.sort(await response.json());
+    return list[0].ua;
+  }
+
+  /**
+   * Sort the newest user agent to the top.
+   */
+  sort(arr) {
+    function sort(a = '', b = '') {
+      const pa = a.split('.');
+      const pb = b.split('.');
+      for (let i = 0; i < 3; i++) {
+        const na = Number(pa[i]);
+        const nb = Number(pb[i]);
+        if (na > nb) {
+          return -1;
+        }
+        if (nb > na) {
+          return 1;
+        }
+        if (!isNaN(na) && isNaN(nb)) {
+          return -1;
+        }
+        if (isNaN(na) && !isNaN(nb)) {
+          return 1;
+        }
+      }
+      return 0;
+    }
+    return arr.sort((a, b) => sort(a.browser.version, b.browser.version));
   }
 }
 
