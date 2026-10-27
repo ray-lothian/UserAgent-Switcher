@@ -35,6 +35,9 @@
   "userAgentData": {
     "message": "Expose \"navigator.userAgentData\" object on Chromium user-agents"
   },
+  "pageContextMenus": {
+    "message": "Show Pause/Resume in page context menu"
+  },
   "disableSpoofing": {
     "message": "Disable Spoofing"
   },

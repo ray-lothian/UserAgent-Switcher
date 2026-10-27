@@ -76,6 +76,7 @@ function save() {
 
   chrome.storage.local.set({
     'userAgentData': document.getElementById('userAgentData').checked,
+    'pageContextMenus': document.getElementById('pageContextMenus').checked,
     'blacklist': prepare(document.getElementById('blacklist').value),
     'whitelist': prepare(document.getElementById('whitelist').value),
     custom,
@@ -99,6 +100,7 @@ function save() {
 function restore() {
   chrome.storage.local.get({
     'userAgentData': true,
+    'pageContextMenus': false,
     'mode': 'blacklist',
     'whitelist': [],
     'blacklist': [],
@@ -117,6 +119,7 @@ function restore() {
     'popular-browsers': ['Internet Explorer', 'Safari', 'Chrome', 'Firefox', 'Opera', 'Edge', 'Vivaldi']
   }, prefs => {
     document.getElementById('userAgentData').checked = prefs.userAgentData;
+    document.getElementById('pageContextMenus').checked = prefs.pageContextMenus;
     document.querySelector(`[name="mode"][value="${prefs.mode}"`).checked = true;
     document.getElementById('blacklist').value = prefs.blacklist.join(', ');
     document.getElementById('whitelist').value = prefs.whitelist.join(', ');
