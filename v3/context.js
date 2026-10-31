@@ -67,19 +67,19 @@ const context = async () => {
   chrome.contextMenus.update(prefs.mode, {
     checked: true
   });
-  updatePageContextMenus();
+  await updatePageContextMenus();
 };
 
 chrome.contextMenus.onClicked.addListener((info, tab) => {
-  if (info.menuItemId === 'blacklist' || info.menuItemId === 'whitelist' || info.menuItemId === 'custom') {
+  // page-context-menu items ('pause-tab-page', 'resume-tab-page')
+  // reuse the behavior of the action items ('pause-tab', 'resume-tab')
+  const id = info.menuItemId.replace('-page', '');
+  if (id === 'blacklist' || id === 'whitelist' || id === 'custom') {
     chrome.storage.local.set({
       mode: info.menuItemId
     });
   }
-  else if (
-    info.menuItemId === 'pause-tab' ||
-    info.menuItemId === 'pause-tab-page'
-  ) {
+  else if (id === 'pause-tab') {
     chrome.declarativeNetRequest.updateSessionRules({
       removeRuleIds: [tab.id],
       addRules: [{
@@ -95,10 +95,7 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
       }]
     });
   }
-  else if (
-    info.menuItemId === 'resume-tab' ||
-    info.menuItemId === 'resume-tab-page'
-  ) {
+  else if (id === 'resume-tab') {
     chrome.declarativeNetRequest.updateSessionRules({
       removeRuleIds: [tab.id]
     });

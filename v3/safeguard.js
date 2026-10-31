@@ -13,6 +13,7 @@ const PREF_TYPES = {
   'popup-sort': v => typeof v === 'string',
   'test': v => typeof v === 'string',
   'userAgentData': v => typeof v === 'boolean',
+  'pageContextMenus': v => typeof v === 'boolean',
   'blacklist': v => Array.isArray(v) && v.every(e => typeof e === 'string'),
   'whitelist': v => Array.isArray(v) && v.every(e => typeof e === 'string'),
   'protected': v => Array.isArray(v) && v.every(e => typeof e === 'string'),
