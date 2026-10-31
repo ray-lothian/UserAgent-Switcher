@@ -1,3 +1,29 @@
+const updatePageContextMenus = async () => {
+  const {pageContextMenus = false} =
+    await chrome.storage.local.get({
+      pageContextMenus: false
+    });
+
+  await chrome.contextMenus.remove('pause-tab-page').catch(() => {});
+  await chrome.contextMenus.remove('resume-tab-page').catch(() => {});
+
+  if (!pageContextMenus) {
+    return;
+  }
+
+  chrome.contextMenus.create({
+    id: 'pause-tab-page',
+    title: 'Pause on This Tab',
+    contexts: ['page']
+  }, () => chrome.runtime.lastError);
+
+  chrome.contextMenus.create({
+    id: 'resume-tab-page',
+    title: 'Resume on This Tab',
+    contexts: ['page']
+  }, () => chrome.runtime.lastError);
+};
+
 const context = async () => {
   if (context.ran) {
     return;
@@ -41,6 +67,7 @@ const context = async () => {
   chrome.contextMenus.update(prefs.mode, {
     checked: true
   });
+  updatePageContextMenus();
 };
 
 chrome.contextMenus.onClicked.addListener((info, tab) => {
@@ -49,7 +76,10 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
       mode: info.menuItemId
     });
   }
-  else if (info.menuItemId === 'pause-tab') {
+  else if (
+    info.menuItemId === 'pause-tab' ||
+    info.menuItemId === 'pause-tab-page'
+  ) {
     chrome.declarativeNetRequest.updateSessionRules({
       removeRuleIds: [tab.id],
       addRules: [{
@@ -65,7 +95,10 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
       }]
     });
   }
-  else if (info.menuItemId === 'resume-tab') {
+  else if (
+    info.menuItemId === 'resume-tab' ||
+    info.menuItemId === 'resume-tab-page'
+  ) {
     chrome.declarativeNetRequest.updateSessionRules({
       removeRuleIds: [tab.id]
     });
@@ -74,3 +107,8 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
 
 chrome.runtime.onInstalled.addListener(context);
 chrome.runtime.onStartup.addListener(context);
+chrome.storage.onChanged.addListener((changes, area) => {
+  if (area === 'local' && changes.pageContextMenus) {
+    updatePageContextMenus();
+  }
+});
