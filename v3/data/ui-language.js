@@ -43,26 +43,7 @@ const uiLanguage = (() => {
       if (value) e.label = value;
     }
 
-    // V2 changes button labels after discovering a Firefox container.
-    if (document.querySelector('#agent [data-cmd="apply"]')) {
-      chrome.tabs.query({active: true, currentWindow: true}, tabs => {
-        if (!tabs.length || !('cookieStoreId' in tabs[0])) return;
-        const labels = {
-          apply: 'applyContainer',
-          window: 'applyContainerWindow',
-          tab: 'applyContainerTab',
-          reset: 'resetContainer'
-        };
-        for (const [cmd, key] of Object.entries(labels)) {
-          const button = document.querySelector('#agent [data-cmd="' + cmd + '"]');
-          if (!button) continue;
-          const value = getMessage(key);
-          const title = getMessage(key + 'Title');
-          if (value) button.value = value;
-          if (title) button.title = title;
-        }
-      });
-    }
+
   }
 
   async function initialize() {

@@ -229,8 +229,5 @@
   },
   "customStylingDescription": {
     "message": "팝업 화면에 적용할 CSS 스타일 규칙을 입력합니다."
-  },
-  "pageContextMenus": {
-    "message": "페이지의 마우스 오른쪽 버튼 메뉴에 일시 중지/재개 표시"
   }
 }
