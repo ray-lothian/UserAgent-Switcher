@@ -272,7 +272,8 @@ body[data-android="true"] [data-cmd="window"] {
 
 /* Android-only overrides: do NOT match a 600px desktop Chrome popup. */
 @media screen and (max-width: 640px) {
- body[data-android="true"] {width: 100%; max-width: 100%; min-width: 0; box-sizing: border-box; overflow-x: hidden}
+ body[data-android="true"] {width: 100%; max-width: 100%; min-width: 0; box-sizing: border-box}
+ body[data-android="true"] > table {table-layout: fixed}
  body[data-android="true"] #filter tr {display: flex; flex-wrap: wrap}
  body[data-android="true"] #filter th {display: flex; box-sizing: border-box; flex: 1 1 100%; min-width: 0; height: auto; padding: 5px 8px; gap: 6px; align-items: center; text-align: left}
  body[data-android="true"] #filter select,
