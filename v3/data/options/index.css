@@ -179,3 +179,20 @@ a:visited {
   max-width: 100%;
   font: inherit;
 }
+
+
+/* Mobile touch settings only; do not alter desktop layout. */
+@media screen and (max-width: 600px) and (pointer: coarse) {
+ body {box-sizing: border-box; min-width: 0; max-width: 100%}
+ .mode, .mode-2, .mode-3 {min-width: 0; white-space: normal}
+ .mode {grid-template-columns: min-content minmax(0,1fr) max-content}
+ .mode-2 {grid-template-columns: minmax(0,1fr) max-content}
+ .mode-3 {grid-template-columns: minmax(0,1fr)}
+ .mode-3 h1 {grid-column: 1}
+ .mode h1, .mode-2 h1 {overflow-wrap: anywhere}
+ .checked {grid-template-columns: min-content minmax(0,1fr)}
+ .checked label {white-space: normal; overflow-wrap: anywhere; line-height: 1.5}
+ textarea, input[type="text"] {box-sizing: border-box; min-width: 0; max-width: 100%}
+ #tools, #backup {grid-template-columns: repeat(2,minmax(0,1fr)); white-space: normal}
+ #tools button, #backup button {box-sizing: border-box; min-width: 0; width: 100%; height: auto; min-height: 38px; white-space: normal; padding: 6px}
+}
