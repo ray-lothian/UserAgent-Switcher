@@ -8,29 +8,25 @@
 </head>
 <body>
   <div id="toast"></div>
-  <table>
-    <thead id="filter">
-      <tr>
-        <th>
-          <select id="browser">
-            <optgroup label="Populars" data-localized-label="populars"></optgroup>
-            <optgroup label="Others" data-localized-label="others"></optgroup>
-          </select>&nbsp;
-          <select id="os">
-            <optgroup label="Populars" data-localized-label="populars"></optgroup>
-            <optgroup label="Others" data-localized-label="others"></optgroup>
-          </select>
-        </th>
-        <th>
-          <input type="search" id="custom" data-localized-placeholder="filterAgents" placeholder="Filter Agents">&nbsp;
-          <select id="sort">
-            <option value="descending" data-localize="ztoa">Z to A</option>
-            <option value="ascending" data-localize="atoz">A to Z</option>
-          </select>
-        </th>
-      </tr>
-    </thead>
-  </table>
+  <div id="filter">
+    <div>
+      <select id="browser">
+        <optgroup label="Populars" data-localized-label="populars"></optgroup>
+        <optgroup label="Others" data-localized-label="others"></optgroup>
+      </select>
+      <select id="os">
+        <optgroup label="Populars" data-localized-label="populars"></optgroup>
+        <optgroup label="Others" data-localized-label="others"></optgroup>
+      </select>
+    </div>
+    <div>
+      <input type="search" id="custom" data-localized-placeholder="filterAgents" placeholder="Filter Agents">
+      <select id="sort">
+        <option value="descending" data-localize="ztoa">Z to A</option>
+        <option value="ascending" data-localize="atoz">A to Z</option>
+      </select>
+    </div>
+  </div>
   <div id="list" data-loading=true>
     <table>
       <colgroup>

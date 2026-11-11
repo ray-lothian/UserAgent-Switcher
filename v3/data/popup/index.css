@@ -119,6 +119,8 @@ select {
   background-position: top 120px center;
   background-repeat: no-repeat;
   font-size: 12px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color) var(--bg-color);
 }
 #list[data-loading="true"] {
   background-image: url("loading.gif");
@@ -138,7 +140,7 @@ select {
   cursor: pointer;
 }
 #list tr[data-matched="false"] {
-  opacity: 0.5;
+  display: none;
 }
 #list tbody {
   position: relative;
@@ -151,7 +153,8 @@ select {
   color: var(--color);
   background-color: var(--bg-color-light);
 }
-#list[data-loading="false"] tbody:empty::before {
+#list[data-loading="false"] tbody:empty::before,
+#list[data-filtered="true"] tbody::before {
   content: attr(data-content);
   position: absolute;
   left: 0;
@@ -179,16 +182,37 @@ select {
 }
 #filter {
   background-color: var(--bg-color-light);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 2px 12px;
+  padding-block: 5px;
 }
-#filter th {
+#filter > div {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  box-sizing: border-box;
+  min-width: 0;
   height: 32px;
 }
-#filter th:first-of-type {
-  text-align: left;
+#filter input {
+  margin-right: 0;
+}
+#filter select {
+  flex: 0 1 auto;
+  min-width: 0;
+}
+#filter #custom {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+#filter #sort {
+  flex: 0 0 auto;
+}
+#filter > div:first-child {
   padding-left: 10px;
 }
-#filter th:last-of-type {
-  text-align: right;
+#filter > div:last-child {
   padding-right: 10px;
 }
 #agent {
@@ -270,16 +294,15 @@ body[data-android="true"] [data-cmd="window"] {
 }
 
 
-/* Android-only overrides: do NOT match a 600px desktop Chrome popup. */
+/* Mobile-only overrides (phone UAs + narrow viewport): do NOT match a 600px desktop Chrome popup. */
 @media screen and (max-width: 640px) {
- body[data-android="true"] {width: 100%; max-width: 100%; min-width: 0; box-sizing: border-box}
- body[data-android="true"] > table {table-layout: fixed}
- body[data-android="true"] #filter tr {display: flex; flex-wrap: wrap}
- body[data-android="true"] #filter th {display: flex; box-sizing: border-box; flex: 1 1 100%; min-width: 0; height: auto; padding: 5px 8px; gap: 6px; align-items: center; text-align: left}
+ body[data-android="true"] {width: 100%; max-width: 100%; min-width: 0; box-sizing: border-box; height: 100vh; height: 100dvh; display: flex; flex-direction: column; overflow: hidden}
+ body[data-android="true"] #filter {grid-template-columns: minmax(0, 1fr); flex-shrink: 0; gap: 5px; padding-block: 10px}
+ body[data-android="true"] #filter > div {height: auto; min-height: 32px; padding: 0 8px; flex-wrap: wrap; gap: 5px}
  body[data-android="true"] #filter select,
  body[data-android="true"] #filter input[type="search"] {box-sizing: border-box; min-width: 0; max-width: 100%; flex: 1 1 0; height: 36px; font-size: 13px}
  body[data-android="true"] #filter #sort {flex: 0 0 90px}
- body[data-android="true"] #list {height: min(42vh, 300px); min-height: 160px}
+ body[data-android="true"] #list {flex: 1; height: auto; min-height: 160px}
  body[data-android="true"] #list col:nth-child(1) {width: 34px}
  body[data-android="true"] #list col:nth-child(2) {width: 36px}
  body[data-android="true"] #list col:nth-child(3) {width: 46%}
@@ -287,7 +310,7 @@ body[data-android="true"] [data-cmd="window"] {
  body[data-android="true"] #list td:nth-child(5) {display: none}
  body[data-android="true"] #list td {font-size: 12px; padding: 8px 3px}
  body[data-android="true"] #list input[type="radio"] {width: 18px; height: 18px}
- body[data-android="true"] #view {box-sizing: border-box; padding: 6px 8px}
+ body[data-android="true"] #view {box-sizing: border-box; padding: 6px 8px; flex-shrink: 0}
  body[data-android="true"] #view table,
  body[data-android="true"] #view tbody {display: block; width: 100%}
  body[data-android="true"] #view tr {display: grid; grid-template-columns: max-content minmax(0,1fr); gap: 6px; align-items: center; padding: 4px 0}
@@ -297,8 +320,9 @@ body[data-android="true"] [data-cmd="window"] {
  body[data-android="true"] #view td:nth-child(4) {grid-column: 2}
  body[data-android="true"] #view [hbox],
  body[data-android="true"] #view input[type="text"] {min-width: 0; width: 100%}
- body[data-android="true"] #agent {grid-template-columns: repeat(2,minmax(0,1fr)); white-space: normal}
+ body[data-android="true"] #agent {grid-template-columns: repeat(2,minmax(0,1fr)); white-space: normal; flex-shrink: 0}
  body[data-android="true"] #agent input[type="button"] {box-sizing: border-box; min-width: 0; width: 100%; height: auto; min-height: 42px; padding: 7px 5px; white-space: normal; font-size: 12px; line-height: 1.3}
  body[data-android="true"] #agent .hide {display: none}
  body[data-android="true"] #toast {bottom: auto; top: 10px; pointer-events: none}
+ body[data-android="true"] #list tbody:empty::before {height: 100%}
 }
