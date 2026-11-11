@@ -107,7 +107,10 @@ function get(path) {
   });
 }
 
+let updateId = 0;
+
 function update(ua) {
+  const id = ++updateId;
   const browser = document.getElementById('browser').value;
   const os = document.getElementById('os').value;
 
@@ -122,6 +125,10 @@ function update(ua) {
       console.error('CACHE_ERROR', e);
       return [];
     }).then(list => {
+      // A slower previous selection must not append rows to the current list.
+      if (id !== updateId) {
+        return;
+      }
       if (list) {
         const fragment = document.createDocumentFragment();
         let radio;
@@ -152,6 +159,7 @@ function update(ua) {
           fragment.appendChild(clone);
         });
         tbody.appendChild(fragment);
+        filter();
         if (radio) {
           radio.checked = true;
           radio.scrollIntoView({
@@ -169,7 +177,9 @@ function update(ua) {
       }
     // FF 55.0 does not support finally
     }).catch(() => {}).then(() => {
-      parent.dataset.loading = false;
+      if (id === updateId) {
+        parent.dataset.loading = false;
+      }
     });
 }
 
@@ -261,11 +271,12 @@ document.getElementById('list').addEventListener('click', ({target}) => {
   }
 });
 
-document.getElementById('custom').addEventListener('keyup', ({target}) => {
-  const value = target.value;
+function filter() {
+  const value = document.getElementById('custom').value;
   [...document.querySelectorAll('#list tbody tr')]
     .forEach(tr => tr.dataset.matched = tr.textContent.toLowerCase().indexOf(value.toLowerCase()) !== -1);
-});
+}
+document.getElementById('custom').addEventListener('input', filter);
 
 chrome.storage.onChanged.addListener(prefs => {
   if (prefs.ua) {
