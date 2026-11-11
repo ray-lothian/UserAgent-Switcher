@@ -164,3 +164,18 @@ a:visited {
 #protected {
   white-space: normal;
 }
+
+
+/* Optional display language selector; desktop and mobile layout unaffected. */
+.language-settings {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin: 10px 0 18px;
+}
+.language-settings select {
+  min-height: 34px;
+  max-width: 100%;
+  font: inherit;
+}

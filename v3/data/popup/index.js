@@ -10,35 +10,35 @@ chrome.storage.local.get({
 // localization
 document.querySelectorAll('[data-localized-value]').forEach(e => {
   const ref = e.dataset.localizedValue;
-  const translated = chrome.i18n.getMessage(ref);
+  const translated = uiLanguage.getMessage(ref);
   if (translated) {
     e.value = translated;
   }
 });
 document.querySelectorAll('[data-localized-title]').forEach(e => {
   const ref = e.dataset.localizedTitle;
-  const translated = chrome.i18n.getMessage(ref);
+  const translated = uiLanguage.getMessage(ref);
   if (translated) {
     e.title = translated;
   }
 });
 document.querySelectorAll('[data-localized-placeholder]').forEach(e => {
   const ref = e.dataset.localizedPlaceholder;
-  const translated = chrome.i18n.getMessage(ref);
+  const translated = uiLanguage.getMessage(ref);
   if (translated) {
     e.placeholder = translated;
   }
 });
 document.querySelectorAll('[data-localized-content]').forEach(e => {
   const ref = e.dataset.localizedContent;
-  const translated = chrome.i18n.getMessage(ref);
+  const translated = uiLanguage.getMessage(ref);
   if (translated) {
     e.dataset.content = translated;
   }
 });
 document.querySelectorAll('[data-localize]').forEach(e => {
   const ref = e.dataset.localize;
-  const translated = chrome.i18n.getMessage(ref);
+  const translated = uiLanguage.getMessage(ref);
   if (translated) {
     e.textContent = translated;
   }
@@ -159,7 +159,7 @@ function update(ua) {
             inline: 'nearest'
           });
         }
-        document.getElementById('custom').placeholder = chrome.i18n.getMessage('filterAmong', [list.length]);
+        document.getElementById('custom').placeholder = uiLanguage.getMessage('filterAmong', [list.length]);
         [...document.getElementById('os').querySelectorAll('option')].forEach(option => {
           option.disabled = (map.matching[browser.toLowerCase()] || []).indexOf(option.value.toLowerCase()) === -1;
         });
@@ -287,10 +287,10 @@ document.addEventListener('click', ({target}) => {
     if (cmd === 'apply') {
       const value = document.getElementById('ua').value;
       if (value === navigator.userAgent) {
-        msg(chrome.i18n.getMessage('msgDefaultUA'));
+        msg(uiLanguage.getMessage('msgDefaultUA'));
       }
       else {
-        msg(chrome.i18n.getMessage('msgUASet'));
+        msg(uiLanguage.getMessage('msgUASet'));
       }
       if (value !== navigator.userAgent) {
         chrome.storage.local.set({
@@ -306,7 +306,7 @@ document.addEventListener('click', ({target}) => {
       chrome.storage.local.set({
         ua: ''
       });
-      msg(chrome.i18n.getMessage('msgDisabled'));
+      msg(uiLanguage.getMessage('msgDisabled'));
     }
     else if (cmd === 'refresh') {
       chrome.tabs.query({

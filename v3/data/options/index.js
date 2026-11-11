@@ -3,14 +3,14 @@
 // localization
 document.querySelectorAll('[data-localize]').forEach(e => {
   const ref = e.dataset.localize;
-  const translated = chrome.i18n.getMessage(ref);
+  const translated = uiLanguage.getMessage(ref);
   if (translated) {
     e.textContent = translated;
   }
 });
 document.querySelectorAll('[data-localized-title]').forEach(e => {
   const ref = e.dataset.localizedTitle;
-  const translated = chrome.i18n.getMessage(ref);
+  const translated = uiLanguage.getMessage(ref);
   if (translated) {
     e.title = translated;
   }
@@ -89,7 +89,7 @@ function save() {
     'popular-browsers': browsers
   }, () => {
     restore();
-    notify(chrome.i18n.getMessage('optionsSaved'));
+    notify(uiLanguage.getMessage('optionsSaved'));
 
     chrome.contextMenus.update(document.querySelector('[name="mode"]:checked').value, {
       checked: true
@@ -170,7 +170,7 @@ document.getElementById('donate').addEventListener('click', () => {
 
 document.getElementById('reset').addEventListener('click', e => {
   if (e.detail === 1) {
-    notify(chrome.i18n.getMessage('dbReset'));
+    notify(uiLanguage.getMessage('dbReset'));
   }
   else {
     localStorage.clear();

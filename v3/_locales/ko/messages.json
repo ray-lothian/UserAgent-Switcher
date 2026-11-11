@@ -202,5 +202,32 @@
   },
   "popularBrowsers": {
     "message": "팝업에 표시할 주요 브라우저"
+  },
+  "interfaceLanguage": {
+    "message": "화면 표시 언어"
+  },
+  "langAuto": {
+    "message": "브라우저 언어 사용"
+  },
+  "langKorean": {
+    "message": "한국어"
+  },
+  "langEnglish": {
+    "message": "영어"
+  },
+  "populars": {
+    "message": "주요 항목"
+  },
+  "others": {
+    "message": "기타"
+  },
+  "exampleHostnames": {
+    "message": "예: www.google.com, www.bing.com"
+  },
+  "customStylingTitle": {
+    "message": "팝업 사용자 지정 스타일"
+  },
+  "customStylingDescription": {
+    "message": "팝업 화면에 적용할 CSS 스타일 규칙을 입력합니다."
   }
 }

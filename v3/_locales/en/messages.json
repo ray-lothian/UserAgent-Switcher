@@ -205,5 +205,32 @@
   },
   "popularBrowsers": {
     "message": "Popular Browsers on the Popup Interface"
+  },
+  "interfaceLanguage": {
+    "message": "Interface language"
+  },
+  "langAuto": {
+    "message": "Follow browser language"
+  },
+  "langKorean": {
+    "message": "Korean"
+  },
+  "langEnglish": {
+    "message": "English"
+  },
+  "populars": {
+    "message": "Populars"
+  },
+  "others": {
+    "message": "Others"
+  },
+  "exampleHostnames": {
+    "message": "e.g. www.google.com, www.bing.com"
+  },
+  "customStylingTitle": {
+    "message": "Custom Styling"
+  },
+  "customStylingDescription": {
+    "message": "Use this section to apply user styling rules to the popup interface"
   }
 }
