@@ -47,7 +47,6 @@ class Agent {
         .replace(/\.$/, '');
       return h && (host === h || host.endsWith('.' + h));
     });
-    const pick = v => Array.isArray(v) ? v[Math.floor(Math.random() * v.length)] : v;
 
     if (dps.mode === 'whitelist') {
       return dps.ua && matches(dps.whitelist) ? dps.ua : '';
@@ -60,12 +59,12 @@ class Agent {
           continue;
         }
         if (matches(hosts.split(/\s*,\s*/))) {
-          return pick(value);
+          return this.pick(value);
         }
       }
       // wildcard entry is the global override
       if (dps.custom && dps.custom['*']) {
-        return pick(dps.custom['*']) || dps.ua || '';
+        return this.pick(dps.custom['*']) || dps.ua || '';
       }
       // a global ua spoofs everything in this mode
       return dps.ua || '';
@@ -85,8 +84,16 @@ class Agent {
     return dps.ua;
   }
 
-  parse(s = '') {
+  async parse(s = '') {
     // log('ua.parse is called', s);
+
+    // If not a string was configured, but a browser and os, resolve it into a string.
+    if (typeof(s) === "object") {
+      s = await this.getUserAgentString(
+        s["browser"].toLowerCase(),
+        s["os"].toLowerCase()
+      );
+    }
 
     const parser = this.#prefs.parser || {};
     if (parser[s]) {
@@ -209,6 +216,61 @@ class Agent {
     o.protected = this.#prefs.protected || [];
 
     return o;
+  }
+
+  /**
+   * Depending on the format of v, select a user agent
+   * String: Return it
+   * Object: Return the newest string matching the configuration
+   * Array: Select one entry at random
+   */
+  async pick(v) {
+    if (Array.isArray(v)) {
+      const choice =  v[Math.floor(Math.random() * v.length)]
+      if (typeof choice === 'object') {
+        return this.getUserAgentString(
+          choice["browser"].toLowerCase(),
+          choice["os"].toLowerCase()
+        );
+      }
+
+      return choice;
+    }
+
+    return v;
+  }
+
+  async getUserAgentString(browser, os) {
+    const response = await fetch('/data/popup/browsers/' + browser.toLowerCase() + '-' + os.toLowerCase().replace(/\//g, '-') + '.json');
+    const list = this.sort(await response.json());
+    return list[0].ua;
+  }
+  /**
+   * Sort the newest user agent to the top.
+   */
+  sort(arr) {
+    function sort(a = '', b = '') {
+      const pa = a.split('.');
+      const pb = b.split('.');
+      for (let i = 0; i < 3; i++) {
+        const na = Number(pa[i]);
+        const nb = Number(pb[i]);
+        if (na > nb) {
+          return -1;
+        }
+        if (nb > na) {
+          return 1;
+        }
+        if (!isNaN(na) && isNaN(nb)) {
+          return -1;
+        }
+        if (isNaN(na) && !isNaN(nb)) {
+          return 1;
+        }
+      }
+      return 0;
+    }
+    return arr.sort((a, b) => sort(a.browser.version, b.browser.version));
   }
 }
 
