@@ -78,34 +78,76 @@ function sort(arr) {
   return list;
 }
 
-function get(path) {
-  const cf = Promise.resolve({
-    match() {
-      return Promise.resolve();
-    },
-    add() {
-      return Promise.resolve();
-    }
+const REFRESH_INTERVAL = 24 * 60 * 60 * 1000;
+const REFRESH_TIMEOUT = 8000;
+const CDN = 'https://cdn.jsdelivr.net/gh/ray-lothian/UserAgent-Switcher@latest/v3/data/popup/';
+
+// a usable list is an array of UA objects with the fields the UI renders
+const validList = json => Array.isArray(json) && json.every(o => o &&
+  typeof o.ua === 'string' && o.browser && o.os);
+
+async function get(path) {
+  const link = CDN + path;
+  const cache = typeof caches === 'undefined' ? null :
+    await caches.open('agents').catch(() => null);
+  const prefs = await chrome.storage.local.get({
+    ['cache.' + path]: 0
   });
-  return (typeof caches !== 'undefined' ? caches : {
-    open() {
-      return cf;
-    }
-  }).open('agents').catch(() => cf).then(cache => {
-    const link = 'https://cdn.jsdelivr.net/gh/ray-lothian/UserAgent-Switcher@latest/v3/data/popup/' + path;
-    // updating agents once per day
-    chrome.storage.local.get({
-      ['cache.' + path]: 0
-    }, prefs => {
-      const now = Date.now();
-      if (now - prefs['cache.' + path] > 1 * 24 * 60 * 60 * 1000) {
-        cache.add(link).then(() => chrome.storage.local.set({
-          ['cache.' + path]: now
-        }));
+  const cached = cache ? await cache.match(link).catch(() => null) : null;
+
+  // updating agents once per day; 'reload' bypasses jsDelivr's max-age so an
+  // old tag cannot be served from the HTTP cache; also refresh right away
+  // when the Cache Storage entry was evicted while the timestamp survived
+  if (!cached || Date.now() - prefs['cache.' + path] > REFRESH_INTERVAL) {
+    try {
+      const response = await fetch(link, {
+        cache: 'reload',
+        signal: AbortSignal.timeout(REFRESH_TIMEOUT)
+      });
+      if (!response.ok) {
+        throw Error('HTTP ' + response.status);
       }
-    });
-    return cache.match(link).then(resp => resp || fetch(path));
-  });
+      const version = response.headers.get('x-jsd-version') || '';
+      const json = await response.clone().json();
+      if (!validList(json)) {
+        throw Error('invalid payload');
+      }
+      if (cache) {
+        await cache.put(link, response).catch(() => {});
+      }
+      await chrome.storage.local.set({
+        ['cache.' + path]: Date.now(),
+        ['cache.version.' + path]: version
+      });
+      return json;
+    }
+    catch (e) {
+      // keep the stale entry, otherwise fall back to the bundled list
+      console.warn('AGENT_UPDATE_FAILED', path, e);
+    }
+  }
+
+  if (cached) {
+    try {
+      const json = await cached.json();
+      if (validList(json)) {
+        return json;
+      }
+    }
+    catch (e) {}
+    if (cache) {
+      await cache.delete(link).catch(() => {});
+    }
+  }
+
+  // bundled copy
+  try {
+    const json = await (await fetch(path)).json();
+    return validList(json) ? json : [];
+  }
+  catch (e) {
+    return [];
+  }
 }
 
 let updateId = 0;
@@ -125,7 +167,7 @@ function update(ua) {
 
   parent.dataset.loading = true;
   get('browsers/' + browser.toLowerCase() + '-' + os.toLowerCase().replace(/\//g, '-') + '.json')
-    .then(r => r.json()).catch(e => {
+    .catch(e => {
       console.error('CACHE_ERROR', e);
       return [];
     }).then(list => {

@@ -29,6 +29,19 @@ chrome.storage.onChanged.addListener((ps, type) => {
   chrome.runtime.onInstalled.addListener(once);
 }
 
+// cached agent lists must not shadow the bundled or newly tagged lists after
+// an extension update; 'cache.*' keys are reserved (see safeguard.js)
+chrome.runtime.onInstalled.addListener(async () => {
+  if (typeof caches !== 'undefined') {
+    await caches.delete('agents').catch(() => {});
+  }
+  const prefs = await chrome.storage.local.get(null);
+  const keys = Object.keys(prefs).filter(k => k.startsWith('cache.'));
+  if (keys.length) {
+    chrome.storage.local.remove(keys);
+  }
+});
+
 chrome.tabs.onRemoved.addListener(tabId => {
   chrome.storage.session.remove(String(tabId));
 });
