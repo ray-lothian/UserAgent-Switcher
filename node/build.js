@@ -2,7 +2,11 @@
 
 const fs = require('fs');
 const path = require('path');
-const UAParser = require('./ua-parser.min.js');
+const {classify} = require('./detect.js');
+const {reduce} = require('./reduce.js');
+
+const dir = __dirname;
+const outDir = path.join(dir, '..', 'v3', 'data', 'popup', 'browsers');
 
 const cache = {};
 const map = {
@@ -11,122 +15,88 @@ const map = {
   matching: {}
 };
 const invalids = [];
+const seen = new Set();
+const stats = {ok: 0, bot: 0, unknown: 0, malformed: 0};
 
 const print = (code, file, ...args) => {
   console.log('\x1b[31m%s\x1b[0m \x1b[32m%s\x1b[0m %s', code.padEnd(25, ' '), file, ...args);
 };
 
-const parser = new UAParser();
-
-const write = ({name, content}, callback) => fs.writeFile('../v3/data/popup/browsers/' + name, content, 'utf8', e => {
+const write = ({name, content}, callback) => fs.writeFile(path.join(outDir, name), content, 'utf8', e => {
   if (e) {
     console.log(e);
   }
   setTimeout(callback, 0);
 });
 
-// reduce the total number of entries to < length while keeping a varied
-// selection of older user agents and a larger share of the newest ones
-// (newer user agents sit at the end of each list)
-const reduce = (arr, length = 400, newest = 0.5) => {
-  if (arr.length <= length) {
-    return arr;
-  }
-  const keepNew = Math.min(Math.round(length * newest), arr.length);
-  const older = arr.slice(0, arr.length - keepNew);
-  const target = Math.max(length - keepNew, 1);
-  let pos = 1;
-  while (older.length > target) {
-    older.splice(pos, 1);
-    pos += 1;
-    pos = pos % Math.max(older.length - Math.round(target / 10), 1);
-  }
-
-  return older.concat(arr.slice(arr.length - keepNew));
-};
-
-fs.readdir('../v3/data/popup/browsers/', (err, files) => {
+fs.readdir(outDir, (err, files) => {
   if (err) throw err;
   for (const file of files) {
-    fs.unlinkSync(path.join('../v3/data/popup/browsers/', file), err => {
-      if (err) throw err;
-    });
+    fs.unlinkSync(path.join(outDir, file));
   }
 
   const next = (ua, source) => {
-    ua = ua.trim();
+    const c = classify(ua);
 
-    if (ua.length < 10) {
-      invalids.push(['SHT', source, ua]);
-      return print('[short agent]', source, ua);
+    // report every user agent only once, even when listed in several files
+    if (seen.has(c.ua)) {
+      return;
     }
-    if (ua.length > 400) {
-      invalids.push(['LNG', source, ua]);
-      return print('[long agent]', source, ua);
-    }
-    if (ua.indexOf('http') !== -1) {
-      if (ua.indexOf('QtWeb') === -1 && ua.toLowerCase().indexOf('crawler') === -1 && ua.toLowerCase().indexOf('bot') === -1 && ua.toLowerCase().indexOf('spider') === -1) {
-        invalids.push(['HTP', source, ua]);
-        return print('[contains HTTP]', source, ua);
-      }
-    }
-    parser.setUA(ua);
-    const o = parser.getResult();
+    seen.add(c.ua);
+    stats[c.category] += 1;
 
-    // validate version number of well-known browsers
-    if (o.browser.version && ['Chrome', 'Opera', 'Firefox', 'Yandex', 'Chromium', 'Brave', 'Edge'].includes(o.browser.name)) {
-      const v = parseFloat(o.browser.version);
-      if (v > 200) {
-        return print('[Invalid Browser Version]', source, o.browser.version, ua);
-      }
+    if (c.category === 'malformed' || c.category === 'unknown') {
+      const tag = c.category === 'unknown' ? '[unknown]' : '[malformed]';
+      invalids.push([tag, c.code, source, c.ua]);
+      return print(tag + ' ' + c.code, source, c.ua);
     }
 
-    if (o.browser.name && o.os.name) {
-      if (o.os.name === 'macOS') {
-        o.os.name = 'Mac OS';
-      }
-      else if (o.os.name === 'Chrome OS') {
-        o.os.name = 'Chromium OS';
-      }
+    const o = c.result;
 
-      const bb = o.browser.name.toLowerCase();
-      const ss = o.os.name.toLowerCase();
-
-      cache[bb] = cache[bb] || {};
-      cache[bb][ss] = cache[bb][ss] || [];
-      cache[bb][ss].push(o);
-
-      map.browser[bb] = map.browser[bb] || [];
-      map.browser[bb].push(o.browser.name);
-
-      map.os[ss] = map.os[ss] || [];
-      map.os[ss].push(o.os.name);
-    }
-    else if (ua.toLowerCase().indexOf('bot') !== -1) {
+    if (c.category === 'bot') {
       cache.bot = cache.bot || {
         'misc': []
       };
       cache.bot.misc.push(o);
       map.browser.bot = map.browser.bot || ['Bot'];
       map.os.misc = map.os.misc || ['Misc'];
+      return;
     }
-    else {
-      invalids.push(['PRS', source, ua]);
-      print('[cannot parse]', source, ua);
+
+    if (o.os.name === 'macOS') {
+      o.os.name = 'Mac OS';
     }
+    else if (o.os.name === 'Chrome OS') {
+      o.os.name = 'Chromium OS';
+    }
+
+    const bb = o.browser.name.toLowerCase();
+    const ss = o.os.name.toLowerCase();
+
+    cache[bb] = cache[bb] || {};
+    cache[bb][ss] = cache[bb][ss] || [];
+    cache[bb][ss].push(o);
+
+    map.browser[bb] = map.browser[bb] || [];
+    map.browser[bb].push(o.browser.name);
+
+    map.os[ss] = map.os[ss] || [];
+    map.os[ss].push(o.os.name);
   };
 
-  require('./assets/bots.json').forEach(ua => next(ua, 'BT'));
-
   {
-    const files = fs.readdirSync('./assets/');
+    const files = fs.readdirSync(path.join(dir, 'assets')).sort();
     for (const file of files) {
       console.log(' -> Working on', file);
       if (file.endsWith('.json')) {
-        require(`./assets/${file}`).forEach(ua => next(ua, file));
+        require(path.join(dir, 'assets', file)).forEach(ua => next(ua, file));
       }
     }
   }
+
+  // flush the report before the duplicated-name assertions below can throw
+  fs.writeFile(path.join(dir, 'invalids.txt'), invalids.map(a => a.join(' ')).join('\n'), () => {});
+  console.log('ok=%d bot=%d unknown=%d malformed=%d', stats.ok, stats.bot, stats.unknown, stats.malformed);
 
   const contents = [];
   for (const browser of Object.keys(cache)) {
@@ -186,8 +156,7 @@ fs.readdir('../v3/data/popup/browsers/', (err, files) => {
         }
       }
 
-      fs.writeFile('invalids.txt', invalids.map(a => a.join(' ')).join('\n'), () => {});
-      fs.writeFile('../v3/data/popup/map.json', JSON.stringify({
+      fs.writeFile(path.join(dir, '..', 'v3', 'data', 'popup', 'map.json'), JSON.stringify({
         browser: Object.values(map.browser).map(k => k[0]),
         os: Object.values(map.os).map(k => k[0]),
         matching: map.matching
@@ -196,4 +165,3 @@ fs.readdir('../v3/data/popup/browsers/', (err, files) => {
   };
   once();
 });
-
