@@ -49,6 +49,13 @@ document.body.dataset.android = /Android|iPhone|iPod/i.test(navigator.userAgent)
 
 const map = {};
 
+// legacy profiles (see legacy.js) are hidden by default; 'show legacy'
+// reveals them for the selected browser/OS view only
+let hideLegacy = true;
+let expandedKey = '';
+// archived profiles waiting for the 'show legacy' control of the current view
+let legacyHidden = null;
+
 function sort(arr) {
   function sort(a = '', b = '') {
     const pa = a.split('.');
@@ -154,6 +161,49 @@ let updateId = 0;
 
 // Mobile view renders fewer agents than desktop (see update())
 const MOBILE_AGENT_LIMIT = 50;
+// short lists are never split: everything is shown without the legacy control
+const LEGACY_AUTO_LIMIT = 10;
+
+// builds one list row; returns the imported template content and the radio
+// when the row matches the applied user-agent string
+function buildRow(template, o, index, ua) {
+  const clone = document.importNode(template.content, true);
+  const num = clone.querySelector('td:nth-child(1)');
+  num.textContent = index + 1;
+  const second = clone.querySelector('td:nth-child(3)');
+  const wrapper = document.createElement('span');
+  wrapper.className = 'agent-cell';
+  const name = document.createElement('span');
+  name.className = 'agent-name';
+  if (o.browser.name && o.browser.version) {
+    second.title = name.textContent = o.browser.name + ' ' + (o.browser.version || ' ');
+  }
+  else {
+    second.title = name.textContent = '-';
+  }
+  wrapper.appendChild(name);
+  if (Legacy.isLegacy(o)) {
+    const badge = document.createElement('span');
+    badge.className = 'legacy-badge';
+    badge.textContent = uiLanguage.getMessage('legacy') || 'Legacy';
+    wrapper.appendChild(badge);
+  }
+  second.appendChild(wrapper);
+  const third = clone.querySelector('td:nth-child(4)');
+  if (o.os.name && o.os.version) {
+    third.title = third.textContent = o.os.name + ' ' + (o.os.version || ' ');
+  }
+  else {
+    third.title = third.textContent = '-';
+  }
+  const forth = clone.querySelector('td:nth-child(5)');
+  forth.title = forth.textContent = o.ua;
+  let radio = null;
+  if (o.ua === ua) {
+    radio = clone.querySelector('input[type=radio]');
+  }
+  return {clone, radio};
+}
 
 function update(ua) {
   const id = ++updateId;
@@ -176,39 +226,55 @@ function update(ua) {
         return;
       }
       if (list) {
+        // legacy profiles are hidden unless the user revealed them for this
+        // browser/OS view; short lists show everything and an applied
+        // legacy agent reveals itself
+        const key = browser + '|' + os;
+        const hidden = hideLegacy ? list.filter(o => Legacy.isLegacy(o)) : [];
+        const current = hidden.length ? list.filter(o => !Legacy.isLegacy(o)) : list;
+        if (hidden.length && (current.length < LEGACY_AUTO_LIMIT ||
+            (ua && hidden.some(o => o.ua === ua)))) {
+          expandedKey = key;
+        }
+        const expanded = expandedKey === key;
+        let rows = expanded || hidden.length === 0 ? list : current;
+        const hiddenCount = list.length - rows.length;
+
         const fragment = document.createDocumentFragment();
         let radio;
-        list = sort(list);
-        const fullLength = list.length;
+        rows = sort(rows);
+        const fullLength = rows.length;
         // Mobile view renders fewer rows to keep the popup fast to build, filter and scroll
-        if (document.body.dataset.android === 'true' && list.length > MOBILE_AGENT_LIMIT) {
-          list = list.slice(0, MOBILE_AGENT_LIMIT);
+        if (!expanded && document.body.dataset.android === 'true' && rows.length > MOBILE_AGENT_LIMIT) {
+          rows = rows.slice(0, MOBILE_AGENT_LIMIT);
         }
-        list.forEach((o, n) => {
-          const clone = document.importNode(t.content, true);
-          const num = clone.querySelector('td:nth-child(1)');
-          num.textContent = n + 1;
-          const second = clone.querySelector('td:nth-child(3)');
-          if (o.browser.name && o.browser.version) {
-            second.title = second.textContent = o.browser.name + ' ' + (o.browser.version || ' ');
+        // the archived profiles the 'show legacy' control can reveal
+        legacyHidden = hiddenCount ? {
+          key,
+          rows: hidden,
+          start: rows.length
+        } : null;
+        rows.forEach((o, n) => {
+          const row = buildRow(t, o, n, ua);
+          if (row.radio) {
+            radio = row.radio;
           }
-          else {
-            second.title = second.textContent = '-';
-          }
-          const third = clone.querySelector('td:nth-child(4)');
-          if (o.os.name && o.os.version) {
-            third.title = third.textContent = o.os.name + ' ' + (o.os.version || ' ');
-          }
-          else {
-            third.title = third.textContent = '-';
-          }
-          const forth = clone.querySelector('td:nth-child(5)');
-          forth.title = forth.textContent = o.ua;
-          if (o.ua === ua) {
-            radio = clone.querySelector('input[type=radio]');
-          }
-          fragment.appendChild(clone);
+          fragment.appendChild(row.clone);
         });
+        if (hiddenCount) {
+          const tr = document.createElement('tr');
+          tr.setAttribute('data-legacy-more', '');
+          const td = document.createElement('td');
+          td.colSpan = 5;
+          const input = document.createElement('input');
+          input.type = 'button';
+          input.dataset.cmd = 'show-legacy';
+          input.value = uiLanguage.getMessage('showMoreLegacy', [hiddenCount]) ||
+            'Show ' + hiddenCount + ' legacy profiles';
+          td.appendChild(input);
+          tr.appendChild(td);
+          fragment.appendChild(tr);
+        }
         tbody.appendChild(fragment);
         filter();
         if (radio) {
@@ -232,6 +298,43 @@ function update(ua) {
         parent.dataset.loading = false;
       }
     });
+}
+
+// appends the archived profiles of the current view without re-rendering the
+// list: existing rows are not moved and the scroll position is preserved
+function revealLegacy() {
+  const pending = legacyHidden;
+  if (!pending || pending.rows.length === 0) {
+    return;
+  }
+  const container = document.getElementById('list');
+  const scrollTop = container.scrollTop;
+  const tbody = container.querySelector('tbody');
+  const buttonRow = tbody.querySelector('tr[data-legacy-more]');
+  const template = document.querySelector('template');
+  const rows = sort(pending.rows.slice());
+  const fragment = document.createDocumentFragment();
+  const ua = document.getElementById('ua').value;
+  rows.forEach((o, n) => {
+    const row = buildRow(template, o, pending.start + n, ua);
+    if (row.radio) {
+      row.radio.checked = true;
+    }
+    fragment.appendChild(row.clone);
+  });
+  if (buttonRow) {
+    tbody.insertBefore(fragment, buttonRow);
+    buttonRow.remove();
+  }
+  else {
+    tbody.appendChild(fragment);
+  }
+  container.scrollTop = scrollTop;
+  legacyHidden = null;
+  expandedKey = pending.key;
+  filter();
+  document.getElementById('custom').placeholder =
+    uiLanguage.getMessage('filterAmong', [pending.start + rows.length]);
 }
 
 document.getElementById('browser').addEventListener('change', e => chrome.storage.local.set({
@@ -266,9 +369,14 @@ fetch('./map.json').then(async r => {
     'popup-os': 'Windows',
     'popup-sort': 'descending',
     'ua': '',
+    'hide-legacy': true,
     'popular-oss': ['Windows', 'Mac OS', 'Linux', 'Chromium OS', 'Android'],
     'popular-browsers': ['Internet Explorer', 'Safari', 'Chrome', 'Firefox', 'Opera', 'Edge', 'Vivaldi']
   });
+  hideLegacy = prefs['hide-legacy'] !== false;
+
+  // legacy rules; a failure keeps every profile visible (fail open)
+  await Legacy.load();
 
   const f1 = document.createDocumentFragment();
   const f3 = document.createDocumentFragment();
@@ -313,6 +421,13 @@ document.getElementById('list').addEventListener('click', ({target}) => {
   const tr = target.closest('tbody tr');
   if (tr) {
     const input = tr.querySelector('input');
+    if (tr.hasAttribute('data-legacy-more')) {
+      // forward row clicks to the embedded 'show legacy' button
+      if (input && input !== target) {
+        input.click();
+      }
+      return;
+    }
     if (input && input !== target) {
       input.checked = true;
       input.dispatchEvent(new Event('change', {
@@ -325,7 +440,8 @@ document.getElementById('list').addEventListener('click', ({target}) => {
 function filter() {
   const value = document.getElementById('custom').value.toLowerCase();
   let matched = 0;
-  [...document.querySelectorAll('#list tbody tr')]
+  // the 'show legacy' control stays visible regardless of the filter
+  [...document.querySelectorAll('#list tbody tr:not([data-legacy-more])')]
     .forEach(tr => {
       const m = tr.textContent.toLowerCase().indexOf(value) !== -1;
       tr.dataset.matched = m;
@@ -405,6 +521,10 @@ document.addEventListener('click', ({target}) => {
           }
         });
       });
+    }
+    else if (cmd === 'show-legacy') {
+      // reveal the archived profiles in place; no reload, no scroll change
+      revealLegacy();
     }
     else if (cmd === 'test') {
       chrome.storage.local.get({

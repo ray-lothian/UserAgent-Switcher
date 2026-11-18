@@ -170,6 +170,12 @@
    "filterAgents": {
      "message": "过滤器"
    },
+   "showMoreLegacy": {
+     "message": "显示 $1 个旧版配置"
+   },
+   "legacy": {
+     "message": "旧版"
+   },
    "msgDefaultUA": {
      "message": "默认 UA，请按重置按钮"
    },

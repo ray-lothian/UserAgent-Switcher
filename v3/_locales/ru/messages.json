@@ -187,6 +187,12 @@
   "filterAgents": {
     "message": "Выбрать UA"
   },
+  "showMoreLegacy": {
+    "message": "Показать устаревшие профили ($1)"
+  },
+  "legacy": {
+    "message": "Устаревший"
+  },
   "msgDefaultUA": {
     "message": "User-Agent по умолчанию, вместо этого нажмите кнопку 'Сбросить'"
   },

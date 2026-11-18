@@ -1,0 +1,179 @@
+{
+  "schemaVersion": 1,
+  "generated": "2026-11-18",
+  "os": {
+    "Android": {
+      "maxMajor": 9,
+      "unknownIsLegacy": true
+    },
+    "iOS": {
+      "maxMajor": 15,
+      "unknownIsLegacy": true
+    },
+    "Mac OS": {
+      "maxVersion": "10.14.99",
+      "unknownIsLegacy": true
+    },
+    "Windows": {
+      "prefixes": [
+        "XP",
+        "Vista",
+        "2000",
+        "98",
+        "95",
+        "ME",
+        "7",
+        "8",
+        "8.1",
+        "NT",
+        "CE"
+      ]
+    },
+    "Symbian": {
+      "all": true
+    },
+    "Maemo": {
+      "all": true
+    },
+    "BlackBerry": {
+      "all": true
+    },
+    "Windows Phone": {
+      "all": true
+    },
+    "Windows Phone OS": {
+      "all": true
+    },
+    "Windows Mobile": {
+      "all": true
+    },
+    "Windows CE": {
+      "all": true
+    },
+    "BeOS": {
+      "all": true
+    },
+    "OS/2": {
+      "all": true
+    },
+    "AmigaOS": {
+      "all": true
+    },
+    "OpenVMS": {
+      "all": true
+    },
+    "QNX": {
+      "all": true
+    },
+    "HP-UX": {
+      "all": true
+    },
+    "AIX": {
+      "all": true
+    },
+    "RISC OS": {
+      "all": true
+    }
+  },
+  "browsers": {
+    "Chrome": {
+      "maxMajor": 119
+    },
+    "Mobile Chrome": {
+      "maxMajor": 119
+    },
+    "Chrome WebView": {
+      "maxMajor": 119
+    },
+    "Chromium": {
+      "maxMajor": 119
+    },
+    "Edge": {
+      "maxMajor": 119
+    },
+    "Firefox": {
+      "maxMajor": 127
+    },
+    "Mobile Firefox": {
+      "maxMajor": 127
+    },
+    "Safari": {
+      "maxMajor": 15
+    },
+    "Mobile Safari": {
+      "maxMajor": 15
+    },
+    "IE": {
+      "all": true
+    },
+    "IEMobile": {
+      "all": true
+    },
+    "Netscape": {
+      "all": true
+    },
+    "Camino": {
+      "all": true
+    },
+    "Chimera": {
+      "all": true
+    },
+    "Flock": {
+      "all": true
+    },
+    "Mosaic": {
+      "all": true
+    },
+    "Firebird": {
+      "all": true
+    },
+    "Phoenix": {
+      "all": true
+    },
+    "Minimo": {
+      "all": true
+    },
+    "Skyfire": {
+      "all": true
+    },
+    "RockMelt": {
+      "all": true
+    },
+    "Blazer": {
+      "all": true
+    },
+    "BOLT": {
+      "all": true
+    },
+    "Maemo Browser": {
+      "all": true
+    },
+    "Opera Tablet": {
+      "all": true
+    },
+    "Android Browser": {
+      "all": true
+    },
+    "WebKit": {
+      "all": true
+    },
+    "Opera": {
+      "prefixes": [
+        "Mobi",
+        "Mini",
+        "ADR-"
+      ]
+    }
+  },
+  "engines": {
+    "EdgeHTML": {
+      "all": true
+    },
+    "Presto": {
+      "all": true
+    },
+    "Blink": {
+      "maxMajor": 119
+    }
+  }
+}

@@ -11,6 +11,7 @@ const PREF_TYPES = {
   'popup-browser': v => typeof v === 'string',
   'popup-os': v => typeof v === 'string',
   'popup-sort': v => typeof v === 'string',
+  'hide-legacy': v => typeof v === 'boolean',
   'test': v => typeof v === 'string',
   'userAgentData': v => typeof v === 'boolean',
   'pageContextMenus': v => typeof v === 'boolean',

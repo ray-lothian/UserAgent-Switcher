@@ -170,6 +170,12 @@
   "filterAgents": {
     "message": "過濾代理字串"
   },
+  "showMoreLegacy": {
+    "message": "顯示 $1 個舊版設定檔"
+  },
+  "legacy": {
+    "message": "舊版"
+  },
   "msgDefaultUA": {
     "message": "預設使用者代理，請改按重設按鈕"
   },

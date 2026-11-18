@@ -170,6 +170,12 @@
   "filterAgents": {
     "message": "UA 검색"
   },
+  "showMoreLegacy": {
+    "message": "레거시 프로필 $1개 표시"
+  },
+  "legacy": {
+    "message": "레거시"
+  },
   "msgDefaultUA": {
     "message": "기본 UA입니다. 초기화 버튼을 누르세요"
   },

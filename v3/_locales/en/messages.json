@@ -173,6 +173,12 @@
   "filterAgents": {
     "message": "Filter Agents"
   },
+  "showMoreLegacy": {
+    "message": "Show $1 legacy profiles"
+  },
+  "legacy": {
+    "message": "Legacy"
+  },
   "msgDefaultUA": {
     "message": "Default UA, press the reset button instead"
   },
