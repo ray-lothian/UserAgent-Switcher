@@ -1,0 +1,242 @@
+{
+  "extensionName": {
+    "message": "User-Agent Switcher and Manager"
+  },
+  "extensionDescription": {
+    "message": "Engaña a los sitios web que intentan recopilar información sobre tu navegación para mostrarte contenido distinto que quizá no quieras"
+  },
+  "userAgentSwitcherandManagerOptions": {
+    "message": "Página de opciones :: User-Agent Switcher and Manager"
+  },
+  "blackListMode": {
+    "message": "Modo lista negra"
+  },
+  "description": {
+    "message": "Descripción"
+  },
+  "blackListModeDescription": {
+    "message": "Aplica el agente de usuario personalizado a todas las pestañas excepto a las de los siguientes nombres de host de nivel superior (lista de nombres de host separados por comas). Ten en cuenta que, si se define un agente de usuario por pestaña desde el panel emergente de la barra de herramientas, se usará ese agente de usuario durante esta sesión."
+  },
+  "whiteListMode": {
+    "message": "Modo lista blanca"
+  },
+  "whiteListModeDescription": {
+    "message": "Aplica el agente de usuario personalizado solo a las pestañas de los siguientes nombres de host de nivel superior. Ten en cuenta que, si se define un agente de usuario por pestaña desde el panel emergente de la barra de herramientas, este sustituirá al global."
+  },
+  "customMode": {
+    "message": "Modo personalizado"
+  },
+  "customModeDescription": {
+    "message": "Intenta obtener el agente de usuario a partir de un objeto JSON; si no, usa el agente de usuario predeterminado o el que hayas definido desde el panel emergente. Usa \"*\" como nombre de host para que coincida con todos los dominios. Puedes elegir al azar entre varios agentes de usuario si indicas un array en lugar de una cadena fija. Si tu objeto JSON tiene una clave \"_\" que apunta a un array de nombres de host, la extensión elegirá el agente de usuario al azar una sola vez para cada nombre de host de esa lista. Es útil si no quieres que el agente de usuario aleatorio cambie hasta que termine la sesión del navegador."
+  },
+  "insertSample": {
+    "message": "Insertar un ejemplo"
+  },
+  "userAgentData": {
+    "message": "Exponer el objeto \"navigator.userAgentData\" en agentes de usuario de Chromium"
+  },
+  "pageContextMenus": {
+    "message": "Mostrar Pausar/Reanudar en el menú contextual de la página"
+  },
+  "disableSpoofing": {
+    "message": "Desactivar suplantación"
+  },
+  "disableSpoofingDescription": {
+    "message": "Lista de palabras clave, separadas por comas, para las que la extensión no suplantará la cabecera User-Agent. Usa esta lista para proteger las URL que contengan estas palabras clave protegidas. Cada palabra clave debe tener al menos 5 caracteres."
+  },
+  "customUserAgentParsing": {
+    "message": "Análisis personalizado del agente de usuario"
+  },
+  "customUserAgentParsingDescription": {
+    "message": "Un objeto JSON para omitir el método interno de análisis del agente de usuario. Las claves son las cadenas de agente de usuario reales y el valor de cada clave es un objeto con las claves que se deben definir en el objeto \"navigator\". Puedes usar la palabra clave \"[delete]\" si quieres que se elimine una clave del objeto \"navigator\"."
+  },
+  "importSettings": {
+    "message": "Importar configuración"
+  },
+  "exportSettings": {
+    "message": "Exportar configuración"
+  },
+  "exportSettingsTitle": {
+    "message": "Para generar una versión minimizada, mantén pulsada la tecla Mayús al pulsar este botón"
+  },
+  "help": {
+    "message": "Preguntas frecuentes (Ayuda)"
+  },
+  "donate": {
+    "message": "Apoyar el desarrollo"
+  },
+  "save": {
+    "message": "Guardar opciones"
+  },
+  "managedStorage": {
+    "message": "Esta extensión admite almacenamiento gestionado, de modo que un administrador del dominio puede cambiar las preferencias automáticamente o configurarlas de antemano. Consulta la página de preguntas frecuentes para más información."
+  },
+  "options": {
+    "message": "Opciones"
+  },
+  "optionsTitle": {
+    "message": "Abrir la página de opciones"
+  },
+  "restart": {
+    "message": "Reiniciar"
+  },
+  "restartTitle": {
+    "message": "Haz clic para recargar la extensión. Se borrarán todos los agentes de usuario definidos por pestaña."
+  },
+  "refreshTab": {
+    "message": "Recargar pestaña"
+  },
+  "refreshTabTitle": {
+    "message": "Recargar la página actual"
+  },
+  "reset": {
+    "message": "Restablecer"
+  },
+  "resetTitle": {
+    "message": "Restablece el agente de usuario del navegador al predeterminado. No restablece los agentes de usuario por pestaña; para ello, usa el botón 'Reiniciar'."
+  },
+  "testUA": {
+    "message": "Probar UA"
+  },
+  "testUATitle": {
+    "message": "Prueba tu agente de usuario"
+  },
+  "considerContainers": {
+    "message": "Usar contenedores"
+  },
+  "considerContainersTitle": {
+    "message": "Permite que la extensión acceda a los contenedores del navegador. Si concedes este permiso, las pestañas de contenedores aislados no seguirán el agente de usuario del contenedor predeterminado. Tendrás que definir el agente de usuario para cada contenedor nuevo."
+  },
+  "applyActiveTab": {
+    "message": "Aplicar (esta pestaña)"
+  },
+  "applyActiveTabTitle": {
+    "message": "Establecer este agente de usuario en la pestaña actual"
+  },
+  "applyAllWindows": {
+    "message": "Aplicar (todas las pestañas)"
+  },
+  "applyAllWindowsTitle": {
+    "message": "Establecer este agente de usuario como agente de usuario del navegador"
+  },
+  "applyContainer": {
+    "message": "Aplicar (contenedor)"
+  },
+  "applyContainerTitle": {
+    "message": "Establecer este agente de usuario como agente de usuario del contenedor actual"
+  },
+  "applyContainerTab": {
+    "message": "Aplicar (contenedor en pestaña)"
+  },
+  "applyContainerTabTitle": {
+    "message": "Establecer este agente de usuario en la pestaña actual del contenedor"
+  },
+  "resetContainer": {
+    "message": "Restablecer (contenedor)"
+  },
+  "resetContainerTitle": {
+    "message": "Restablece el agente de usuario del contenedor al predeterminado. No restablece los agentes de usuario por pestaña; para ello, usa el botón 'Reiniciar'."
+  },
+  "oscpuTitle": {
+    "message": "Este campo es de solo lectura. Usa la página de opciones para el análisis personalizado."
+  },
+  "appVersionTitle": {
+    "message": "Este campo es de solo lectura. Usa la página de opciones para el análisis personalizado."
+  },
+  "platformTitle": {
+    "message": "Este campo es de solo lectura. Usa la página de opciones para el análisis personalizado."
+  },
+  "vendorTitle": {
+    "message": "Este campo es de solo lectura. Usa la página de opciones para el análisis personalizado."
+  },
+  "productTitle": {
+    "message": "Este campo es de solo lectura. Usa la página de opciones para el análisis personalizado."
+  },
+  "uaTitle": {
+    "message": "Para usar un agente de usuario vacío, escribe la palabra clave 'empty'. Para crear un agente de usuario personalizado a partir del objeto navigator del navegador actual, usa la notación $${}. Lo que pongas dentro de esta notación se leerá del objeto 'navigator'. Por ejemplo, para añadir texto al final del agente de usuario predeterminado, usa '$${userAgent} ESTE ES EL TEXTO AÑADIDO'"
+  },
+  "uaPlaceholder": {
+    "message": "Tu agente de usuario preferido"
+  },
+  "noMatch": {
+    "message": "Ningún agente de usuario coincide con esta búsqueda"
+  },
+  "ztoa": {
+    "message": "De Z a A"
+  },
+  "atoz": {
+    "message": "De A a Z"
+  },
+  "filterAmong": {
+    "message": "Filtrar entre $1"
+  },
+  "filterAgents": {
+    "message": "Filtrar agentes"
+  },
+  "showMoreLegacy": {
+    "message": "Mostrar $1 perfiles antiguos"
+  },
+  "legacy": {
+    "message": "Antiguo"
+  },
+  "msgDefaultUA": {
+    "message": "Es el UA predeterminado; usa el botón Restablecer"
+  },
+  "msgUASet": {
+    "message": "Agente de usuario establecido"
+  },
+  "msgDisabledOnContainer": {
+    "message": "Desactivado en este contenedor. Se usa el agente de usuario predeterminado."
+  },
+  "msgDisabled": {
+    "message": "Desactivado. Se usa el agente de usuario predeterminado."
+  },
+  "optionsSaved": {
+    "message": "Opciones guardadas."
+  },
+  "dbReset": {
+    "message": "¡Haz doble clic para restablecer!"
+  },
+  "remoteAddress": {
+    "message": "Servidor de configuración remota"
+  },
+  "updateFromRemote": {
+    "message": "Actualizar desde el servidor remoto"
+  },
+  "remoteSanitizedNote": {
+    "message": "Las actualizaciones obtenidas de un servidor de configuración remota se filtran: la respuesta solo puede cambiar valores de preferencias. No puede cambiar la propia dirección remota, forzar actualizaciones ni escribir claves internas. Las claves ignoradas se muestran en la consola. El almacenamiento gestionado (administrador del dominio) no tiene restricciones."
+  },
+  "popularOSs": {
+    "message": "Sistemas operativos populares en el panel emergente"
+  },
+  "popularBrowsers": {
+    "message": "Navegadores populares en el panel emergente"
+  },
+  "interfaceLanguage": {
+    "message": "Idioma de la interfaz"
+  },
+  "langAuto": {
+    "message": "Usar el idioma del navegador"
+  },
+  "langKorean": {
+    "message": "Coreano"
+  },
+  "langEnglish": {
+    "message": "Inglés"
+  },
+  "populars": {
+    "message": "Populares"
+  },
+  "others": {
+    "message": "Otros"
+  },
+  "exampleHostnames": {
+    "message": "p. ej., www.google.com, www.bing.com"
+  },
+  "customStylingTitle": {
+    "message": "Estilo personalizado"
+  },
+  "customStylingDescription": {
+    "message": "Usa esta sección para aplicar tus propias reglas de estilo al panel emergente"
+  }
+}
