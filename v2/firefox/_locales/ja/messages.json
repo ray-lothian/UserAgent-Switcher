@@ -1,0 +1,211 @@
+{
+  "extensionName": {
+    "message": "User-Agent Switcher and Manager",
+    "description": "Name of the extension."
+  },
+  "extensionDescription": {
+    "message": "望まない別コンテンツを配信するためWeb閲覧情報を収集しようとするサイトに対しブラウザ情報を偽装します",
+    "description": "Description of the extension."
+  },
+  "userAgentSwitcherandManagerOptions": {
+    "message": "User-Agent Switcher and Manager :: オプション"
+  },
+  "blackListMode": {
+    "message": "ブラックリストモード"
+  },
+  "description": {
+    "message": "説明"
+  },
+  "blackListModeDescription": {
+    "message": "以下のトップレベルホスト名（カンマ区切り）を持つタブを除くすべてのタブにカスタムUser-Agent文字列を適用します。ツールバーのポップアップからウィンドウ単位のUser-Agent文字列が設定されていても、ブラウザの既定のUser-Agent文字列が使用されます。"
+  },
+  "whiteListMode": {
+    "message": "ホワイトリストモード"
+  },
+  "whiteListModeDescription": {
+    "message": "以下のトップレベルホスト名を持つタブにのみカスタムUser-Agent文字列を適用します。ツールバーのポップアップからウィンドウ単位のUser-Agent文字列が設定されている場合、全体設定はその文字列で上書きされます。"
+  },
+  "customMode": {
+    "message": "カスタムモード"
+  },
+  "customModeDescription": {
+    "message": "JSONオブジェクトからUser-Agent文字列の解決を試み、該当しない場合は既定のUser-Agent文字列またはポップアップ画面で設定した文字列を使用します。すべてのドメインに一致させるにはホスト名に\"*\"を指定します。固定文字列の代わりに配列を指定すると、複数のUser-Agent文字列からランダムに選択できます。JSONオブジェクトにホスト名配列を参照する\"_\"キーがある場合、リスト内の各ホスト名ごとにセッション中1回だけランダムに選択されます。ブラウザセッションが終わるまでランダムなUser-Agentを変更したくない場合に便利です。"
+  },
+  "insertSample": {
+    "message": "サンプルを挿入"
+  },
+  "cache": {
+    "message": "パフォーマンス向上のためキャッシュを使用する（推奨値はtrue）。カスタムモードを使用しており、かつリクエストごとに指定リストからUser-Agent文字列を変更する必要がある場合のみチェックを外してください。"
+  },
+  "exactMatch": {
+    "message": "完全一致を使用する（チェックを入れた場合、ホワイトリストモードとブラックリストモードで判定対象にするにはすべてのサブドメインを入力する必要があります。チェックを外した場合、すべてのサブドメインが一致と判定されます。例：リストにgoogle.comがあればwww.google.comも一致します）"
+  },
+  "faqs": {
+    "message": "更新時にFAQページを開く"
+  },
+  "userAgentData": {
+    "message": "Chromium系ブラウザで\"navigator.userAgentData\"オブジェクトを公開"
+  },
+  "log": {
+    "message": "ブラウザのコンソールにデバッグ情報を表示"
+  },
+  "disableSpoofing": {
+    "message": "偽装の無効化"
+  },
+  "disableSpoofingDescription": {
+    "message": "拡張機能がUser-Agentヘッダーを偽装しないキーワードのカンマ区切りリストです。これらの保護対象キーワードを含むURLを保護するために使用します。各キーワードは5文字以上である必要があります。"
+  },
+  "customUserAgentParsing": {
+    "message": "カスタムUser-Agent解析"
+  },
+  "customUserAgentParsingDescription": {
+    "message": "内部のUser-Agent文字列解析をバイパスするためのJSONオブジェクトです。キーに実際のUser-Agent文字列、値に\"navigator\"オブジェクトへ設定するキーのオブジェクトを指定します。\"navigator\"オブジェクトからキーを削除する場合は\"[delete]\"キーワードを使用できます。"
+  },
+  "siblingHostnames": {
+    "message": "関連ホスト名"
+  },
+  "siblingHostnamesDescription": {
+    "message": "グループごとに単一のUser-Agent文字列を割り当てるホスト名グループを1つ以上含むJSON配列です。同じグループ内のホスト名ではUser-Agent文字列の算出が1回だけ行われ、他のメンバーもすべて同じ文字列を使用します。関連するWebサイト群で同じUser-Agent文字列を共有したい場合に便利です。"
+  },
+  "importSettings": {
+    "message": "設定をインポート"
+  },
+  "exportSettings": {
+    "message": "設定をエクスポート"
+  },
+  "exportSettingsTitle": {
+    "message": "圧縮版を生成するにはShiftキーを押しながらこのボタンを押してください"
+  },
+  "help": {
+    "message": "FAQページ（ヘルプ）"
+  },
+  "donate": {
+    "message": "開発を支援する"
+  },
+  "save": {
+    "message": "保存"
+  },
+  "managedStorage": {
+    "message": "本拡張機能はマネージドストレージに対応しており、ドメイン管理者が設定を自動変更・事前構成できます。詳細はFAQページを参照してください。"
+  },
+  "options": {
+    "message": "オプション"
+  },
+  "optionsTitle": {
+    "message": "オプションページを開く"
+  },
+  "restart": {
+    "message": "再起動"
+  },
+  "restartTitle": {
+    "message": "クリックして拡張機能を再読み込みします。ウィンドウ単位で設定したUser-Agent文字列はすべて消去されます。"
+  },
+  "refreshTab": {
+    "message": "タブを更新"
+  },
+  "refreshTabTitle": {
+    "message": "現在のページを更新"
+  },
+  "reset": {
+    "message": "リセット"
+  },
+  "resetTitle": {
+    "message": "ブラウザのUser-Agentを既定値にリセットします。ウィンドウ単位のUA文字列はリセットされません。それらをリセットするには「再起動」ボタンを使用してください。"
+  },
+  "testUA": {
+    "message": "UAテスト"
+  },
+  "testUATitle": {
+    "message": "User-Agent文字列をテスト"
+  },
+  "considerContainers": {
+    "message": "コンテナを考慮する"
+  },
+  "considerContainersTitle": {
+    "message": "拡張機能にブラウザのコンテナへのアクセスを許可します。この権限を付与すると、分離されたコンテナ内のタブは既定コンテナのUser-Agentに従わなくなります。新しいコンテナごとにUser-Agent文字列を設定する必要があります。"
+  },
+  "applyActiveWindow": {
+    "message": "適用（このウィンドウ）"
+  },
+  "applyActiveWindowTitle": {
+    "message": "現在のウィンドウ内の全タブにこのUser-Agentを設定"
+  },
+  "applyAllWindows": {
+    "message": "適用（全ウィンドウ）"
+  },
+  "applyAllWindowsTitle": {
+    "message": "ブラウザのUser-Agentとしてこの文字列を設定"
+  },
+  "applyContainer": {
+    "message": "適用（コンテナ）"
+  },
+  "applyContainerTitle": {
+    "message": "現在のコンテナのUser-Agentとしてこの文字列を設定"
+  },
+  "applyContainerWindow": {
+    "message": "適用（現ウィンドウのコンテナ）"
+  },
+  "applyContainerWindowTitle": {
+    "message": "現在のウィンドウのコンテナ内にある全タブにこのUser-Agentを設定"
+  },
+  "resetContainer": {
+    "message": "リセット（コンテナ）"
+  },
+  "resetContainerTitle": {
+    "message": "コンテナのUser-Agentを既定値にリセットします。ウィンドウ単位のUA文字列はリセットされません。それらをリセットするには「再起動」ボタンを使用してください。"
+  },
+  "oscpuTitle": {
+    "message": "読み取り専用です。カスタム解析はオプションページで行ってください。"
+  },
+  "appVersionTitle": {
+    "message": "読み取り専用です。カスタム解析はオプションページで行ってください。"
+  },
+  "platformTitle": {
+    "message": "読み取り専用です。カスタム解析はオプションページで行ってください。"
+  },
+  "vendorTitle": {
+    "message": "読み取り専用です。カスタム解析はオプションページで行ってください。"
+  },
+  "productTitle": {
+    "message": "読み取り専用です。カスタム解析はオプションページで行ってください。"
+  },
+  "uaTitle": {
+    "message": "空のUser-Agent文字列を設定するには'empty'キーワードを使用します。現在のブラウザのnavigatorオブジェクトを基にカスタムUser-Agent文字列を構築するには${}記法を使用します。記法内の値は'navigator'オブジェクトから読み取られます。たとえば、既定のUser-Agentに文字列を追加するには'${userAgent} THIS IS THE APPENDED STRING'を使用します。"
+  },
+  "uaPlaceholder": {
+    "message": "任意のUser-Agent文字列"
+  },
+  "noMatch": {
+    "message": "検索条件に一致するUser-Agent文字列がありません"
+  },
+  "ztoa": {
+    "message": "Z→A"
+  },
+  "atoz": {
+    "message": "A→Z"
+  },
+  "filterAmong": {
+    "message": "$1から絞り込む"
+  },
+  "filterAgents": {
+    "message": "User-Agentを絞り込む"
+  },
+  "msgDefaultUA": {
+    "message": "既定のUAです。代わりにリセットボタンを押してください"
+  },
+  "msgUASet": {
+    "message": "User-Agentを設定済み"
+  },
+  "msgDisabledOnContainer": {
+    "message": "このコンテナでは無効です。既定のUser-Agentを使用します。"
+  },
+  "msgDisabled": {
+    "message": "無効です。既定のUser-Agentを使用します。"
+  },
+  "optionsSaved": {
+    "message": "オプションを保存しました。"
+  },
+  "dbReset": {
+    "message": "ダブルクリックでリセット！"
+  }
+}
