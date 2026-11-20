@@ -465,6 +465,11 @@ function match({url, tabId, cookieStoreId = DCSI}) {
     else if (prefs.exactMatch === false) {
       return s.endsWith('.' + h) || h.endsWith('.' + s) || s.endsWith('.' + hh) || hh.endsWith('.' + s);
     }
+      // Support "*"
+    else if (s.startsWith('*.')) {
+      const domain = s.substring(2);
+      return h.endsWith(domain);
+    }
   }).shift();
   let s;
   // try to use an already resolved sibling hostname
